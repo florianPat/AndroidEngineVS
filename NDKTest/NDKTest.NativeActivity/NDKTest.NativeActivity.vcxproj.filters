@@ -6,6 +6,8 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="EventLoop.h" />
+    <ClInclude Include="ActivityHandler.h" />
+    <ClInclude Include="DroidBlaster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />

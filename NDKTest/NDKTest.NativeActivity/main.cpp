@@ -292,12 +292,12 @@
 //	}
 //}
 
-
 #include "Log.h"
 #include "EventLoop.h"
+#include "DroidBlaster.h"
 
 void android_main(android_app* app)
 {
-	EventLoop eventLoop(app);
-	eventLoop.run();
+	DroitBlaster droidBlaster(app);
+	droidBlaster.run();
 }
