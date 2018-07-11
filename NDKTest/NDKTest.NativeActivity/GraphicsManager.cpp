@@ -46,8 +46,8 @@ STATUS GraphicsManager::start()
 
 STATUS GraphicsManager::update()
 {
-	ANativeWindow_Buffer* windowBuffer = nullptr;
-	if (ANativeWindow_lock(app->window, windowBuffer, nullptr) < 0)
+	ANativeWindow_Buffer windowBuffer;
+	if (ANativeWindow_lock(app->window, &windowBuffer, nullptr) < 0)
 	{
 		utilsLogBreak("Error while locking window in update");
 		return STATUS::KO;
@@ -55,10 +55,10 @@ STATUS GraphicsManager::update()
 
 	//Clear
 	//stride is the full width`y, you know
-	memset(windowBuffer->bits, 0, windowBuffer->stride * windowBuffer->height * sizeof(uint32_t));
+	memset(windowBuffer.bits, 0, windowBuffer.stride * windowBuffer.height * sizeof(uint32_t));
 
 	//Draw
-	uint32_t* pixels = (uint32_t*)windowBuffer->bits;
+	uint32_t* pixels = (uint32_t*)windowBuffer.bits;
 
 	for (int i = 0; i < elementCount; ++i)
 	{
@@ -74,11 +74,11 @@ STATUS GraphicsManager::update()
 		if (x < 0)
 			x = 0;
 
-		for (; y < windowBuffer->height || (y - it->loc.y) < it->height; ++y)
+		for (; y < windowBuffer.height || (y - it->loc.y) < it->height; ++y)
 		{
-			for (; x < windowBuffer->width || (x - it->loc.x) < it->width; ++x)
+			for (; x < windowBuffer.width || (x - it->loc.x) < it->width; ++x)
 			{
-				pixels[y * windowBuffer->stride + x] = 0xFF;
+				pixels[y * windowBuffer.stride + x] = 0xFF;
 			}
 		}
 	}

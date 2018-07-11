@@ -75,6 +75,10 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_INIT_WINDOW:
 		{
 			activityHandler.onCreateWindow();
+			if (activityHandler.onActivate() != STATUS::OK)
+			{
+				utilsLogBreak("onActivate error!");
+			}
 			break;
 		}
 		case APP_CMD_DESTROY:
@@ -90,6 +94,7 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_LOST_FOCUS:
 		{
 			activityHandler.onLoseFocus();
+			deactivate();
 			break;
 		}
 		case APP_CMD_LOW_MEMORY:
@@ -100,7 +105,6 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_PAUSE:
 		{
 			activityHandler.onPause();
-			deactivate();
 			break;
 		}
 		case APP_CMD_RESUME:
@@ -126,7 +130,6 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_TERM_WINDOW:
 		{
 			activityHandler.onDestroyWindow();
-			deactivate();
 			break;
 		}
 		default:
