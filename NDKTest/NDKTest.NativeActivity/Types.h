@@ -13,3 +13,10 @@ enum class STATUS
 	KO = -1,
 	EXIT = -2
 };
+
+struct Location
+{
+	Location() = default;
+public:
+	float x = 0.0f, y = 0.0f;
+};

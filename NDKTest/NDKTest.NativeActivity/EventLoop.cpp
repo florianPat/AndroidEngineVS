@@ -10,10 +10,10 @@ EventLoop::EventLoop(android_app * pApp, ActivityHandler& activityHandler) : app
 
 void EventLoop::run()
 {
-	int32_t result, events;
+	int32_t events;
 	android_poll_source* source;
 
-	Log::info("Starting event loop");
+	utilsLog("Starting event loop");
 	while (1)
 	{
 		while ((ALooper_pollAll(enabled ? 0 : -1, 0, &events, (void**)&source)) >= 0)
@@ -24,7 +24,7 @@ void EventLoop::run()
 			}
 			if (app->destroyRequested)
 			{
-				Log::info("exit event loop");
+				utilsLog("exit event loop");
 				return;
 			}
 		}

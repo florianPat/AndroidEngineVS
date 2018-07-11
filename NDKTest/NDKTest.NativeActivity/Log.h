@@ -1,13 +1,11 @@
 #pragma once
 
-class Log
-{
-public:
-	static void info(const char* pMessage);
-};
+#include <assert.h>
 
 #ifndef NDEBUG
-#define log_debug(pMessage) Log::debug(pMessage)
+	#define utilsLog(string) __android_log_write(ANDROID_LOG_INFO, __FUNCTION__, string);
+	#define utilsLogBreak(string) __assert(__FUNCTION__, __LINE__, string)
 #else
-#define log_debug(pMessage)
+	#define utilsLog(string)
+	#define utilsLogBreak(string)
 #endif

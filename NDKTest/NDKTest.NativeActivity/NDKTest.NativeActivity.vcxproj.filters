@@ -8,11 +8,14 @@
     <ClInclude Include="EventLoop.h" />
     <ClInclude Include="ActivityHandler.h" />
     <ClInclude Include="DroidBlaster.h" />
+    <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="Ship.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="EventLoop.cpp" />
-    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="Ship.cpp" />
   </ItemGroup>
 </Project>

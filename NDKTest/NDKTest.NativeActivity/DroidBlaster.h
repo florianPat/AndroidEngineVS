@@ -3,12 +3,14 @@
 #include "ActivityHandler.h"
 #include "Log.h"
 #include "EventLoop.h"
+#include "GraphicsManager.h"
+#include "Ship.h"
 
 struct DroitBlaster : public ActivityHandler
 {
-	DroitBlaster(android_app* app) : eventLoop(app, *this)
+	DroitBlaster(android_app* app) : eventLoop(app, *this), graphicsManager(app), ship(graphicsManager)
 	{
-		Log::info("Creating DroidBlaster");
+		utilsLog("Creating DroidBlaster");
 	}
 
 	void run()
@@ -18,23 +20,33 @@ struct DroitBlaster : public ActivityHandler
 
 	STATUS onActivate() override
 	{
-		Log::info("onActivate");
-		return STATUS::OK;
+		utilsLog("onActivate");
+
+		if (graphicsManager.start() != STATUS::OK)
+			return STATUS::KO;
+		else
+			return STATUS::OK;
 	}
 
 	void onDeactivate() override
 	{
-		Log::info("deactivate");
+		utilsLog("deactivate");
 	}
 
 	STATUS onStep() override
 	{
-		Log::info("Step started");
+		utilsLog("Step started");
+
+		STATUS result = graphicsManager.update();
+
 		//sleep in microseconds
-		usleep(1000000);
-		Log::info("Step ended");
-		return STATUS::OK;
+		//60 frames a second!
+		usleep(16666);
+		utilsLog("Step ended");
+		return result;
 	}
 private:
 	EventLoop eventLoop;
+	GraphicsManager graphicsManager;
+	Ship ship;
 };
