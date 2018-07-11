@@ -10,6 +10,7 @@
     <ClInclude Include="DroidBlaster.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -17,5 +18,6 @@
     <ClCompile Include="EventLoop.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
 </Project>
