@@ -7,7 +7,7 @@ class Ship
 public:
 	Ship(GraphicsManager& graphicsManager);
 private:
-	static constexpr float INITIAL_X = 0.5f;
-	static constexpr float INITIAL_Y = 0.25f;
-	static constexpr int32_t SIZE = 64;
+	static constexpr float INITIAL_X = 100;
+	static constexpr float INITIAL_Y = 300;
+	static constexpr int32_t SIZE = 640;
 };

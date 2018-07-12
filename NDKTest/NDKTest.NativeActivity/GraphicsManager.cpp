@@ -70,15 +70,15 @@ STATUS GraphicsManager::update()
 		if (y < 0)
 			y = 0;
 		
-		int x = it->loc.x;
-		if (x < 0)
-			x = 0;
+		int clampedX = it->loc.x;
+		if (clampedX < 0)
+			clampedX = 0;
 
-		for (; y < windowBuffer.height || (y - it->loc.y) < it->height; ++y)
+		for (; y < windowBuffer.height && (y - it->loc.y) < it->height; ++y)
 		{
-			for (; x < windowBuffer.width || (x - it->loc.x) < it->width; ++x)
+			for (int x = clampedX; x < windowBuffer.width && (x - it->loc.x) < it->width; ++x)
 			{
-				pixels[y * windowBuffer.stride + x] = 0xFF;
+				pixels[y * windowBuffer.stride + x] = 0x000000FF;
 			}
 		}
 	}
