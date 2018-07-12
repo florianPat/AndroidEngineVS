@@ -28,7 +28,7 @@ STATUS GraphicsManager::start()
 		return STATUS::KO;
 	}
 
-	if (ANativeWindow_lock(app->window, &windowBuffer, nullptr) >= 0)
+	if (ANativeWindow_lock(app->window, &windowBuffer, NULL) >= 0)
 	{
 		renderWidth = windowBuffer.width;
 		renderHeight = windowBuffer.height;
@@ -47,7 +47,7 @@ STATUS GraphicsManager::start()
 STATUS GraphicsManager::update()
 {
 	ANativeWindow_Buffer windowBuffer;
-	if (ANativeWindow_lock(app->window, &windowBuffer, nullptr) < 0)
+	if (ANativeWindow_lock(app->window, &windowBuffer, NULL) < 0)
 	{
 		utilsLogBreak("Error while locking window in update");
 		return STATUS::KO;
@@ -64,7 +64,7 @@ STATUS GraphicsManager::update()
 	{
 		GraphicsElement* it = elements[i];
 
-		assert(it != nullptr);
+		assert(it != NULL);
 		
 		int y = it->loc.y;
 		if (y < 0)

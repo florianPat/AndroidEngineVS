@@ -4,7 +4,7 @@
 
 TimeManager::TimeManager()
 {
-	srand(time(nullptr));
+	srand(time(NULL));
 	reset();
 }
 

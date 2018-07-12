@@ -17,7 +17,7 @@ private:
 	static void AppEventCallback(android_app* app, int32_t command);
 private:
 	android_app * app;
-	bool enabled = true;
+	bool enabled = false;
 	bool quit = false;
 
 	ActivityHandler& activityHandler;

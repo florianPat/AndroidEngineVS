@@ -41,7 +41,7 @@ void EventLoop::run()
 
 void EventLoop::activate()
 {
-	if ((!enabled) && (app->window != nullptr))
+	if ((!enabled) && (app->window != NULL))
 	{
 		quit = false;
 		enabled = true;
@@ -75,10 +75,7 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_INIT_WINDOW:
 		{
 			activityHandler.onCreateWindow();
-			if (activityHandler.onActivate() != STATUS::OK)
-			{
-				utilsLogBreak("onActivate error!");
-			}
+			enabled = true;
 			break;
 		}
 		case APP_CMD_DESTROY:
@@ -130,6 +127,7 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_TERM_WINDOW:
 		{
 			activityHandler.onDestroyWindow();
+			enabled = false;
 			break;
 		}
 		default:

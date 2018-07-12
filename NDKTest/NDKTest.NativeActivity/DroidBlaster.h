@@ -45,6 +45,32 @@ struct DroitBlaster : public ActivityHandler
 		utilsLog("Step ended");
 		return result;
 	}
+
+	void onStart() override { utilsLog("onStart"); }
+	void onResume() override { utilsLog("onResume"); }
+	void onPause() override { utilsLog("onPause"); }
+	void onStop() override { utilsLog("onStop"); }
+	void onDestroy() override { utilsLog("onDestroy"); }
+
+	void onSaveInstanceState(void** pData, size_t* pSize) override { utilsLog("onSaveInstanceState"); }
+	void onConfigurationChanged() override { utilsLog("onConfigurationChanged"); }
+	void onLowMemory() override { utilsLog("onLowMemory"); }
+
+	void onCreateWindow() override 
+	{
+		utilsLog("onCreateWindow");
+		if (onActivate() != STATUS::OK)
+		{
+			utilsLogBreak("onActivate error!");
+		}
+	}
+	void onDestroyWindow() override 
+	{
+		utilsLog("onDestroyWindow");
+		onDeactivate();
+	}
+	void onGainFocus() override { utilsLog("onGainFocus"); }
+	void onLoseFocus() override { utilsLog("onLoseFocus"); }
 private:
 	EventLoop eventLoop;
 	GraphicsManager graphicsManager;
