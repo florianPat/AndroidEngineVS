@@ -5,10 +5,11 @@
 #include "EventLoop.h"
 #include "GraphicsManager.h"
 #include "Ship.h"
+#include "TimeManager.h"
 
 struct DroitBlaster : public ActivityHandler
 {
-	DroitBlaster(android_app* app) : eventLoop(app, *this), graphicsManager(app), ship(graphicsManager)
+	DroitBlaster(android_app* app) : eventLoop(app, *this), graphicsManager(app), ship(graphicsManager), timeManager()
 	{
 		utilsLog("Creating DroidBlaster");
 	}
@@ -39,9 +40,28 @@ struct DroitBlaster : public ActivityHandler
 
 		STATUS result = graphicsManager.update();
 
+		assert(result == STATUS::OK);
+
+		timeManager.update();
+		float elapsed = timeManager.getElapsed();
+		__android_log_print(ANDROID_LOG_INFO, "FPS", "%f", elapsed);
+
+		if (elapsed < wantedGameHzMicroseconds)
+		{
+			ulong timeToSleep = wantedGameHzMicroseconds - elapsed;
+			if (usleep(timeToSleep) != 0)
+			{
+				utilsLogBreak("usleep error!");
+			}
+		}
+
+		timeManager.update();
+		elapsed = timeManager.getElapsed();
+		__android_log_print(ANDROID_LOG_INFO, "FPS", "%f", elapsed);
+
 		//sleep in microseconds
-		//60 frames a second!
-		usleep(16666);
+		//60 frames a second
+		//usleep(16666);
 		utilsLog("Step ended");
 		return result;
 	}
@@ -75,4 +95,6 @@ private:
 	EventLoop eventLoop;
 	GraphicsManager graphicsManager;
 	Ship ship;
+	TimeManager timeManager;
+	static constexpr int wantedGameHzMicroseconds = 16666;
 };

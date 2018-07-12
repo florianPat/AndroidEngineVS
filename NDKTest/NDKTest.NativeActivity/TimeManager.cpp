@@ -27,6 +27,9 @@ void TimeManager::update()
 double TimeManager::now()
 {
 	timespec timeVal;
-	clock_gettime(CLOCK_MONOTONIC, &timeVal);
-	return timeVal.tv_sec + (timeVal.tv_nsec * 1.0e-9);
+	if (clock_gettime(CLOCK_MONOTONIC, &timeVal) != 0)
+	{
+		utilsLogBreak("clock_gettime error!");
+	}
+	return timeVal.tv_nsec / 1000;
 }
