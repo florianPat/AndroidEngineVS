@@ -212,6 +212,7 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Types.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="EventLoop.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>

@@ -11,6 +11,7 @@
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -19,5 +20,6 @@
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="Resource.cpp" />
   </ItemGroup>
 </Project>
