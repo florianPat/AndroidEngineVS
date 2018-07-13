@@ -91,7 +91,6 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_LOST_FOCUS:
 		{
 			activityHandler.onLoseFocus();
-			deactivate();
 			break;
 		}
 		case APP_CMD_LOW_MEMORY:
@@ -127,6 +126,7 @@ void EventLoop::processAppEvent(int32_t command)
 		case APP_CMD_TERM_WINDOW:
 		{
 			activityHandler.onDestroyWindow();
+			deactivate();
 			enabled = false;
 			break;
 		}

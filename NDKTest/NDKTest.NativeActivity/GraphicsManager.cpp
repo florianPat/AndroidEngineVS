@@ -21,68 +21,130 @@ GraphicsElement * GraphicsManager::registerElement(int32_t width, int32_t height
 
 STATUS GraphicsManager::start()
 {
-	ANativeWindow_Buffer windowBuffer;
-	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, WINDOW_FORMAT_RGBX_8888) < 0)
+	utilsLog("starting GraphicsManager");
+
+	EGLint format, numConfigs;
+	EGLConfig config;
+
+	constexpr EGLint DISPLAY_ATTRIBS[] = {
+		EGL_RENDERABLE_TYPE,
+		EGL_OPENGL_ES2_BIT,
+		EGL_BLUE_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_RED_SIZE, 8,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_NONE
+	};
+
+	constexpr EGLint CONTEXT_ATTRIBS[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+
+	display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (display == EGL_NO_DISPLAY)
 	{
-		utilsLogBreak("Error while setting buffer geometry");
+		utilsLogBreak("eglGetDisplay failed!");
+		stop();
 		return STATUS::KO;
 	}
 
-	if (ANativeWindow_lock(app->window, &windowBuffer, NULL) >= 0)
+	if (!eglInitialize(display, 0, 0))
 	{
-		renderWidth = windowBuffer.width;
-		renderHeight = windowBuffer.height;
-
-		ANativeWindow_unlockAndPost(app->window);
-	}
-	else
-	{
-		utilsLogBreak("Error while locking window");
+		utilsLogBreak("egInitialize failed!");
+		stop();
 		return STATUS::KO;
 	}
+
+	if (!eglChooseConfig(display, DISPLAY_ATTRIBS, &config, 1, &numConfigs) || (numConfigs <= 0))
+	{
+		utilsLogBreak("eglChooseConfig failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
+	{
+		utilsLogBreak("eglGetConfigAttrib failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, format) != 0)
+	{
+		utilsLogBreak("ANativeWindow_setBufferGeometry failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	surface = eglCreateWindowSurface(display, config, app->window, nullptr);
+	if (surface == EGL_NO_SURFACE)
+	{
+		utilsLogBreak("eglCreateWindowSurface failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	context = eglCreateContext(display, config, 0, CONTEXT_ATTRIBS);
+	if (context == EGL_NO_CONTEXT)
+	{
+		utilsLogBreak("eglCreateContext failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	if (!eglMakeCurrent(display, surface, surface, context) || 
+		!eglQuerySurface(display, surface, EGL_WIDTH, &renderWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &renderHeight) ||
+		(renderWidth <= 0) || (renderHeight <= 0))
+	{
+		utilsLogBreak("eglMakeCurrent failed!");
+		stop();
+		return STATUS::KO;
+	}
+
+	glViewport(0, 0, renderWidth, renderHeight);
+	glDisable(GL_DEPTH_TEST);
 
 	return STATUS::OK;
 }
 
+void GraphicsManager::stop()
+{
+	utilsLog("stopping GraphicsManager");
+
+	if (display != EGL_NO_DISPLAY)
+	{
+		eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
+		if (context != EGL_NO_CONTEXT)
+		{
+			eglDestroyContext(display, context);
+			context = EGL_NO_CONTEXT;
+		}
+
+		if (surface != EGL_NO_SURFACE)
+		{
+			eglDestroySurface(display, surface);
+			surface = EGL_NO_SURFACE;
+		}
+
+		eglTerminate(display);
+		display = EGL_NO_DISPLAY;
+	}
+}
+
 STATUS GraphicsManager::update()
 {
-	ANativeWindow_Buffer windowBuffer;
-	if (ANativeWindow_lock(app->window, &windowBuffer, NULL) < 0)
+	static float clearColor = 0.0f;
+	clearColor += 0.1f;
+	glClearColor(clearColor, clearColor, clearColor, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	if (eglSwapBuffers(display, surface) != EGL_TRUE)
 	{
-		utilsLogBreak("Error while locking window in update");
+		__android_log_assert(nullptr, __FUNCTION__, "Error %d swapping buffers!", eglGetError());
 		return STATUS::KO;
 	}
-
-	//Clear
-	//stride is the full width`y, you know
-	memset(windowBuffer.bits, 0, windowBuffer.stride * windowBuffer.height * sizeof(uint32_t));
-
-	//Draw
-	uint32_t* pixels = (uint32_t*)windowBuffer.bits;
-
-	for (int i = 0; i < elementCount; ++i)
-	{
-		GraphicsElement* it = elements[i];
-
-		assert(it != NULL);
-		
-		int y = it->loc.y;
-		if (y < 0)
-			y = 0;
-		
-		int clampedX = it->loc.x;
-		if (clampedX < 0)
-			clampedX = 0;
-
-		for (; y < windowBuffer.height && (y - it->loc.y) < it->height; ++y)
-		{
-			for (int x = clampedX; x < windowBuffer.width && (x - it->loc.x) < it->width; ++x)
-			{
-				pixels[y * windowBuffer.stride + x] = 0x000000FF;
-			}
-		}
-	}
-
-	ANativeWindow_unlockAndPost(app->window);
-	return STATUS::OK;
+	else
+		return STATUS::OK;
 }

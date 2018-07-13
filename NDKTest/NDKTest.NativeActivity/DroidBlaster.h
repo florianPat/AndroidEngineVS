@@ -32,6 +32,8 @@ struct DroitBlaster : public ActivityHandler
 	void onDeactivate() override
 	{
 		utilsLog("deactivate");
+
+		graphicsManager.stop();
 	}
 
 	STATUS onStep() override
