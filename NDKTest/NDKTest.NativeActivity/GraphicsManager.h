@@ -4,6 +4,15 @@
 #include "android_native_app_glue.h"
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
+#include "Resource.h"
+
+struct TexturePropeties
+{
+	Resource* resource;
+	GLuint texture;
+	int width;
+	int height;
+};
 
 struct GraphicsElement
 {
@@ -27,9 +36,15 @@ public:
 	STATUS start();
 	void stop();
 	STATUS update();
+
+	TexturePropeties* loadTexture(Resource& resource);
 private:
 	android_app * app;
 	int32_t renderWidth = 0, renderHeight = 0;
+
+	TexturePropeties textures[32] = {};
+	int32_t textureCount = 0;
+
 	GraphicsElement* elements[1024] = {};
 	int32_t elementCount = 0;
 

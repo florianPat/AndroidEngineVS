@@ -15,5 +15,5 @@ public:
 private:
 	const char* path;
 	AAssetManager* assetManager;
-	AAsset* asset = nullptr	;
+	AAsset* asset = nullptr;
 };

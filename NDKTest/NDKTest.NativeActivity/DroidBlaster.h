@@ -6,10 +6,11 @@
 #include "GraphicsManager.h"
 #include "Ship.h"
 #include "TimeManager.h"
+#include "Resource.h"
 
 struct DroitBlaster : public ActivityHandler
 {
-	DroitBlaster(android_app* app) : eventLoop(app, *this), graphicsManager(app), ship(graphicsManager), timeManager()
+	DroitBlaster(android_app* app) : eventLoop(app, *this), graphicsManager(app), shipTexture(app, "ship.png"), ship(graphicsManager), timeManager()
 	{
 		utilsLog("Creating DroidBlaster");
 	}
@@ -25,8 +26,11 @@ struct DroitBlaster : public ActivityHandler
 
 		if (graphicsManager.start() != STATUS::OK)
 			return STATUS::KO;
-		else
-			return STATUS::OK;
+
+		graphicsManager.loadTexture(shipTexture);
+		timeManager.reset();
+		
+		return STATUS::OK;
 	}
 
 	void onDeactivate() override
@@ -96,6 +100,7 @@ struct DroitBlaster : public ActivityHandler
 private:
 	EventLoop eventLoop;
 	GraphicsManager graphicsManager;
+	Resource shipTexture;
 	Ship ship;
 	TimeManager timeManager;
 	static constexpr int wantedGameHzMicroseconds = 16666;
