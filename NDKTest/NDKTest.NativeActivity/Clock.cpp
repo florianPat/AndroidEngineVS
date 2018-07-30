@@ -29,14 +29,14 @@ Time Clock::getElapsedTimeTotal()
 	return Time{ elapsedTotal };
 }
 
-double Clock::now()
+int64_t Clock::now()
 {
 	timespec timeVal;
 	if (clock_gettime(CLOCK_REALTIME, &timeVal) != 0)
 	{
 		utilsLogBreak("clock_gettime error!");
 	}
-	return timeVal.tv_sec + timeVal.tv_nsec / 1000000000;
+	return timeVal.tv_sec * 1000000000ll + timeVal.tv_nsec;
 }
 
 void Clock::update()
