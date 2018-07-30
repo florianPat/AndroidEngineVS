@@ -9,16 +9,11 @@ GraphicsManager::GraphicsManager(android_app * app) : app(app)
 
 GraphicsManager::~GraphicsManager()
 {
-	for (int i = 0; i < elementCount; ++i)
-	{
-		delete elements[i];
-	}
 }
 
-GraphicsElement * GraphicsManager::registerElement(int32_t width, int32_t height)
+void GraphicsManager::registerComponent(GraphicsComponent* component)
 {
-	elements[elementCount] = new GraphicsElement(width, height);
-	return elements[elementCount++];
+	components[componentCount++] = component;
 }
 
 STATUS GraphicsManager::start()
@@ -107,6 +102,23 @@ STATUS GraphicsManager::start()
 	glViewport(0, 0, renderWidth, renderHeight);
 	glDisable(GL_DEPTH_TEST);
 
+	memset(projectionMatrix[0], 0, sizeof(projectionMatrix));
+	projectionMatrix[0][0] = 2.0f / renderWidth;
+	projectionMatrix[1][1] = 2.0f / renderHeight;
+	projectionMatrix[2][2] = -1.0f; 
+	projectionMatrix[3][0] = -1.0f;
+	projectionMatrix[3][1] = -1.0f;
+	projectionMatrix[3][2] = 0.0f;
+	projectionMatrix[3][3] = 1.0f;
+
+	for (int32_t i = 0; i < componentCount; ++i)
+	{
+		if (components[i]->load() != STATUS::OK)
+		{
+			return STATUS::KO;
+		}
+	}
+
 	return STATUS::OK;
 }
 
@@ -114,11 +126,17 @@ void GraphicsManager::stop()
 {
 	utilsLog("stopping GraphicsManager");
 
-	for (int i = 0; i < textureCount; ++i)
+	for (int32_t i = 0; i < textureCount; ++i)
 	{
 		glDeleteTextures(1, &textures[i].texture);
 	}
 	textureCount = 0;
+
+	for (int32_t i = 0; i < shaderCount; ++i)
+	{
+		glDeleteProgram(shaders[i]);
+	}
+	shaderCount = 0;
 
 	if (display != EGL_NO_DISPLAY)
 	{
@@ -147,6 +165,11 @@ STATUS GraphicsManager::update()
 	clearColor += 0.1f;
 	glClearColor(clearColor, clearColor, clearColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	for (int32_t i = 0; i < componentCount; ++i)
+	{
+		components[i]->draw();
+	}
 
 	if (eglSwapBuffers(display, surface) != EGL_TRUE)
 	{
@@ -385,4 +408,58 @@ TexturePropeties * GraphicsManager::loadTexture(Resource & resource)
 	texturePropeties->height = height;
 	
 	return texturePropeties;
+}
+
+GLuint GraphicsManager::loadShader(const char * vertexShaderFilename, const char * fragmentShaderFilename)
+{
+	GLint result;
+	char log[256];
+	GLuint vertexShader, fragmentShader, shaderProgram;
+	
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderFilename, nullptr);
+	glCompileShader(vertexShader);
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE)
+	{
+		glGetShaderInfoLog(vertexShader, sizeof(log), 0, log);
+		utilsLog("VertexShader compilation failed!");
+		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
+
+		if (vertexShader > 0) glDeleteShader(vertexShader);
+	}
+
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderFilename, nullptr);
+	glCompileShader(fragmentShader);
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE)
+	{
+		glGetShaderInfoLog(fragmentShader, sizeof(log), nullptr, log);
+		utilsLog("FragmentShader compilation failed!");
+		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
+
+		if (vertexShader > 0) glDeleteShader(vertexShader);
+		if (fragmentShader > 0) glDeleteShader(fragmentShader);
+	}
+
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	if (result == GL_FALSE)
+	{
+		glGetProgramInfoLog(shaderProgram, sizeof(log), nullptr, log);
+		utilsLog("ShaderProgram linking failed!");
+		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
+
+		if (vertexShader > 0) glDeleteShader(vertexShader);
+		if (fragmentShader > 0) glDeleteShader(fragmentShader);
+	}
+
+	shaders[shaderCount++] = shaderProgram;
+	return shaderProgram;
 }
