@@ -116,7 +116,7 @@ void RenderWindow::processAppEvent(int32_t command)
 				}
 			}
 
-			timeManager.reset();
+			//clock.reset();
 
 			enabled = true;
 			break;

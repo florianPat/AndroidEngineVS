@@ -3,7 +3,7 @@
 #include "android_native_app_glue.h"
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
-#include "TimeManager.h"
+#include "Clock.h"
 
 void clearErrors();
 void checkErrors(const std::string& func);
@@ -15,7 +15,7 @@ class RenderWindow
 	android_app * app;
 	bool enabled = false;
 	bool quit = false;
-	TimeManager timeManager;
+	Clock timeManager;
 
 	int32_t renderWidth = 0, renderHeight = 0;
 	EGLDisplay display = EGL_NO_DISPLAY;
