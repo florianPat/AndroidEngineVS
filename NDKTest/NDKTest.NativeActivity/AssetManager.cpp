@@ -1,15 +1,19 @@
 #include "AssetManager.h"
 #include "Utils.h"
 
-sf::Texture* TextureAssetManager::getOrAddRes(const std::string & filename)
+TextureAssetManager::TextureAssetManager(AAssetManager * aassetManager) : ressourceCache(), timeOfInsertCache(), aassetManager(aassetManager)
+{
+}
+
+Texture* TextureAssetManager::getOrAddRes(const std::string & filename)
 {
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
 		return res->second.get();
 	else
 	{
-		std::unique_ptr<sf::Texture> texture = std::make_unique<sf::Texture>();
-		if(!texture->loadFromFile(filename))
+		std::unique_ptr<Texture> texture = std::make_unique<Texture>();
+		if(!texture->loadFromFile(filename, aassetManager))
 		{
 			utilsLogBreak("Could not load texture!");
 			return nullptr;
@@ -29,7 +33,7 @@ sf::Texture* TextureAssetManager::getOrAddRes(const std::string & filename)
 			} while (currentSize > maxSize);
 		}
 
-		auto result = ressourceCache.emplace(std::pair<std::string, std::unique_ptr<sf::Texture>>{ filename, std::move(texture) });
+		auto result = ressourceCache.emplace(std::pair<std::string, std::unique_ptr<Texture>>{ filename, std::move(texture) });
 		timeOfInsertCache.push_back(filename);
 		assert(result.second);
 		return result.first->second.get();

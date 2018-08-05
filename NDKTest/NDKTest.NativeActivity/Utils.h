@@ -25,8 +25,6 @@
 namespace utils
 {
 	unsigned int getGUID();
-	//TODO: Think about how to do that!
-	//const unsigned int getGUIDConst();
 	bool isWordInLine(const std::string & word, const std::string & lineContent);
 	DelegateFunction getDelegateFromFunction(std::function<void(EventData*)>& function);
 	std::string getWordBetweenChars(const std::string& lineContent, char first, char last);

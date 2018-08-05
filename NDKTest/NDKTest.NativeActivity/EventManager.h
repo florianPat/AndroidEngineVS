@@ -5,6 +5,8 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include <list>
+#include <vector>
 
 typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunction;
 

@@ -2,9 +2,10 @@
 
 #include <vector>
 #include <string>
-#include <SFML\Graphics.hpp>
+#include "Texture.h"
 #include <memory>
 #include <unordered_map>
+#include "Vector2.h"
 
 class TextureRegion
 {
@@ -12,10 +13,10 @@ class TextureRegion
 
 	std::string textureAtlasFileName;
 	std::string filename;
-	sf::Vector2i xy;
-	sf::Vector2i size;
+	Vector2i xy;
+	Vector2i size;
 
-	sf::Texture* atlasTexture;
+	Texture* atlasTexture;
 	sf::Sprite regionSprite;
 private:
 	TextureRegion() = default;
@@ -23,8 +24,8 @@ private:
 public:
 	std::string getAtlasFileName() { return textureAtlasFileName; }
 	std::string getRegionName() { return filename; }
-	sf::Vector2i getXY() { return xy; }
-	sf::Vector2i getSize() { return size; }
+	Vector2i getXY() { return xy; }
+	Vector2i getSize() { return size; }
 
 	void setRegion(int x, int y, int widht, int height);
 	sf::Sprite getRegion();
@@ -35,7 +36,7 @@ class TextureAtlas
 	struct FileHeader
 	{
 		std::string name;
-		sf::Vector2i size;
+		Vector2i size;
 		std::string format;
 		std::string filter[2];
 		std::string repeat;
@@ -48,7 +49,7 @@ public:
 	void addRegion(const TextureRegion& adder);
 private:
 	std::string getLineContentBetweeen(std::string& lineContent, char first, char secound);
-	sf::Vector2i getLineContentRegionValues(std::string& lineContent, char firstRealChar);
+	Vector2i getLineContentRegionValues(std::string& lineContent, char firstRealChar);
 private:
 	std::unordered_map<std::string, TextureRegion> textureAtlas;
 	static constexpr int FILE_HEADER_LINE_SIZE = 5;

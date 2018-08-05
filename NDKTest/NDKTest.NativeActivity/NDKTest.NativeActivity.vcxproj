@@ -210,11 +210,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ActivityHandler.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="Assets.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventLevelReload.h" />
@@ -230,22 +228,22 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="RenderWindow.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="Ship.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureAtlas.h" />
     <ClInclude Include="TiledMap.h" />
     <ClInclude Include="TiledMapRenderComponent.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AssetManager.cpp" />
-    <ClCompile Include="Assets.cpp" />
     <ClCompile Include="EventLevelReload.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -258,8 +256,7 @@
     <ClCompile Include="MainLevel.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
-    <ClCompile Include="Resource.cpp" />
-    <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureAtlas.cpp" />
     <ClCompile Include="TiledMap.cpp" />
     <ClCompile Include="Clock.cpp" />

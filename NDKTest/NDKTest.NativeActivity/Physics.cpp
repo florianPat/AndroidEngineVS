@@ -27,7 +27,7 @@ void Physics::handleCollision(Body* itBody, Body* collideElementBody, Collider &
 		}
 	}
 
-	sf::Vector2f minTransVec = {};
+	Vector2f minTransVec = {};
 	if (bodyCollider.collide(elementCollider, &minTransVec))
 	{
 		if (minTransVec.x > 0.0f)
@@ -55,7 +55,7 @@ void Physics::handleCollision(Body* itBody, Body* collideElementBody, Collider &
 	}
 }
 
-void Physics::Collider::getPointsAxis(sf::Vector2f * points, sf::Vector2f * axis) const
+void Physics::Collider::getPointsAxis(Vector2f * points, Vector2f * axis) const
 {
 	switch (type)
 	{
@@ -69,11 +69,11 @@ void Physics::Collider::getPointsAxis(sf::Vector2f * points, sf::Vector2f * axis
 			points[3] = { bodyOBB.pos.x, bodyOBB.pos.y + bodyOBB.height };
 
 			//Global origin
-			sf::Vector2f origin = bodyOBB.pos + bodyOBB.origin;
+			Vector2f origin = bodyOBB.pos + bodyOBB.origin;
 
 			for (int i = 0; i < 4; ++i)
 			{
-				points[i] = sf::Vector2f(bodyOBB.pos + (points[i].x - origin.x) * bodyOBB.xAxis + (points[i].y - origin.y) * bodyOBB.yAxis);
+				points[i] = Vector2f(bodyOBB.pos + bodyOBB.xAxis * (points[i].x - origin.x) + bodyOBB.yAxis * (points[i].y - origin.y));
 			}
 
 			axis[0] = bodyOBB.xAxis;
@@ -83,7 +83,7 @@ void Physics::Collider::getPointsAxis(sf::Vector2f * points, sf::Vector2f * axis
 		}
 		case Collider::Type::rect:
 		{
-			sf::FloatRect bodyRect = collider.rect;
+			FloatRect bodyRect = collider.rect;
 
 			points[0] = { bodyRect.left, bodyRect.top };
 			points[1] = { bodyRect.left + bodyRect.width, bodyRect.top };
@@ -112,9 +112,9 @@ void Physics::Collider::getPointsAxis(sf::Vector2f * points, sf::Vector2f * axis
 	}
 }
 
-sf::Vector2f Physics::Collider::getProjectionMinMax(const sf::Vector2f * points, const sf::Vector2f & axis, bool isXAxis) const
+Vector2f Physics::Collider::getProjectionMinMax(const Vector2f * points, const Vector2f & axis, bool isXAxis) const
 {
-	sf::Vector2f result = { points[0].x * axis.x + points[0].y * axis.y, points[0].x * axis.x + points[0].y * axis.y };
+	Vector2f result = { points[0].x * axis.x + points[0].y * axis.y, points[0].x * axis.x + points[0].y * axis.y };
 
 	if (type != Type::circle)
 	{
@@ -195,7 +195,7 @@ void Physics::update(float dt)
 	}
 }
 
-void Physics::debugRenderBodies(sf::RenderWindow & window)
+void Physics::debugRenderBodies(RenderWindow & window)
 {
 	for (auto it = bodies.begin(); it != bodies.end(); ++it)
 	{
@@ -209,10 +209,10 @@ void Physics::debugRenderBodies(sf::RenderWindow & window)
 			{
 				case Collider::Type::rect:
 				{
-					sf::FloatRect colliderRect = collider->collider.rect;
+					FloatRect colliderRect = collider->collider.rect;
 
-					body.setSize(sf::Vector2f(colliderRect.width, colliderRect.height));
-					body.setPosition(sf::Vector2f(colliderRect.left, colliderRect.top));
+					body.setSize(Vector2f(colliderRect.width, colliderRect.height));
+					body.setPosition(Vector2f(colliderRect.left, colliderRect.top));
 					body.setFillColor(sf::Color::Yellow);
 
 					window.draw(body);
@@ -224,27 +224,27 @@ void Physics::debugRenderBodies(sf::RenderWindow & window)
 					OBB collideOBB = collider->collider.obb;
 
 					body.setPosition(collideOBB.pos);
-					body.setSize(sf::Vector2f{ collideOBB.width, collideOBB.height });
+					body.setSize(Vector2f{ collideOBB.width, collideOBB.height });
 					body.setOrigin(collideOBB.origin);
 					body.setRotation(collideOBB.angle * 180 / collideOBB.PI);
 					body.setFillColor(sf::Color::Yellow);
 #if 0
-					sf::Vector2f points[4] = { { collideOBB.pos },{ collideOBB.pos.x + collideOBB.width, collideOBB.pos.y },
+					Vector2f points[4] = { { collideOBB.pos },{ collideOBB.pos.x + collideOBB.width, collideOBB.pos.y },
 											 { collideOBB.pos.x + collideOBB.width, collideOBB.pos.y + collideOBB.height },
 											 { collideOBB.pos.x, collideOBB.pos.y + collideOBB.height } };
 
 					//Global origin
-					sf::Vector2f origin = collideOBB.pos + collideOBB.origin;
+					Vector2f origin = collideOBB.pos + collideOBB.origin;
 
 					for (int i = 0; i < 4; ++i)
 					{
-						points[i] = sf::Vector2f(collideOBB.pos + (points[i].x - origin.x) * collideOBB.xAxis + (points[i].y - origin.y) * collideOBB.yAxis);
+						points[i] = Vector2f(collideOBB.pos + (points[i].x - origin.x) * collideOBB.xAxis + (points[i].y - origin.y) * collideOBB.yAxis);
 					}
 
 					for (unsigned int i = 0; i < body.getPointCount(); ++i)
 					{
-						sf::Vector2f myPoint = points[i];
-						sf::Vector2f point = body.getPoint(i);
+						Vector2f myPoint = points[i];
+						Vector2f point = body.getPoint(i);
 						point = body.getTransform().transformPoint(point);
 						sf::Transform transform = body.getTransform();
 
@@ -335,7 +335,7 @@ std::vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::stri
 	return result;
 }
 
-Physics::Body::Body(sf::Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger, bool isStatic)
+Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger, bool isStatic)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -347,7 +347,7 @@ Physics::Body::Body(sf::Vector2f& pos, std::string name, Collider* collider, std
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(sf::Vector2f & pos, std::string name, Collider * collider, bool isTrigger, bool isStatic, std::vector<std::string> collisionId)
+Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool isTrigger, bool isStatic, std::vector<std::string> collisionId)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -393,7 +393,7 @@ bool Physics::Body::getIsTriggerd()
 	return triggered;
 }
 
-sf::Vector2f& Physics::Body::getPos()
+Vector2f& Physics::Body::getPos()
 {
 	assert(!isStatic);
 
@@ -406,7 +406,7 @@ sf::Vector2f& Physics::Body::getPos()
 	}
 }
 
-void Physics::Body::setPos(sf::Vector2f newPos)
+void Physics::Body::setPos(Vector2f newPos)
 {
 	assert(!isStatic);
 
@@ -448,7 +448,7 @@ Physics::Collider::Collider() : type(Type::rect), collider{ {} }
 {
 }
 
-Physics::Collider::Collider(sf::FloatRect & rect) : type(Type::rect), collider{ {rect.left, rect.top, rect.width, rect.height} }
+Physics::Collider::Collider(FloatRect & rect) : type(Type::rect), collider{ {rect.left, rect.top, rect.width, rect.height} }
 {
 }
 
@@ -462,7 +462,7 @@ Physics::Collider::Collider(FloatCircle & circle) : type(Type::circle), collider
 	collider.circle = circle;
 }
 
-Physics::Collider::Collider(sf::FloatRect && rect) : type(Type::rect), collider{ std::move(rect) }
+Physics::Collider::Collider(FloatRect && rect) : type(Type::rect), collider{ std::move(rect) }
 {
 }
 
@@ -489,26 +489,26 @@ bool Physics::Collider::intersects(const Collider & other) const
 	}
 	else if (other.type == Type::circle && type == Type::circle)
 	{
-		sf::Vector2f vec = collider.circle.center - other.collider.circle.center;
-		if (std::sqrtf(vec.x * vec.x + vec.y * vec.y) < collider.circle.radius + other.collider.circle.radius)
+		Vector2f vec = collider.circle.center - other.collider.circle.center;
+		if (sqrtf(vec.x * vec.x + vec.y * vec.y) < collider.circle.radius + other.collider.circle.radius)
 			return true;
 		else
 			return false;
 	}
 	else
 	{
-		sf::Vector2f axis[4] = {};
+		Vector2f axis[4] = {};
 
-		sf::Vector2f s1Points[4] = {};
-		sf::Vector2f s2Points[4] = {};
+		Vector2f s1Points[4] = {};
+		Vector2f s2Points[4] = {};
 
 		getPointsAxis(s1Points, axis);
 		other.getPointsAxis(s2Points, axis + 2);
 
 		for (int i = 0; i < 4; ++i)
 		{
-			sf::Vector2f s1MinMax = getProjectionMinMax(s1Points, axis[i], i % 2 == 0);
-			sf::Vector2f s2MinMax = getProjectionMinMax(s2Points, axis[i], i % 2 == 0);
+			Vector2f s1MinMax = getProjectionMinMax(s1Points, axis[i], i % 2 == 0);
+			Vector2f s2MinMax = getProjectionMinMax(s2Points, axis[i], i % 2 == 0);
 
 			if ((s2MinMax.x > s1MinMax.y || s2MinMax.y < s1MinMax.x))
 				return false;
@@ -522,7 +522,7 @@ bool Physics::Collider::intersects(const Collider & other) const
 	}
 }
 
-bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVec) const
+bool Physics::Collider::collide(const Collider & other, Vector2f *minTransVec) const
 {
 	if (other.type == Type::rect && type == Type::rect)
 	{
@@ -530,18 +530,18 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 		
 		if (result)
 		{
-			sf::FloatRect rect = collider.rect;
-			sf::FloatRect otherRect = other.collider.rect;
+			FloatRect rect = collider.rect;
+			FloatRect otherRect = other.collider.rect;
 			
 			*minTransVec = { -(rect.left - (otherRect.left + otherRect.width)), -0 };
-			std::vector<sf::Vector2f> corners;
-			corners.emplace_back(sf::Vector2f{ (rect.left + rect.width) - otherRect.left, 0 });
-			corners.emplace_back(sf::Vector2f{ 0, rect.top - (otherRect.top + otherRect.height) });
-			corners.emplace_back(sf::Vector2f{ 0, (rect.top + rect.height) - otherRect.top });
+			std::vector<Vector2f> corners;
+			corners.emplace_back(Vector2f{ (rect.left + rect.width) - otherRect.left, 0 });
+			corners.emplace_back(Vector2f{ 0, rect.top - (otherRect.top + otherRect.height) });
+			corners.emplace_back(Vector2f{ 0, (rect.top + rect.height) - otherRect.top });
 
 			for (auto it = corners.begin(); it != corners.end(); ++it)
 			{
-				if (std::fabsf(minTransVec->x * minTransVec->x + minTransVec->y * minTransVec->y) > std::fabsf(it->x * it->x + it->y * it->y))
+				if (fabsf(minTransVec->x * minTransVec->x + minTransVec->y * minTransVec->y) > std::fabsf(it->x * it->x + it->y * it->y))
 				{
 					*minTransVec = -*it;
 				}
@@ -552,11 +552,11 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 	}
 	else if (other.type == Type::circle && type == Type::circle)
 	{
-		sf::Vector2f vec = collider.circle.center - other.collider.circle.center;
-		float lenght = std::sqrtf(vec.x * vec.x + vec.y * vec.y);
+		Vector2f vec = collider.circle.center - other.collider.circle.center;
+		float lenght = sqrtf(vec.x * vec.x + vec.y * vec.y);
 		if (lenght < collider.circle.radius + other.collider.circle.radius)
 		{
-			sf::Vector2f normalizedVec = { vec.x / lenght, vec.y / lenght };
+			Vector2f normalizedVec = { vec.x / lenght, vec.y / lenght };
 			float overlap = lenght - (collider.circle.radius + other.collider.circle.radius);
 			*minTransVec = -(normalizedVec * overlap);
 
@@ -568,15 +568,15 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 	else
 	{
 		//NOTE: xAxis goes first!!
-		sf::Vector2f axis[4] = {};
+		Vector2f axis[4] = {};
 
-		sf::Vector2f s1Points[4] = {};
-		sf::Vector2f s2Points[4] = {};
+		Vector2f s1Points[4] = {};
+		Vector2f s2Points[4] = {};
 
 		float angle = 0.0f;
 
 		float o = std::numeric_limits<float>::max();
-		sf::Vector2f minAxis = { 0.0f, 0.0f };
+		Vector2f minAxis = { 0.0f, 0.0f };
 
 		//Get x and y axis, and the points of the collider
 		getPointsAxis(s1Points, axis);
@@ -588,8 +588,8 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 				continue;
 
 			//Project points on axis with dot-product
-			sf::Vector2f s1MinMax = getProjectionMinMax(s1Points, axis[i], i % 2 == 0);
-			sf::Vector2f s2MinMax = other.getProjectionMinMax(s2Points, axis[i], i % 2 == 0);
+			Vector2f s1MinMax = getProjectionMinMax(s1Points, axis[i], i % 2 == 0);
+			Vector2f s2MinMax = other.getProjectionMinMax(s2Points, axis[i], i % 2 == 0);
 
 			//Check for 1d-intersection (all axis have to intersect if the colliders collide)
 			if ((s2MinMax.x > s1MinMax.y || s2MinMax.y < s1MinMax.x))
@@ -597,7 +597,7 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 			else
 			{
 				float overlap = s1MinMax.y > s2MinMax.y ? -(s2MinMax.y - s1MinMax.x) : (s1MinMax.y - s2MinMax.x);
-				if (std::fabsf(overlap) < std::fabsf(o))
+				if (fabsf(overlap) < fabsf(o))
 				{
 					o = overlap;
 					minAxis = axis[i];
@@ -619,32 +619,32 @@ bool Physics::Collider::collide(const Collider & other, sf::Vector2f *minTransVe
 			}
 		}
 
-		*minTransVec = -sf::Vector2f(o * minAxis.x, o * minAxis.y);
+		*minTransVec = -Vector2f(o * minAxis.x, o * minAxis.y);
 
 		return true;
 	}
 }
 
 //NOTE: angle from degrees in radians, because cosf uses radians, but in matrix of SFML in Shape it uses degrees, so you have to convert back and forth...
-Physics::OBB::OBB(float left, float top, float width, float height, float angle) : angle(angle*PI/180), pos(sf::Vector2f{ left, top }), width(width), height(height),
+Physics::OBB::OBB(float left, float top, float width, float height, float angle) : angle(angle*PI/180), pos(Vector2f{ left, top }), width(width), height(height),
 																				   xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
 																				   origin(0.0f, 0.0f)
 {
 }
 
-Physics::OBB::OBB(sf::Vector2f & topLeft, float width, float height, float angle) : angle(angle*PI/180), pos(topLeft), width(width), height(height),
+Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle) : angle(angle*PI/180), pos(topLeft), width(width), height(height),
 																					xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
 																					origin(0.0f, 0.0f)
 {
 }
 
-Physics::OBB::OBB(float left, float top, float width, float height, float angle, sf::Vector2f origin) : angle(angle*PI / 180), pos(sf::Vector2f{ left, top }), width(width), height(height),
+Physics::OBB::OBB(float left, float top, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180), pos(Vector2f{ left, top }), width(width), height(height),
 																										xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
 																										origin(origin)
 {
 }
 
-Physics::OBB::OBB(sf::Vector2f & topLeft, float width, float height, float angle, sf::Vector2f origin) : angle(angle*PI / 180), pos(topLeft), width(width), height(height),
+Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180), pos(topLeft), width(width), height(height),
 																										 xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
 																										 origin(origin)
 {
@@ -653,8 +653,8 @@ Physics::OBB::OBB(sf::Vector2f & topLeft, float width, float height, float angle
 void Physics::OBB::setAngle(float newAngle)
 {
 	angle = newAngle*PI/180;
-	xAxis = sf::Vector2f(cosf(angle), sinf(angle));
-	yAxis = sf::Vector2f(-sinf(angle), cosf(angle));
+	xAxis = Vector2f(cosf(angle), sinf(angle));
+	yAxis = Vector2f(-sinf(angle), cosf(angle));
 }
 
 float Physics::OBB::getAngle() const
@@ -662,7 +662,7 @@ float Physics::OBB::getAngle() const
 	return angle * 180 / PI;
 }
 
-Physics::FloatCircle::FloatCircle(const sf::Vector2f & center, float radius) : center(center), radius(radius)
+Physics::FloatCircle::FloatCircle(const Vector2f & center, float radius) : center(center), radius(radius)
 {
 }
 

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "SFML\Graphics.hpp"
+#include "Vector2.h"
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include "Rect.h"
+#include "RenderWindow.h"
 
 //TODO: Add GJK just for implementatin ;)
 
@@ -16,9 +18,9 @@ public:
 		friend class Physics;
 	public:
 		float radius;
-		sf::Vector2f center;
+		Vector2f center;
 	public:
-		FloatCircle(const sf::Vector2f& center, float radius);
+		FloatCircle(const Vector2f& center, float radius);
 		FloatCircle(float centerX, float centerY, float radius);
 		FloatCircle() = default;
 	};
@@ -31,18 +33,18 @@ public:
 		static constexpr float PI = 3.1415927f;
 
 		float angle;
-		sf::Vector2f xAxis, yAxis;
+		Vector2f xAxis, yAxis;
 	public:
 		float width, height;
-		sf::Vector2f pos;
-		sf::Vector2f origin;
+		Vector2f pos;
+		Vector2f origin;
 	public:
 		//angle has to be in degrees!
 		OBB(float left, float top, float width, float height, float angle);
-		OBB(sf::Vector2f& topLeft, float width, float height, float angle);
+		OBB(Vector2f& topLeft, float width, float height, float angle);
 		//Local origin
-		OBB(float left, float top, float width, float height, float angle, sf::Vector2f origin);
-		OBB(sf::Vector2f& topLeft, float width, float height, float angle, sf::Vector2f origin);
+		OBB(float left, float top, float width, float height, float angle, Vector2f origin);
+		OBB(Vector2f& topLeft, float width, float height, float angle, Vector2f origin);
 		//angle has to be in degrees!
 		void setAngle(float newAngle);
 		float getAngle() const;
@@ -65,16 +67,16 @@ public:
 	public:
 		union
 		{
-			sf::FloatRect rect;
+			FloatRect rect;
 			OBB obb;
 			FloatCircle circle;
 		} collider;
 
-		Collider(sf::FloatRect& rect);
+		Collider(FloatRect& rect);
 		Collider(OBB& obb);
 		Collider(FloatCircle& circle);
 
-		Collider(sf::FloatRect&& rect);
+		Collider(FloatRect&& rect);
 		Collider(OBB&& obb);
 		Collider(FloatCircle&& circle);
 
@@ -83,10 +85,10 @@ public:
 		Collider();
 
 		bool intersects(const Collider& other) const;
-		bool collide(const Collider& other, sf::Vector2f* minTransVec) const;
+		bool collide(const Collider& other, Vector2f* minTransVec) const;
 
-		void getPointsAxis(sf::Vector2f* points, sf::Vector2f* axis) const;
-		sf::Vector2f getProjectionMinMax(const sf::Vector2f* points, const sf::Vector2f& axis, bool isXAxis) const;
+		void getPointsAxis(Vector2f* points, Vector2f* axis) const;
+		Vector2f getProjectionMinMax(const Vector2f* points, const Vector2f& axis, bool isXAxis) const;
 	};
 private:
 	//NOTE: All is public, but really you should only use the two methods, could make a constructor for that and therefore make it a class but yeah ;)
@@ -130,23 +132,23 @@ public:
 		bool isTrigger;
 		bool triggered = false;
 		TriggerInformation triggerInformation = {};
-		sf::Vector2f pos;
+		Vector2f pos;
 		std::string id;
 		std::vector<PhysicElement> physicsElements;
 	public:
-		sf::Vector2f vel = { 0.0f, 0.0f };
+		Vector2f vel = { 0.0f, 0.0f };
 	public:
 		//Should be called, if the object is moving
-		Body(sf::Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger = false, bool isStatic = false);
-		Body(sf::Vector2f& pos, std::string name, Collider* collider, bool isTrigger = false, bool isStatic = false, std::vector<std::string> collisionId = {});
+		Body(Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger = false, bool isStatic = false);
+		Body(Vector2f& pos, std::string name, Collider* collider, bool isTrigger = false, bool isStatic = false, std::vector<std::string> collisionId = {});
 		//Should be called if the object, is a static one
 		Body(std::string name, Collider collider, bool isTrigger = false, bool isStatic = true, std::vector<std::string> collisionId = {});
 		//To have one name for a lot of Colliders. The body you have to pass by value, because pos and that does not make sense to manipulate here!
 		Body(std::string name, std::vector<Collider> colliders, bool isTrigger = false);
 	public:
 		bool getIsTriggerd();
-		sf::Vector2f& getPos();
-		void setPos(sf::Vector2f newPos);
+		Vector2f& getPos();
+		void setPos(Vector2f newPos);
 		TriggerInformation& getTriggerInformation();
 		std::string& getId();
 	};
@@ -159,7 +161,7 @@ private:
 public:
 	Physics();
 	void update(float dt);
-	void debugRenderBodies(sf::RenderWindow& window);
+	void debugRenderBodies(RenderWindow& window);
 	//Use if you need a reference to the body, to get back triggerInformation etc.
 	Body* addElementPointer(std::unique_ptr<Body> body);
 	//Use this otherwise

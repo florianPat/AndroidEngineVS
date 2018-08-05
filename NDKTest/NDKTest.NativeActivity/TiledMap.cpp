@@ -193,7 +193,7 @@ void TiledMap::ParseObjectGroups(std::ifstream & file, std::string & lineContent
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 
-			objectVector.push_back(sf::FloatRect((float)x, (float)y, (float)width, (float)height));
+			objectVector.push_back(FloatRect((float)x, (float)y, (float)width, (float)height));
 
 			std::getline(file, lineContent);
 		}
@@ -216,7 +216,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 				for (int x = 0; x < mapWidth; ++x)
 				{
 					Layer currentLayer = it->second;
-					sf::Texture* source = currentLayer.tiles[mapWidth * y + x].source;
+					Texture* source = currentLayer.tiles[mapWidth * y + x].source;
 					if (source == nullptr)
 						continue;
 					sf::Sprite sprite(*source);

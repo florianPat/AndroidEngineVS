@@ -4,14 +4,10 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="ActivityHandler.h" />
     <ClInclude Include="GraphicsManager.h" />
-    <ClInclude Include="Ship.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AssetManager.h" />
-    <ClInclude Include="Assets.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventLevelReload.h" />
@@ -30,17 +26,17 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Rect.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
-    <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AssetManager.cpp" />
-    <ClCompile Include="Assets.cpp" />
     <ClCompile Include="EventLevelReload.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -55,5 +51,6 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ void InkscapeAnimation::setupInkscapeKeyFrames(const std::vector<std::string>& r
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{
 		if (iae.isElementInMap(*it))
-			inkscapeKeyFrames.push_back(std::map<std::string, sf::IntRect>{ iae.getElementMap(*it) });
+			inkscapeKeyFrames.push_back(std::map<std::string, IntRect>{ iae.getElementMap(*it) });
 	}
 }
 
@@ -30,11 +30,11 @@ void InkscapeAnimation::setInkscapeAnimationElement(const std::string& inkscapeF
 
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{
-		inkscapeKeyFrames.push_back(std::map<std::string, sf::IntRect>{ iae.getElementMap(*it) });
+		inkscapeKeyFrames.push_back(std::map<std::string, IntRect>{ iae.getElementMap(*it) });
 	}
 }
 
-sf::IntRect InkscapeAnimation::getInkscapeAnimationElementKeyFrame(const std::string & keyFrameId) const
+IntRect InkscapeAnimation::getInkscapeAnimationElementKeyFrame(const std::string & keyFrameId) const
 {
 	size_t i = (playMode == PlayMode::LOOPED || playMode == PlayMode::NORMAL) ? keyFrameIt : keyFrameItReverse;
 
@@ -44,6 +44,6 @@ sf::IntRect InkscapeAnimation::getInkscapeAnimationElementKeyFrame(const std::st
 	else
 	{
 		InvalidCodePath;
-		return sf::IntRect();
+		return IntRect();
 	}
 }

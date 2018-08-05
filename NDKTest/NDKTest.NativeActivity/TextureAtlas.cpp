@@ -2,9 +2,9 @@
 #include <fstream>
 #include <stdlib.h>
 #include <assert.h>
-#include "SFML\System\FileInputStream.hpp"
 #include "Assets.h"
 #include "Utils.h"
+#include "Rect.h"
 
 TextureAtlas::TextureAtlas(const std::string& filepath) : textureAtlas(), fileHeader{}
 {
@@ -47,7 +47,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath) : textureAtlas(), fileHe
 					width = atoi(widthChar.c_str());
 					height = atoi(heightChar.c_str());
 
-					fileHeader.size = sf::Vector2i(width, height);
+					fileHeader.size = Vector2i(width, height);
 				}	break;
 				case 2:
 				{
@@ -171,9 +171,9 @@ std::string TextureAtlas::getLineContentBetweeen(std::string & lineContent, char
 	return result;
 }
 
-sf::Vector2i TextureAtlas::getLineContentRegionValues(std::string & lineContent, char firstRealChar)
+Vector2i TextureAtlas::getLineContentRegionValues(std::string & lineContent, char firstRealChar)
 {
-	sf::Vector2i result;
+	Vector2i result;
 
 	lineContent.erase(0, lineContent.find(firstRealChar));
 	result.x = atoi(getLineContentBetweeen(lineContent, ' ', ',').c_str());
@@ -188,7 +188,7 @@ void TextureRegion::initSprite()
 	assert(textureAtlasFileName != "" || filename != "");
 
 	atlasTexture = Assets::textureAssetManager.getOrAddRes(textureAtlasFileName);
-	regionSprite = sf::Sprite(*atlasTexture, sf::IntRect(xy.x, xy.y, size.x, size.y));
+	regionSprite = sf::Sprite(*atlasTexture, IntRect(xy.x, xy.y, size.x, size.y));
 }
 
 void TextureRegion::setRegion(int x, int y, int widht, int height)
@@ -196,7 +196,7 @@ void TextureRegion::setRegion(int x, int y, int widht, int height)
 	if(x >= 0 && y >= 0)
 		if ((unsigned int)widht <= regionSprite.getTexture()->getSize().x && (unsigned int)height <= regionSprite.getTexture()->getSize().y)
 		{
-			regionSprite.setTextureRect(sf::IntRect(x, y, widht, height));
+			regionSprite.setTextureRect(IntRect(x, y, widht, height));
 			xy.x = x;
 			xy.y = y;
 			size.x = widht;

@@ -22,8 +22,6 @@ class RenderWindow
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
 	GLuint shaders[2];
-	int32_t shaderCount = 0;
-	GLfloat projectionMatrix[4][4] = {};
 
 	struct Vertex
 	{

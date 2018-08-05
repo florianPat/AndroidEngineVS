@@ -31,9 +31,9 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 		{
 			std::getline(file, lineContent); //<g
 			std::string groupId;
-			std::map<std::string, sf::IntRect> rectMap;
-			sf::Vector2i translationVec = { 0, 0 };
-			sf::Vector2i scalingVec = { 1, 1 };
+			std::map<std::string, IntRect> rectMap;
+			Vector2i translationVec = { 0, 0 };
+			Vector2i scalingVec = { 1, 1 };
 			bool shouldAdd = true;
 			for (; shouldAdd && lineContent.find("</g>") == std::string::npos; std::getline(file, lineContent))
 			{
@@ -57,13 +57,13 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 				else if (lineContent.find("<rect") != std::string::npos)
 				{
 					std::string id;
-					sf::IntRect rect;
+					IntRect rect;
 					bool shouldAdd = true;
 					//TODO: Think about how to make this nicer!
 					bool addWidth = false;
 
-					sf::Vector2i beforeTranslationVec = translationVec;
-					sf::Vector2i beforeScalingVec = scalingVec;
+					Vector2i beforeTranslationVec = translationVec;
+					Vector2i beforeScalingVec = scalingVec;
 
 					for (std::getline(file, lineContent); shouldAdd; std::getline(file, lineContent))
 					{
@@ -193,7 +193,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 						utilsLogBreak("Only found \"Base\" element, but there is need for more!");
 					}
 
-					sf::Vector2i baseVec = { base->second.left, base->second.top };
+					Vector2i baseVec = { base->second.left, base->second.top };
 					rectMap.erase(base);
 					for (auto it = rectMap.begin(); it != rectMap.end(); ++it)
 					{
@@ -231,7 +231,7 @@ bool InkscapeAnimationElement::FindGroupLayer(std::string & lineContent) const
 		return false;
 }
 
-sf::IntRect InkscapeAnimationElement::getElementRect(std::string& keyFrameId, std::string& elementId) const
+IntRect InkscapeAnimationElement::getElementRect(std::string& keyFrameId, std::string& elementId) const
 {
 	auto keyFrameResult = elementMap.find(keyFrameId);
 	if (keyFrameResult != elementMap.end())
@@ -242,17 +242,17 @@ sf::IntRect InkscapeAnimationElement::getElementRect(std::string& keyFrameId, st
 		else
 		{
 			InvalidCodePath;
-			return sf::IntRect();
+			return IntRect();
 		}
 	}
 	else
 	{
 		InvalidCodePath;
-		return sf::IntRect();
+		return IntRect();
 	}
 }
 
-std::map<std::string, sf::IntRect> InkscapeAnimationElement::getElementMap(const std::string & keyFrameId) const
+std::map<std::string, IntRect> InkscapeAnimationElement::getElementMap(const std::string & keyFrameId) const
 {
 	auto result = elementMap.find(keyFrameId);
 	if (result != elementMap.end())
@@ -260,7 +260,7 @@ std::map<std::string, sf::IntRect> InkscapeAnimationElement::getElementMap(const
 	else
 	{
 		InvalidCodePath;
-		return std::map<std::string, sf::IntRect>();
+		return std::map<std::string, IntRect>();
 	}
 }
 

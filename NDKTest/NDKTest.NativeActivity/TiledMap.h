@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include "SFML\Graphics.hpp"
+#include "Texture.h"
 #include <memory>
 #include "Physics.h"
 #include "GameObjectManager.h"
@@ -12,7 +12,7 @@ class TiledMap
 	{
 		int id;
 		int width, height;
-		sf::Texture* source;
+		Texture* source;
 	};
 	struct Layer
 	{
