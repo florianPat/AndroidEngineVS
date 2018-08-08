@@ -21,12 +21,8 @@ class RenderWindow
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
-	GLuint shaders[2];
-
-	struct Vertex
-	{
-		GLfloat x, y, u, v;
-	};
+	static constexpr int NUM_SHADERS = 2;
+	GLuint shaders[NUM_SHADERS];
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();

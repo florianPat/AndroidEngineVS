@@ -256,15 +256,6 @@ bool RenderWindow::startGfx()
 	glViewport(0, 0, renderWidth, renderHeight);
 	glDisable(GL_DEPTH_TEST);
 
-	memset(projectionMatrix[0], 0, sizeof(projectionMatrix));
-	projectionMatrix[0][0] = 2.0f / renderWidth;
-	projectionMatrix[1][1] = 2.0f / renderHeight;
-	projectionMatrix[2][2] = -1.0f;
-	projectionMatrix[3][0] = -1.0f;
-	projectionMatrix[3][1] = -1.0f;
-	projectionMatrix[3][2] = 0.0f;
-	projectionMatrix[3][3] = 1.0f;
-
 	return true;
 }
 
@@ -272,11 +263,10 @@ void RenderWindow::stopGfx()
 {
 	utilsLog("stopping GraphicsManager");
 
-	for (int32_t i = 0; i < shaderCount; ++i)
+	for (int32_t i = 0; i < NUM_SHADERS; ++i)
 	{
 		glDeleteProgram(shaders[i]);
 	}
-	shaderCount = 0;
 
 	if (display != EGL_NO_DISPLAY)
 	{

@@ -1,12 +1,19 @@
 #include "Texture.h"
 #include <png.h>
 #include "Utils.h"
+#include "Ifstream.h"
+
+void callback_readPng(png_structp pStruct, png_bytep pData, png_size_t pSize) {
+	Ifstream* asset = ((Ifstream*)png_get_io_ptr(pStruct));
+	asset->read(pData, pSize);
+}
 
 bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetManager, bool pixeld)
 {
 	bool result = true;
 
-	AAsset* asset = AAssetManager_open(assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+	Ifstream asset = Ifstream(assetManager);
+	asset.open(filename);
 
 	if (!asset)
 		result = false;
@@ -20,7 +27,7 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	png_int_32 rowSize;
 	bool transparency;
 
-	read(asset, header, sizeof(header));
+	asset.read(header, sizeof(header));
 	if (png_sig_cmp(header, 0, 8) != 0)
 		result = false;
 
@@ -30,6 +37,8 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	info = png_create_info_struct(png);
 	if (!info)
 		result = false;
+
+	png_set_read_fn(png, &asset, callback_readPng);
 
 	png_set_sig_bytes(png, 8);
 	png_read_info(png, info);
@@ -101,11 +110,7 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 
 	png_destroy_read_struct(&png, &info, nullptr);
 	delete[] rowPtrs;
-	if (asset != nullptr)
-	{
-		AAsset_close(asset);
-		asset = nullptr;
-	}
+	asset.close();
 
 	glGenTextures(1, &texture);
 	glActiveTexture(GL_TEXTURE0);

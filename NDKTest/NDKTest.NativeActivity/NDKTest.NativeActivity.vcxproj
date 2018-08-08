@@ -221,6 +221,7 @@
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="gomSort.h" />
     <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="Ifstream.h" />
     <ClInclude Include="InkscapeAnimation.h" />
     <ClInclude Include="InscapeAnimationElement.h" />
     <ClInclude Include="Level.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="Ifstream.cpp" />
     <ClCompile Include="InkscapeAnimation.cpp" />
     <ClCompile Include="InscapeAnimationElement.cpp" />
     <ClCompile Include="Level.cpp" />

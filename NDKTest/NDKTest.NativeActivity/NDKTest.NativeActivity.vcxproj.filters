@@ -29,6 +29,7 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Ifstream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -52,5 +53,6 @@
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Ifstream.cpp" />
   </ItemGroup>
 </Project>
