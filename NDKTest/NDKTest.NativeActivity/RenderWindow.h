@@ -4,6 +4,7 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include "Clock.h"
+#include <string>
 
 void clearErrors();
 void checkErrors(const std::string& func);
@@ -21,8 +22,7 @@ class RenderWindow
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
-	static constexpr int NUM_SHADERS = 2;
-	GLuint shaders[NUM_SHADERS];
+	GLuint shaderProgram;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();
@@ -37,5 +37,7 @@ private:
 	static void AppEventCallback(android_app* app, int32_t command);
 	bool startGfx();
 	void stopGfx();
-	//GLuint loadShader(const char * vertexShaderFilename, const char * fragmentShaderFilename);
+	GLuint compileShader(const std::string& shaderFilename, const GLuint type);
+	void linkShaders(GLuint vertexShader, GLuint fragmentShader);
+	void loadShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
 };
