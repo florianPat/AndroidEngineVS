@@ -128,6 +128,11 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	return result;
 }
 
+Texture::operator bool() const
+{
+	return (width != 0);
+}
+
 void Texture::read(AAsset * asset, void * buffer, size_t size)
 {
 	int resultSizeRead = AAsset_read(asset, buffer, size);

@@ -30,6 +30,12 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Ifstream.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Mat4x4.h" />
+    <ClInclude Include="IndexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -54,5 +60,10 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Ifstream.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
   </ItemGroup>
 </Project>

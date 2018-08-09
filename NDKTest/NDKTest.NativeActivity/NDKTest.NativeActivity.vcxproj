@@ -222,15 +222,19 @@
     <ClInclude Include="gomSort.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Ifstream.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InkscapeAnimation.h" />
     <ClInclude Include="InscapeAnimationElement.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainLevel.h" />
+    <ClInclude Include="Mat4x4.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="RenderWindow.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureAtlas.h" />
     <ClInclude Include="TiledMap.h" />
@@ -239,6 +243,8 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -251,6 +257,7 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Ifstream.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InkscapeAnimation.cpp" />
     <ClCompile Include="InscapeAnimationElement.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -258,11 +265,15 @@
     <ClCompile Include="MainLevel.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureAtlas.cpp" />
     <ClCompile Include="TiledMap.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
