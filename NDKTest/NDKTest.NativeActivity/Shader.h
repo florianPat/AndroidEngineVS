@@ -1,14 +1,15 @@
 #pragma once
 
 #include <string>
-#include <GL/glew.h>
+#include <GLES2/gl2.h>
 #include <unordered_map>
 #include "Mat4x4.h"
+#include "android_native_app_glue.h"
 
 class Shader
 {
 public:
-	Shader(const std::string& filename);
+	Shader(const std::string& filename, AAssetManager* assetManager);
 	virtual ~Shader();
 
 	void bind() const;

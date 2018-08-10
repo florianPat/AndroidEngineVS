@@ -4,24 +4,7 @@
 #include "Types.h"
 #include "Utils.h"
 #include "Ifstream.h"
-
-void clearErrors()
-{
-	while (glGetError() != GL_NO_ERROR); //not 0
-}
-
-void checkErrors(const std::string& func)
-{
-	bool errorOccured = false;
-	while (GLenum errorCode = glGetError())
-	{
-		errorOccured = true;
-		std::cout << "OpenGL error: [" << errorCode << "] occured in function: " << func << ", line: " << __LINE__ << ", file: " __FILE__ << '\n';
-	}
-
-	if (errorOccured)
-		assert(true);
-}
+#include "GLUtils.h"
 
 void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 {
@@ -29,7 +12,8 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 	renderWindow.processAppEvent(command);
 }
 
-RenderWindow::RenderWindow(android_app * app, int width, int height) : renderWidth(width), renderHeight(height), timeManager()
+RenderWindow::RenderWindow(android_app * app, int width, int height) : renderWidth(width), renderHeight(height), timeManager(), 
+																	   shader("BasicShader", app->activity->assetManager)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -79,9 +63,45 @@ void RenderWindow::clear()
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void RenderWindow::draw(const Sprite & sprite)
+{
+	const Texture* texture = sprite.getTexture();
+	assert(*texture);
+
+	CallGL(glActiveTexture(GL_TEXTURE0));
+	texture->bind();
+
+	float vertices[] = {-1.0f, -1.0f, 0.0f, 0.0f,
+						 1.0f,  -1.0f, 1.0f, 0.0f,
+						 1.0f,  1.0f, 1.0f, 1.0f,
+						-1.0f,  1.0f, 0.0f, 1.0f };
+	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
+
+	VertexBuffer vb = VertexBuffer(vertices, sizeof(vertices));
+	IndexBuffer ib = IndexBuffer(indices, arrayCount(indices));
+
+	vb.bind();
+	
+	VertexLayouts va;
+	va.addAttribute(2, GL_FLOAT);
+	va.addAttribute(2, GL_FLOAT);
+	va.set();
+	
+	ib.bind();
+
+	Mat4x4 mvp = sprite.getTransform() * orhtoProj;
+
+	shader.setUniformMat4f("u_mvp", mvp);
+	shader.bind();
+
+	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, indices);
+}
+
 void RenderWindow::render()
 {
-	CallGL((eglSwapBuffers(display, surface) != EGL_TRUE));
+	EGLBoolean result;
+	CallGL((result = eglSwapBuffers(display, surface)));
+	assert(result == EGL_TRUE);
 }
 
 void RenderWindow::deactivate()
@@ -258,8 +278,6 @@ bool RenderWindow::startGfx()
 
 void RenderWindow::stopGfx()
 {
-	CallGL(glDeleteProgram(shaderProgram));
-
 	if (display != EGL_NO_DISPLAY)
 	{
 		eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -281,68 +299,68 @@ void RenderWindow::stopGfx()
 	}
 }
 
-GLuint RenderWindow::compileShader(const std::string& shaderFilename, const GLuint type)
-{
-	GLint result;
-	char log[256];
-	GLuint shader;
-
-	Ifstream shaderFile(app->activity->assetManager);
-	shaderFile.open(shaderFilename);
-
-	char* shaderSource = new char[shaderFile.getSize()];
-	shaderFile.getFullData(shaderSource);
-
-	CallGL(shader = glCreateShader(type));
-	CallGL(glShaderSource(shader, 1, &shaderSource, nullptr));
-
-	delete[] shaderSource;
-	shaderFile.close();
-
-	CallGL(glCompileShader(shader));
-	CallGL(glGetShaderiv(shader, GL_COMPILE_STATUS, &result));
-	if (result == GL_FALSE)
-	{
-		CallGL(glGetShaderInfoLog(shader, sizeof(log), 0, log));
-		utilsLog("shader compilation failed!");
-		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
-
-		if (shader > 0) CallGL(glDeleteShader(shader));
-	}
-
-	return shader;
-}
-
-void RenderWindow::linkShaders(GLuint vertexShader, GLuint fragmentShader)
-{
-	GLint result;
-	char log[256];
-
-	CallGL(shaderProgram = glCreateProgram());
-	CallGL(glAttachShader(shaderProgram, vertexShader));
-	CallGL(glAttachShader(shaderProgram, fragmentShader));
-	CallGL(glLinkProgram(shaderProgram));
-	CallGL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result));
-
-	if (result == GL_FALSE)
-	{
-		CallGL(glGetProgramInfoLog(shaderProgram, sizeof(log), nullptr, log));
-		utilsLog("ShaderProgram linking failed!");
-		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
-	}
-
-	CallGL(glDetachShader(shaderProgram, vertexShader));
-	CallGL(glDeleteShader(vertexShader));
-	CallGL(glDetachShader(shaderProgram, fragmentShader));
-	CallGL(glDeleteShader(fragmentShader));
-}
-
-void RenderWindow::loadShaders(const std::string & vertexShaderFilename, const std::string & fragmentShaderFilename)
-{
-	GLuint vertexShader = compileShader(vertexShaderFilename, GL_VERTEX_SHADER);
-	GLuint fragmentShader = compileShader(fragmentShaderFilename, GL_FRAGMENT_SHADER);
-
-	linkShaders(vertexShader, fragmentShader);
-
-	CallGL(glUseProgram(shaderProgram));
-}
+//GLuint RenderWindow::compileShader(const std::string& shaderFilename, const GLuint type)
+//{
+//	GLint result;
+//	char log[256];
+//	GLuint shader;
+//
+//	Ifstream shaderFile(app->activity->assetManager);
+//	shaderFile.open(shaderFilename);
+//
+//	char* shaderSource = new char[shaderFile.getSize()];
+//	shaderFile.getFullData(shaderSource);
+//
+//	CallGL(shader = glCreateShader(type));
+//	CallGL(glShaderSource(shader, 1, &shaderSource, nullptr));
+//
+//	delete[] shaderSource;
+//	shaderFile.close();
+//
+//	CallGL(glCompileShader(shader));
+//	CallGL(glGetShaderiv(shader, GL_COMPILE_STATUS, &result));
+//	if (result == GL_FALSE)
+//	{
+//		CallGL(glGetShaderInfoLog(shader, sizeof(log), 0, log));
+//		utilsLog("shader compilation failed!");
+//		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
+//
+//		if (shader > 0) CallGL(glDeleteShader(shader));
+//	}
+//
+//	return shader;
+//}
+//
+//void RenderWindow::linkShaders(GLuint vertexShader, GLuint fragmentShader)
+//{
+//	GLint result;
+//	char log[256];
+//
+//	CallGL(shaderProgram = glCreateProgram());
+//	CallGL(glAttachShader(shaderProgram, vertexShader));
+//	CallGL(glAttachShader(shaderProgram, fragmentShader));
+//	CallGL(glLinkProgram(shaderProgram));
+//	CallGL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result));
+//
+//	if (result == GL_FALSE)
+//	{
+//		CallGL(glGetProgramInfoLog(shaderProgram, sizeof(log), nullptr, log));
+//		utilsLog("ShaderProgram linking failed!");
+//		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
+//	}
+//
+//	CallGL(glDetachShader(shaderProgram, vertexShader));
+//	CallGL(glDeleteShader(vertexShader));
+//	CallGL(glDetachShader(shaderProgram, fragmentShader));
+//	CallGL(glDeleteShader(fragmentShader));
+//}
+//
+//void RenderWindow::loadShaders(const std::string & vertexShaderFilename, const std::string & fragmentShaderFilename)
+//{
+//	GLuint vertexShader = compileShader(vertexShaderFilename, GL_VERTEX_SHADER);
+//	GLuint fragmentShader = compileShader(fragmentShaderFilename, GL_FRAGMENT_SHADER);
+//
+//	linkShaders(vertexShader, fragmentShader);
+//
+//	CallGL(glUseProgram(shaderProgram));
+//}

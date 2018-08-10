@@ -5,26 +5,26 @@
 
 struct Time
 {
-	int64_t nanoseconds;
+	int64_t nanosecondss;
 
 	inline int64_t asNanoseconds()
 	{
-		return nanoseconds;
+		return nanosecondss;
 	}
 
 	inline int64_t asMicroseconds()
 	{
-		return nanoseconds / 1000;
+		return nanosecondss / 1000;
 	}
 
 	inline int32_t asMilliseconds()
 	{
-		return (int32_t)(nanoseconds / 1000000.0);
+		return (int32_t)(nanosecondss / 1000000.0);
 	}
 
 	inline float asSeconds()
 	{
-		return (float)(nanoseconds / 1000000000.0);
+		return (float)(nanosecondss / 1000000000.0);
 	}
 
 	static Time seconds(float seconds)
@@ -61,8 +61,8 @@ private:
 	int64_t now();
 	void update();
 private:
-	double firstTime = 0.0;
-	double lastTime = 0.0;
-	double elapsed = 0.0f;
-	double elapsedTotal = 0.0f;
+	int64_t firstTime = 0.0;
+	int64_t lastTime = 0.0;
+	int64_t elapsed = 0.0f;
+	int64_t elapsedTotal = 0.0f;
 };

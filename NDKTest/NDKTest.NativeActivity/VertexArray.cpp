@@ -1,6 +1,7 @@
 #include "VertexArray.h"
 
-#include "Renderer.h"
+#include "Utils.h"
+#include "GLUtils.h"
 
 int VertexArray::sizeofType(GLenum type) const
 {
@@ -20,8 +21,8 @@ int VertexArray::sizeofType(GLenum type) const
 
 VertexArray::VertexArray() : vertexLayouts()
 {
-	Call(glGenVertexArrays(1, &rendererId));
-	Call(glBindVertexArray(rendererId));
+	CallGL(glGenVertexArrays(1, &rendererId));
+	CallGL(glBindVertexArray(rendererId));
 }
 
 VertexArray::~VertexArray()
@@ -57,7 +58,7 @@ void VertexArray::bind() const
 	assert(ib);
 	assert(vertexLayouts.size() > 0);
 
-	Call(glBindVertexArray(rendererId));
+	CallGL(glBindVertexArray(rendererId));
 	vb->bind();
 
 	int offset = 0;
@@ -66,8 +67,8 @@ void VertexArray::bind() const
 	{
 		auto& it = vertexLayouts[i];
 
-		Call(glEnableVertexAttribArray(i));
-		Call(glVertexAttribPointer(i, it.size, it.type, it.normalized, stride, (void*)offset));
+		CallGL(glEnableVertexAttribArray(i));
+		CallGL(glVertexAttribPointer(i, it.size, it.type, it.normalized, stride, (void*)offset));
 
 		offset += it.size * sizeofType(it.type);
 	}
@@ -77,7 +78,7 @@ void VertexArray::bind() const
 
 void VertexArray::unbind() const
 {
-	Call(glBindVertexArray(0));
+	CallGL(glBindVertexArray(0));
 }
 
 int VertexArray::getIboCount() const

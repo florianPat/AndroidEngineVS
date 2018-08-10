@@ -16,7 +16,7 @@ public:
 		REVERSED
 	};
 protected:
-	std::vector<sf::Sprite> keyFrames;
+	std::vector<Sprite> keyFrames;
 	size_t keyFrameIt;
 	size_t keyFrameItReverse;
 	int64_t currentTime = 0;
@@ -34,7 +34,7 @@ public:
 	void setFrameDuration(int64_t frameDuration);
 	void setKeyFrames(std::vector<TextureRegion>& keyFrames);
 	bool isAnimationFinished();
-	sf::Sprite getKeyFrame();
+	Sprite getKeyFrame();
 	void setPlayMode(PlayMode& playMode);
 	void restartFrameTimer();
 	void pause();

@@ -17,6 +17,7 @@ public:
 	int getHeight() const { return height; }
 	Vector2i getSize() const { return Vector2i{ width, height }; }
 	explicit operator bool() const;
+	void bind(int slot = 0) const;
 private:
 	void read(AAsset* asset, void * buffer, size_t size);
 };

@@ -6,7 +6,7 @@ class Vector2
 public:
 	Vector2() = default;
 	Vector2(T x, T y) : x(x), y(y) {}
-	Vector2(const Vector2& vect) : Vector2(vect.x, vect.y) {}
+	//Vector2(const Vector2& vect) : Vector2(vect.x, vect.y) {}
 	
 	template <typename T2>
 	explicit operator Vector2<T2>() const
@@ -30,7 +30,7 @@ public:
 	}
 	Vector2	GetNormalized() const
 	{
-		_Vec2 norm = *this;
+		Vector2 norm = *this;
 		norm.Normalize();
 		return norm;
 	}
@@ -38,29 +38,29 @@ public:
 	{
 		return Vector2(-x, -y);
 	}
-	Vector2& operator=(const _Vec2 &rhs)
+	/*Vector2& operator=(const Vector2 &rhs)
 	{
 		x = rhs.x;
 		y = rhs.y;
 		return *this;
-	}
-	Vector2& operator+=(const _Vec2 &rhs)
+	}*/
+	Vector2& operator+=(const Vector2 &rhs)
 	{
 		x += rhs.x;
 		y += rhs.y;
 		return *this;
 	}
-	Vector2& operator-=(const _Vec2 &rhs)
+	Vector2& operator-=(const Vector2 &rhs)
 	{
 		x -= rhs.x;
 		y -= rhs.y;
 		return *this;
 	}
-	Vector2	operator+(const _Vec2 &rhs) const
+	Vector2	operator+(const Vector2 &rhs) const
 	{
 		return Vector2(*this) += rhs;
 	}
-	Vector2	operator-(const _Vec2 &rhs) const
+	Vector2	operator-(const Vector2 &rhs) const
 	{
 		return Vector2(*this) -= rhs;
 	}
@@ -88,11 +88,11 @@ public:
 	{
 		return Vector2(*this) /= rhs;
 	}
-	bool operator==(const _Vec2 &rhs) const
+	bool operator==(const Vector2 &rhs) const
 	{
 		return x == rhs.x && y == rhs.y;
 	}
-	bool operator!=(const _Vec2 &rhs) const
+	bool operator!=(const Vector2 &rhs) const
 	{
 		return !(*this == rhs);
 	}

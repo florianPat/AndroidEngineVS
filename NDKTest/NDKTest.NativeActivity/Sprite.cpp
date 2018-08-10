@@ -34,7 +34,7 @@ const IntRect & Sprite::getTextureRect() const
 	return rect;
 }
 
-FloatRect Sprite::getGlobalBounds()
+FloatRect Sprite::getGlobalBounds() const
 {
 	float halfWidth = texture->getWidth() / 2.0f;
 	float halfHeight = texture->getHeight() / 2.0f;
@@ -104,7 +104,7 @@ const Vector2f & Sprite::getOrigin() const
 	return org;
 }
 
-const Mat4x4 & Sprite::getTransform() const
+const Mat4x4 Sprite::getTransform() const
 {
 	Mat4x4 result;
 

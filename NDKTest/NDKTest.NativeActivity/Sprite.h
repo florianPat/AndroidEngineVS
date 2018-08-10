@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "Vector2.h"
 #include "Rect.h"
+#include "Mat4x4.h"
 
 //TODO: Texture Rect!!
 
@@ -21,7 +22,7 @@ public:
 	void setTextureRect(const IntRect& rect);
 	const Texture* getTexture() const;
 	const IntRect& getTextureRect() const;
-	FloatRect getGlobalBounds();
+	FloatRect getGlobalBounds() const;
 	void setPosition(float x, float y);
 	void setPosition(const Vector2f &position);
 	void setRotation(float angle);
@@ -33,5 +34,5 @@ public:
 	float getRotation() const;
 	const Vector2f& getScale() const;
 	const Vector2f& getOrigin() const;
-	const Mat4x4& getTransform() const;
+	const Mat4x4 getTransform() const;
 };

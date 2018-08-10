@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(RenderWindow& window, std::unique_ptr<Level> level) : window(window), currentLevel(std::move(level))
+Game::Game(RenderWindow& window, std::unique_ptr<Level> level) : currentLevel(std::move(level))
 {
 	while (window.isOpen())
 	{

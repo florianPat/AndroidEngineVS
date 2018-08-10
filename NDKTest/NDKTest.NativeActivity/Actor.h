@@ -29,9 +29,11 @@ template<typename T>
 inline T* Actor::getComponent(unsigned int componentId)
 {
 	auto result = components.find(componentId);
-	if (result != components.end() && typeid(*result->second) == typeid(T))
+	auto componentPtr = result->second.get();
+	//TODO: Without rtti?
+	if (result != components.end() && typeid((*componentPtr)) == typeid(T))
 	{
-		return dynamic_cast<T*>(result->second.get());
+		return dynamic_cast<T*>(componentPtr);
 	}
 	else
 		return nullptr;

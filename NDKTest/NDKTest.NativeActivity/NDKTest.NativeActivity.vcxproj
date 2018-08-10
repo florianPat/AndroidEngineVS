@@ -191,6 +191,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <CppLanguageStandard>c++1y</CppLanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
@@ -219,8 +220,8 @@
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GLUtils.h" />
     <ClInclude Include="gomSort.h" />
-    <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Ifstream.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InkscapeAnimation.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
@@ -243,8 +245,8 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector2.h" />
-    <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -255,7 +257,7 @@
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
-    <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Ifstream.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InkscapeAnimation.cpp" />
@@ -264,6 +266,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainLevel.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -272,8 +275,8 @@
     <ClCompile Include="TiledMap.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Utils.cpp" />
-    <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="VertexLayout.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

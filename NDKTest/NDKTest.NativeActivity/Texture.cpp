@@ -2,6 +2,7 @@
 #include <png.h>
 #include "Utils.h"
 #include "Ifstream.h"
+#include "GLUtils.h"
 
 void callback_readPng(png_structp pStruct, png_bytep pData, png_size_t pSize) {
 	Ifstream* asset = ((Ifstream*)png_get_io_ptr(pStruct));
@@ -112,16 +113,16 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	delete[] rowPtrs;
 	asset.close();
 
-	glGenTextures(1, &texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	CallGL(glGenTextures(1, &texture));
+	CallGL(glActiveTexture(GL_TEXTURE0));
+	CallGL(glBindTexture(GL_TEXTURE_2D, texture));
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixeld ? GL_NEAREST : GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixeld ? GL_NEAREST : GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	CallGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixeld ? GL_NEAREST : GL_LINEAR));
+	CallGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixeld ? GL_NEAREST : GL_LINEAR));
+	CallGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	CallGL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	CallGL(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image));
 
 	delete[] image;
 
@@ -131,6 +132,12 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 Texture::operator bool() const
 {
 	return (width != 0);
+}
+
+void Texture::bind(int slot) const
+{
+	CallGL(glActiveTexture(GL_TEXTURE0 + slot));
+	CallGL(glBindTexture(GL_TEXTURE_2D, texture));
 }
 
 void Texture::read(AAsset * asset, void * buffer, size_t size)

@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include "Vector2.h"
+#include "Sprite.h"
 
 class TextureRegion
 {
@@ -17,7 +18,7 @@ class TextureRegion
 	Vector2i size;
 
 	Texture* atlasTexture;
-	sf::Sprite regionSprite;
+	Sprite regionSprite;
 private:
 	TextureRegion() = default;
 	void initSprite();
@@ -28,7 +29,7 @@ public:
 	Vector2i getSize() { return size; }
 
 	void setRegion(int x, int y, int widht, int height);
-	sf::Sprite getRegion();
+	Sprite getRegion();
 };
 
 class TextureAtlas

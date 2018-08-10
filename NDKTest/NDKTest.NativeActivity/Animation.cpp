@@ -4,7 +4,7 @@
 #include <fstream>
 
 Animation::Animation(std::vector<TextureRegion>& keyFrames, int64_t frameDuration, PlayMode type)
-	: keyFrames(), frameDuration(frameDuration), playMode(type), clock(), keyFrameIt(), keyFrameItReverse()
+	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()
 {
 	for (auto it = keyFrames.begin(); it != keyFrames.end(); ++it)
 	{
@@ -16,7 +16,7 @@ Animation::Animation(std::vector<TextureRegion>& keyFrames, int64_t frameDuratio
 }
 
 Animation::Animation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, int64_t frameDuration, PlayMode type)
-	: keyFrames(), frameDuration(frameDuration), playMode(type), clock(), keyFrameIt(), keyFrameItReverse()
+	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()
 {
 	std::vector<TextureRegion> keyFrames;
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
@@ -138,7 +138,7 @@ bool Animation::isAnimationFinished()
 	}
 }
 
-sf::Sprite Animation::getKeyFrame()
+Sprite Animation::getKeyFrame()
 {
 	if (!paused)
 	{

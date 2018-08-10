@@ -195,84 +195,85 @@ void Physics::update(float dt)
 	}
 }
 
+//TODO: Implement!
 void Physics::debugRenderBodies(RenderWindow & window)
 {
-	for (auto it = bodies.begin(); it != bodies.end(); ++it)
-	{
-		if (!it->second->isStatic)
-		{
-			Collider* collider = it->second->physicsElements[0].getCollider();
-
-			sf::RectangleShape body;
-
-			switch (collider->type)
-			{
-				case Collider::Type::rect:
-				{
-					FloatRect colliderRect = collider->collider.rect;
-
-					body.setSize(Vector2f(colliderRect.width, colliderRect.height));
-					body.setPosition(Vector2f(colliderRect.left, colliderRect.top));
-					body.setFillColor(sf::Color::Yellow);
-
-					window.draw(body);
-
-					break;
-				}
-				case Collider::Type::obb:
-				{
-					OBB collideOBB = collider->collider.obb;
-
-					body.setPosition(collideOBB.pos);
-					body.setSize(Vector2f{ collideOBB.width, collideOBB.height });
-					body.setOrigin(collideOBB.origin);
-					body.setRotation(collideOBB.angle * 180 / collideOBB.PI);
-					body.setFillColor(sf::Color::Yellow);
-#if 0
-					Vector2f points[4] = { { collideOBB.pos },{ collideOBB.pos.x + collideOBB.width, collideOBB.pos.y },
-											 { collideOBB.pos.x + collideOBB.width, collideOBB.pos.y + collideOBB.height },
-											 { collideOBB.pos.x, collideOBB.pos.y + collideOBB.height } };
-
-					//Global origin
-					Vector2f origin = collideOBB.pos + collideOBB.origin;
-
-					for (int i = 0; i < 4; ++i)
-					{
-						points[i] = Vector2f(collideOBB.pos + (points[i].x - origin.x) * collideOBB.xAxis + (points[i].y - origin.y) * collideOBB.yAxis);
-					}
-
-					for (unsigned int i = 0; i < body.getPointCount(); ++i)
-					{
-						Vector2f myPoint = points[i];
-						Vector2f point = body.getPoint(i);
-						point = body.getTransform().transformPoint(point);
-						sf::Transform transform = body.getTransform();
-
-						std::cout << myPoint.x << " " << myPoint.y << "---" << point.x << " " << point.y << std::endl;
-					}
-#endif
-
-					window.draw(body);
-
-					break;
-				}
-				case Collider::Type::circle:
-				{
-					sf::CircleShape body;
-
-					FloatCircle circle = collider->collider.circle;
-
-					body.setPosition(circle.center.x - circle.radius, circle.center.y - circle.radius);
-					body.setRadius(circle.radius);
-					body.setFillColor(sf::Color::Yellow);
-
-					window.draw(body);
-
-					break;
-				}
-			}
-		}
-	}
+//	for (auto it = bodies.begin(); it != bodies.end(); ++it)
+//	{
+//		if (!it->second->isStatic)
+//		{
+//			Collider* collider = it->second->physicsElements[0].getCollider();
+//
+//			sf::RectangleShape body;
+//
+//			switch (collider->type)
+//			{
+//				case Collider::Type::rect:
+//				{
+//					FloatRect colliderRect = collider->collider.rect;
+//
+//					body.setSize(Vector2f(colliderRect.width, colliderRect.height));
+//					body.setPosition(Vector2f(colliderRect.left, colliderRect.top));
+//					body.setFillColor(sf::Color::Yellow);
+//
+//					window.draw(body);
+//
+//					break;
+//				}
+//				case Collider::Type::obb:
+//				{
+//					OBB collideOBB = collider->collider.obb;
+//
+//					body.setPosition(collideOBB.pos);
+//					body.setSize(Vector2f{ collideOBB.width, collideOBB.height });
+//					body.setOrigin(collideOBB.origin);
+//					body.setRotation(collideOBB.angle * 180 / collideOBB.PI);
+//					body.setFillColor(sf::Color::Yellow);
+//#if 0
+//					Vector2f points[4] = { { collideOBB.pos },{ collideOBB.pos.x + collideOBB.width, collideOBB.pos.y },
+//											 { collideOBB.pos.x + collideOBB.width, collideOBB.pos.y + collideOBB.height },
+//											 { collideOBB.pos.x, collideOBB.pos.y + collideOBB.height } };
+//
+//					//Global origin
+//					Vector2f origin = collideOBB.pos + collideOBB.origin;
+//
+//					for (int i = 0; i < 4; ++i)
+//					{
+//						points[i] = Vector2f(collideOBB.pos + (points[i].x - origin.x) * collideOBB.xAxis + (points[i].y - origin.y) * collideOBB.yAxis);
+//					}
+//
+//					for (unsigned int i = 0; i < body.getPointCount(); ++i)
+//					{
+//						Vector2f myPoint = points[i];
+//						Vector2f point = body.getPoint(i);
+//						point = body.getTransform().transformPoint(point);
+//						sf::Transform transform = body.getTransform();
+//
+//						std::cout << myPoint.x << " " << myPoint.y << "---" << point.x << " " << point.y << std::endl;
+//					}
+//#endif
+//
+//					window.draw(body);
+//
+//					break;
+//				}
+//				case Collider::Type::circle:
+//				{
+//					sf::CircleShape body;
+//
+//					FloatCircle circle = collider->collider.circle;
+//
+//					body.setPosition(circle.center.x - circle.radius, circle.center.y - circle.radius);
+//					body.setRadius(circle.radius);
+//					body.setFillColor(sf::Color::Yellow);
+//
+//					window.draw(body);
+//
+//					break;
+//				}
+//			}
+//		}
+//	}
 }
 
 Physics::Body* Physics::addElementPointer(std::unique_ptr<Body> body)
@@ -293,7 +294,7 @@ bool Physics::removeElementById(std::string & id)
 	return bodies.erase(id);
 }
 
-void Physics::applySpriteToBoundingBox(const sf::Sprite & sprite, Collider & boundingBox)
+void Physics::applySpriteToBoundingBox(const Sprite & sprite, Collider & boundingBox)
 {
 	assert(boundingBox.type == Collider::Type::rect);
 
@@ -541,7 +542,7 @@ bool Physics::Collider::collide(const Collider & other, Vector2f *minTransVec) c
 
 			for (auto it = corners.begin(); it != corners.end(); ++it)
 			{
-				if (fabsf(minTransVec->x * minTransVec->x + minTransVec->y * minTransVec->y) > std::fabsf(it->x * it->x + it->y * it->y))
+				if (fabsf(minTransVec->x * minTransVec->x + minTransVec->y * minTransVec->y) > fabsf(it->x * it->x + it->y * it->y))
 				{
 					*minTransVec = -*it;
 				}

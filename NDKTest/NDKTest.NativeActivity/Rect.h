@@ -7,9 +7,9 @@ template <typename T>
 class Rect
 {
 public:
-	inline Rect() {}
+	inline Rect() = default;
 	inline Rect(T left, T top, T width, T height) : left(left), top(top), width(width), height(height) {}
-	inline Rect(const Rect& rect) : left(rect.left), top(rect.top), width(rect.width), height(rect.height) {}
+	//Rect(const Rect& rect) : top(rect.top), left(rect.left), width(rect.width), height(rect.height) {}
 	template <typename T2>
 	inline operator Rect<T2>() const
 	{

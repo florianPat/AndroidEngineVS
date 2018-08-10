@@ -5,11 +5,12 @@
 #include <EGL/egl.h>
 #include "Clock.h"
 #include <string>
-
-void clearErrors();
-void checkErrors(const std::string& func);
-
-#define CallGL(x) do { clearErrors(); x; checkErrors(#x); } while(false)
+#include "Sprite.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexLayout.h"
+#include "Shader.h"
+#include "Mat4x4.h"
 
 class RenderWindow
 {
@@ -22,7 +23,8 @@ class RenderWindow
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
-	GLuint shaderProgram;
+	Shader shader;
+	Mat4x4 orhtoProj;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();
@@ -30,6 +32,7 @@ public:
 	bool isOpen() const;
 	void close();
 	void clear();
+	void draw(const Sprite& sprite);
 	void render();
 private:
 	void deactivate();
@@ -37,7 +40,4 @@ private:
 	static void AppEventCallback(android_app* app, int32_t command);
 	bool startGfx();
 	void stopGfx();
-	GLuint compileShader(const std::string& shaderFilename, const GLuint type);
-	void linkShaders(GLuint vertexShader, GLuint fragmentShader);
-	void loadShaders(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
 };

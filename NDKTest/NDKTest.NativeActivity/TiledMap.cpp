@@ -1,11 +1,10 @@
 #include "TiledMap.h"
 #include <fstream>
 #include <stdlib.h>
-#include "Assets.h"
 #include "Utils.h"
 #include "TiledMapRenderComponent.h"
 
-TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, sf::RenderWindow& window, std::vector<std::string>&& toGameObjects)
+TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), textureSprite(), texture()
 {
 	std::ifstream file;
@@ -82,7 +81,7 @@ std::vector<TiledMap::ObjectGroup> TiledMap::getObjectGroups()
 	return result;
 }
 
-void TiledMap::draw(sf::RenderWindow& renderWindow)
+void TiledMap::draw(RenderWindow& renderWindow)
 {
 	renderWindow.draw(textureSprite);
 }
@@ -203,7 +202,7 @@ void TiledMap::ParseObjectGroups(std::ifstream & file, std::string & lineContent
 	}
 }
 
-void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, sf::RenderWindow& window)
+void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
 	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight))
 	{
@@ -219,7 +218,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 					Texture* source = currentLayer.tiles[mapWidth * y + x].source;
 					if (source == nullptr)
 						continue;
-					sf::Sprite sprite(*source);
+					Sprite sprite(*source);
 					sprite.setPosition((float)x * tileWidth, (float)y * tileHeight);
 
 					if(toGameObjects.empty())
@@ -245,7 +244,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 		}
 		texture.display();
 
-		textureSprite = sf::Sprite(texture.getTexture());
+		textureSprite = Sprite(texture.getTexture());
 	}
 	else
 	{
@@ -274,7 +273,8 @@ std::string TiledMap::ParseTiles(std::ifstream & file)
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 			std::string source = getLineContentBetween(lineContent, "source", '"');
-			tiles.emplace(id, Tile{ id, width, height, Assets::textureAssetManager.getOrAddRes(source) });
+			//TODO:
+			//tiles.emplace(id, Tile{ id, width, height, Assets::textureAssetManager.getOrAddRes(source) });
 
 			std::getline(file, lineContent); //</tile>
 		}

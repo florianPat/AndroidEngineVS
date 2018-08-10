@@ -50,7 +50,7 @@ public:
 		return *this;
 	}
 
-	inline Mat4x4& operator*(const Mat4x4& rhs) const
+	inline Mat4x4 operator*(const Mat4x4& rhs) const
 	{
 		Mat4x4 lhs = *this;
 		lhs *= rhs;

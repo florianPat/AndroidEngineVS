@@ -23,7 +23,6 @@ public:
 	std::streampos tellg();
 	void seekg(std::streampos pos);
 	void seekg(std::streamoff off, std::ios_base::seekdir way);
-	//TODO: Think about making this an int!
 	long long getSize();
 	void open(const std::string& filename);
 	void getFullData(void* s);

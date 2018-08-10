@@ -29,8 +29,8 @@ void Level::composeFrame()
 	window.render();
 }
 
-Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(), levelName(tiledMapName),
-clock(), gom(), eventManager(), map(tiledMapName, gom, eventManager, window)
+Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
+gom(), clock(), levelName(tiledMapName), eventManager(), map(tiledMapName, gom, eventManager, window)
 {
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

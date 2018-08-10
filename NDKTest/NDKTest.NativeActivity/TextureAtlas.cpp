@@ -2,7 +2,6 @@
 #include <fstream>
 #include <stdlib.h>
 #include <assert.h>
-#include "Assets.h"
 #include "Utils.h"
 #include "Rect.h"
 
@@ -187,8 +186,9 @@ void TextureRegion::initSprite()
 {
 	assert(textureAtlasFileName != "" || filename != "");
 
-	atlasTexture = Assets::textureAssetManager.getOrAddRes(textureAtlasFileName);
-	regionSprite = sf::Sprite(*atlasTexture, IntRect(xy.x, xy.y, size.x, size.y));
+	//TODO:
+	//atlasTexture = Assets::textureAssetManager.getOrAddRes(textureAtlasFileName);
+	regionSprite = Sprite(*atlasTexture, IntRect(xy.x, xy.y, size.x, size.y));
 }
 
 void TextureRegion::setRegion(int x, int y, int widht, int height)
@@ -204,7 +204,7 @@ void TextureRegion::setRegion(int x, int y, int widht, int height)
 		}
 }
 
-sf::Sprite TextureRegion::getRegion()
+Sprite TextureRegion::getRegion()
 {
 	return regionSprite;
 }

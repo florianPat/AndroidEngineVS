@@ -6,5 +6,5 @@ class MainLevel: public Level
 {
 	virtual void eventLevelReloadHandler(EventData* eventData) override;
 public:
-	MainLevel(sf::RenderWindow& window, std::string tiledMapName);
+	MainLevel(RenderWindow& window, std::string tiledMapName);
 };

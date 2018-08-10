@@ -2,7 +2,6 @@
 
 #include "RenderWindow.h"
 #include "TiledMap.h"
-#include "Assets.h"
 #include "Physics.h"
 #include <iostream>
 #include "GameObjectManager.h"

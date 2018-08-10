@@ -2,7 +2,7 @@
 #include "GameObjectManager.h"
 #include "Utils.h"
 
-Actor::Actor(unsigned int id) : components(), id(id)
+Actor::Actor(unsigned int id) : id(id), components()
 {
 }
 
@@ -49,7 +49,7 @@ void Actor::sort(std::multimap<gomSort::SortKey, unsigned long long, gomSort::So
 	{
 		gomSort::SortKey sortKey = it->second->sort();
 		unsigned long long actorComponentId = GetActorComponentId(it->second->id);
-		auto returned = sortedActors.emplace(sortKey, actorComponentId);
+		sortedActors.emplace(sortKey, actorComponentId);
 	}
 }
 

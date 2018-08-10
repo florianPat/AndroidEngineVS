@@ -6,6 +6,8 @@
 #include "Animation.h"
 #include "EventManager.h"
 
+#undef assert
+
 #ifndef NDEBUG
 #define utilsLog(string) __android_log_write(ANDROID_LOG_INFO, __FUNCTION__, string);
 #define assert(exp) if(!(exp)) __android_log_assert(nullptr, "ASSERT", #exp);
@@ -15,6 +17,7 @@
 #define utilsLogBreak(string)
 #define assert(exp)
 #endif
+#define arrayCount(x) sizeof(x) / sizeof(x[0])
 
 #define InvalidCodePath assert(!"InvalidCodePath")
 
