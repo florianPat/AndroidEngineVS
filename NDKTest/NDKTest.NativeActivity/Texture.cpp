@@ -142,6 +142,5 @@ void Texture::bind(int slot) const
 
 void Texture::read(AAsset * asset, void * buffer, size_t size)
 {
-	int resultSizeRead = AAsset_read(asset, buffer, size);
-	assert(resultSizeRead == size);
+	assert(AAsset_read(asset, buffer, size) == size);
 }
