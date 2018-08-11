@@ -1,5 +1,4 @@
 #include "Physics.h"
-#include <assert.h>
 #include <math.h>
 #include <limits>
 #include <iostream>
@@ -373,8 +372,8 @@ Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool is
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(std::string name, std::vector<Collider> colliders, bool isTrigger) : id(name), 
-	isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), physicsElements{}
+Physics::Body::Body(std::string name, std::vector<Collider> colliders, bool isTrigger) : isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), 
+																						 id(name), physicsElements{}
 {
 	for (auto it = colliders.begin(); it != colliders.end(); ++it)
 	{
@@ -627,27 +626,27 @@ bool Physics::Collider::collide(const Collider & other, Vector2f *minTransVec) c
 }
 
 //NOTE: angle from degrees in radians, because cosf uses radians, but in matrix of SFML in Shape it uses degrees, so you have to convert back and forth...
-Physics::OBB::OBB(float left, float top, float width, float height, float angle) : angle(angle*PI/180), pos(Vector2f{ left, top }), width(width), height(height),
+Physics::OBB::OBB(float left, float top, float width, float height, float angle) : angle(angle*PI/180), 
 																				   xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
-																				   origin(0.0f, 0.0f)
+																				   width(width), height(height), pos(Vector2f{ left, top }), origin(0.0f, 0.0f)
 {
 }
 
-Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle) : angle(angle*PI/180), pos(topLeft), width(width), height(height),
-																					xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
-																					origin(0.0f, 0.0f)
+Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle) : angle(angle*PI/180),
+																				xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
+																				width(width), height(height), pos(topLeft), origin(0.0f, 0.0f)
 {
 }
 
-Physics::OBB::OBB(float left, float top, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180), pos(Vector2f{ left, top }), width(width), height(height),
-																										xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
-																										origin(origin)
+Physics::OBB::OBB(float left, float top, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180), 
+																									xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
+																									width(width), height(height), pos(Vector2f{ left, top }), origin(origin)
 {
 }
 
-Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180), pos(topLeft), width(width), height(height),
-																										 xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
-																										 origin(origin)
+Physics::OBB::OBB(Vector2f & topLeft, float width, float height, float angle, Vector2f origin) : angle(angle*PI / 180),
+																								 xAxis(cosf(this->angle), sinf(this->angle)), yAxis((-sinf(this->angle)), cosf(this->angle)),
+																								 width(width), height(height), pos(topLeft), origin(origin)
 {
 }
 
@@ -663,10 +662,10 @@ float Physics::OBB::getAngle() const
 	return angle * 180 / PI;
 }
 
-Physics::FloatCircle::FloatCircle(const Vector2f & center, float radius) : center(center), radius(radius)
+Physics::FloatCircle::FloatCircle(const Vector2f & center, float radius) : radius(radius), center(center)
 {
 }
 
-Physics::FloatCircle::FloatCircle(float centerX, float centerY, float radius) : center(centerX, centerY), radius(radius)
+Physics::FloatCircle::FloatCircle(float centerX, float centerY, float radius) : radius(radius), center(centerX, centerY)
 {
 }

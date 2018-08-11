@@ -4,6 +4,7 @@
 #include "EventManager.h"
 #include "gomSort.h"
 #include "Utils.h"
+#include "AssetManager.h"
 
 class Actor;
 
@@ -14,9 +15,11 @@ class Component
 protected:
 	const unsigned int id;
 	EventManager* eventManager;
+	TextureAssetManager* assetManager;
 	Actor* owner;
 public:
-	Component(int id, EventManager* eventManager, Actor* owner) : id(id), eventManager(eventManager), owner(owner) {};
+	Component(int id, EventManager* eventManager, TextureAssetManager* assetManager, Actor* owner) : id(id), eventManager(eventManager), 
+																									 assetManager(assetManager), owner(owner) {};
 	virtual void update(float dt) = 0;
 	virtual void draw() = 0;
 	virtual gomSort::SortKey sort() { return gomSort::SortKey{ 0, 0.0f }; };

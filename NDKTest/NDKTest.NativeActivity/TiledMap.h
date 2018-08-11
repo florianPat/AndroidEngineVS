@@ -6,6 +6,7 @@
 #include "Physics.h"
 #include "GameObjectManager.h"
 #include "RenderTexture.h"
+#include "AssetManager.h"
 
 class TiledMap
 {
@@ -33,6 +34,7 @@ class TiledMap
 
 	RenderTexture texture;
 	Sprite textureSprite;
+	TextureAssetManager* assetManager;
 public:
 	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects = std::vector<std::string>{});
 	std::vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);

@@ -5,7 +5,7 @@
 #include "TiledMapRenderComponent.h"
 
 TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects)
-	: tiles(), layers(), objectGroups(), textureSprite(), texture()
+	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
 	std::ifstream file;
 	file.open(filepath);
@@ -273,8 +273,7 @@ std::string TiledMap::ParseTiles(std::ifstream & file)
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 			std::string source = getLineContentBetween(lineContent, "source", '"');
-			//TODO:
-			//tiles.emplace(id, Tile{ id, width, height, Assets::textureAssetManager.getOrAddRes(source) });
+			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes(source) });
 
 			std::getline(file, lineContent); //</tile>
 		}

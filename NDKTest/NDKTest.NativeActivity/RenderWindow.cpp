@@ -12,8 +12,9 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 	renderWindow.processAppEvent(command);
 }
 
-RenderWindow::RenderWindow(android_app * app, int width, int height) : renderWidth(width), renderHeight(height), timeManager(), 
-																	   shader("BasicShader", app->activity->assetManager)
+RenderWindow::RenderWindow(android_app * app, int width, int height) : timeManager(), renderWidth(width), renderHeight(height),
+																	   shader("BasicShader", app->activity->assetManager),
+																	   assetManager(app->activity->assetManager)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -102,6 +103,11 @@ void RenderWindow::render()
 	EGLBoolean result;
 	CallGL((result = eglSwapBuffers(display, surface)));
 	assert(result == EGL_TRUE);
+}
+
+TextureAssetManager * RenderWindow::getAssetManager()
+{
+	return &assetManager;
 }
 
 void RenderWindow::deactivate()

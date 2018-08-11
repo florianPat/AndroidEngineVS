@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Utils.h"
 
-GameObjectManager::GameObjectManager() : actors(), destroyActorQueue(), sortedActors()
+GameObjectManager::GameObjectManager() : actors(), sortedActors(), destroyActorQueue()
 {
 }
 

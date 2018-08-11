@@ -11,13 +11,13 @@ void InkscapeAnimation::setupInkscapeKeyFrames(const std::vector<std::string>& r
 }
 
 InkscapeAnimation::InkscapeAnimation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, const std::string& inkscapeFileName, int64_t frameDuration, PlayMode type)
-	: iae(inkscapeFileName, regionNames), inkscapeKeyFrames(), Animation(regionNames, atlas, frameDuration, type)
+	: Animation(regionNames, atlas, frameDuration, type), iae(inkscapeFileName, regionNames), inkscapeKeyFrames()
 {
 	setupInkscapeKeyFrames(regionNames);
 }
 
 InkscapeAnimation::InkscapeAnimation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, const InkscapeAnimationElement & iae, int64_t frameDuration, PlayMode type)
-	: iae(iae), inkscapeKeyFrames(), Animation(regionNames, atlas, frameDuration, type)
+	: Animation(regionNames, atlas, frameDuration, type), iae(iae), inkscapeKeyFrames()
 {
 	setupInkscapeKeyFrames(regionNames);
 }

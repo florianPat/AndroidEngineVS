@@ -11,6 +11,7 @@
 #include "VertexLayout.h"
 #include "Shader.h"
 #include "Mat4x4.h"
+#include "AssetManager.h"
 
 class RenderWindow
 {
@@ -25,6 +26,7 @@ class RenderWindow
 	EGLContext context = EGL_NO_CONTEXT;
 	Shader shader;
 	Mat4x4 orhtoProj;
+	TextureAssetManager assetManager;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();
@@ -34,6 +36,7 @@ public:
 	void clear();
 	void draw(const Sprite& sprite);
 	void render();
+	TextureAssetManager* getAssetManager();
 private:
 	void deactivate();
 	void processAppEvent(int32_t command);

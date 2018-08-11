@@ -1,7 +1,6 @@
 #include "TextureAtlas.h"
 #include <fstream>
 #include <stdlib.h>
-#include <assert.h>
 #include "Utils.h"
 #include "Rect.h"
 

@@ -8,7 +8,7 @@ class Rect
 {
 public:
 	inline Rect() = default;
-	inline Rect(T left, T top, T width, T height) : left(left), top(top), width(width), height(height) {}
+	inline Rect(T left, T top, T width, T height) : top(top), left(left), width(width), height(height) {}
 	//Rect(const Rect& rect) : top(rect.top), left(rect.left), width(rect.width), height(rect.height) {}
 	template <typename T2>
 	inline operator Rect<T2>() const
