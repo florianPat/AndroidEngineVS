@@ -13,9 +13,9 @@ void checkErrors(const std::string& func)
 	while (GLenum errorCode = glGetError())
 	{
 		errorOccured = true;
-		std::cout << "OpenGL error: [" << errorCode << "] occured in function: " << func << ", line: " << __LINE__ << ", file: " __FILE__ << '\n';
+		__android_log_print(ANDROID_LOG_ERROR, "OpenGL error", "OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, func.c_str(), __LINE__, __FILE__);
 	}
 
 	if (errorOccured)
-		assert(true);
+		InvalidCodePath;
 }

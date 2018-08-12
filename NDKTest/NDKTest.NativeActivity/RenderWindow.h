@@ -15,18 +15,18 @@
 
 class RenderWindow
 {
-	android_app * app;
-	bool enabled = false;
-	bool quit = false;
+	android_app* app = nullptr;
+	bool initFinished = false;
+	bool running = true;
 	Clock timeManager;
 
 	int32_t renderWidth = 0, renderHeight = 0;
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
+	TextureAssetManager assetManager;
 	Shader shader;
 	Mat4x4 orhtoProj;
-	TextureAssetManager assetManager;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();

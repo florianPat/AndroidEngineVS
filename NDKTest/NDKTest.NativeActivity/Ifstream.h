@@ -8,7 +8,7 @@ class Ifstream
 {
 	AAsset* asset = nullptr;
 	AAssetManager* assetManager = nullptr;
-	bool fail = false;
+	bool good = true;
 public:
 	Ifstream(const std::string& filename, AAssetManager* assetManager);
 	Ifstream(AAssetManager* assetManager);

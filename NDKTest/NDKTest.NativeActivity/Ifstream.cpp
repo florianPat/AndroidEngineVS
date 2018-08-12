@@ -17,7 +17,7 @@ Ifstream::~Ifstream()
 
 Ifstream::operator bool() const
 {
-	return fail;
+	return good;
 }
 
 bool Ifstream::operator!() const
@@ -39,12 +39,7 @@ void Ifstream::getline(std::string & line)
 		c = get();
 
 		if (c == '\n')
-		{
-			if(!eof())
-				c = get();
-			
 			break;
-		}
 
 		line += c;
 	}
@@ -61,7 +56,7 @@ void Ifstream::open(const std::string & filename)
 
 	if (!asset)
 	{
-		fail = true;
+		good = false;
 		return;
 	}
 }

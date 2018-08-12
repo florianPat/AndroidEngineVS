@@ -9,6 +9,7 @@
 class Shader
 {
 public:
+	Shader() = default;
 	Shader(const std::string& filename, AAssetManager* assetManager);
 	virtual ~Shader();
 
@@ -20,7 +21,7 @@ private:
 	int getUniformLoc(const std::string& var);
 private:
 	static constexpr unsigned int NUM_SHADERS = 2;
-	GLuint program;
+	GLuint program = 0;
 	GLuint shaders[NUM_SHADERS];
 	std::unordered_map<std::string, GLint> uniformCache;
 };

@@ -10,6 +10,7 @@
 void Level::updateModel()
 {
 	float dt = clock.getTime().asSeconds();
+	__android_log_print(ANDROID_LOG_INFO, "FPS", "%f", dt);
 
 	gom.updateActors(dt);
 
@@ -20,7 +21,7 @@ void Level::composeFrame()
 {
 	window.clear();
 
-	map.draw(window);
+	//map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
 
@@ -30,7 +31,7 @@ void Level::composeFrame()
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName)
+gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName)
 {
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

@@ -47,8 +47,9 @@ void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const std::str
 			CallGL(glGetShaderInfoLog(shader, sizeof(error), nullptr, error));
 		}
 
-		__android_log_write(ANDROID_LOG_WARN, "", errorMessage.c_str());
-		__android_log_assert(nullptr, __FUNCTION__, "%s", error);
+		__android_log_write(ANDROID_LOG_ERROR, "", errorMessage.c_str());
+		__android_log_print(ANDROID_LOG_ERROR, __FUNCTION__, "%s", error);
+		InvalidCodePath;
 	}
 }
 

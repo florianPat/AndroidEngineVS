@@ -10,8 +10,8 @@
 
 #ifndef NDEBUG
 #define utilsLog(string) __android_log_write(ANDROID_LOG_INFO, __FUNCTION__, string);
-#define assert(exp) if(!(exp)) __android_log_assert(nullptr, "ASSERT", #exp);
-#define utilsLogBreak(string) do { utilsLog((string)); assert(true); } while(false)
+#define assert(exp) if(!((exp) && true)) __android_log_assert(nullptr, "ASSERT", #exp);
+#define utilsLogBreak(string) do { utilsLog((string)); assert(false); } while(false)
 #else
 #define utilsLog(string)
 #define utilsLogBreak(string)

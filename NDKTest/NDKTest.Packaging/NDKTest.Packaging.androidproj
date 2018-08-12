@@ -119,6 +119,9 @@
     </AntPackage>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Content Include="assets\BasicShader.fs" />
+    <Content Include="assets\BasicShader.vs" />
+    <Content Include="assets\ship.png" />
     <Content Include="res\values\strings.xml" />
     <AntBuildXml Include="build.xml" />
     <AndroidManifest Include="AndroidManifest.xml" />

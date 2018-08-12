@@ -12,9 +12,9 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 	renderWindow.processAppEvent(command);
 }
 
-RenderWindow::RenderWindow(android_app * app, int width, int height) : timeManager(), renderWidth(width), renderHeight(height),
-																	   shader("BasicShader", app->activity->assetManager),
-																	   assetManager(app->activity->assetManager)
+RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
+																	   assetManager(app->activity->assetManager),
+												orhtoProj(Mat4x4::orthoProj(-1.0f, 1.0f, 0.0f, 0.0f, (float)renderWidth, (float)renderHeight))
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -29,19 +29,19 @@ void RenderWindow::processEvents()
 
 	while (1)
 	{
-		while ((ALooper_pollAll(enabled ? 0 : -1, 0, &events, (void**)&source)) >= 0)
+		while ((ALooper_pollAll(initFinished ? 0 : -1, 0, &events, (void**)&source)) >= 0)
 		{
-			if (source != 0)
+			if (source != nullptr)
 			{
 				source->process(app, source);
 			}
 			if (app->destroyRequested)
 			{
 				utilsLog("exit event loop!");
-				quit = true;
+				running = false;
 			}
 		}
-		if (enabled && (!quit))
+		if (initFinished && running)
 		{
 			return;
 		}
@@ -50,11 +50,13 @@ void RenderWindow::processEvents()
 
 bool RenderWindow::isOpen() const
 {
-	return quit;
+	return running;
 }
 
 void RenderWindow::close()
 {
+	utilsLog("Window close");
+	running = false;
 	ANativeActivity_finish(app->activity);
 }
 
@@ -112,10 +114,10 @@ TextureAssetManager * RenderWindow::getAssetManager()
 
 void RenderWindow::deactivate()
 {
-	if (enabled)
+	if (initFinished)
 	{
 		stopGfx();
-		enabled = false;
+		initFinished = false;
 	}
 }
 
@@ -129,21 +131,25 @@ void RenderWindow::processAppEvent(int32_t command)
 		}
 		case APP_CMD_INIT_WINDOW:
 		{
-			if ((!enabled) && (app->window != NULL))
+			if ((!initFinished) && (app->window != NULL))
 			{
-				quit = false;
-				enabled = true;
-				if (startGfx())
+				running = true;
+				if (!startGfx())
 				{
-					quit = true;
+					running = false;
 					deactivate();
 					ANativeActivity_finish(app->activity);
+				}
+				else
+				{
+					//NOTE: Init graphics things here!
+					shader = Shader("BasicShader", app->activity->assetManager);
 				}
 			}
 
 			//clock.reset();
 
-			enabled = true;
+			initFinished = true;
 			break;
 		}
 		case APP_CMD_DESTROY:
@@ -217,35 +223,30 @@ bool RenderWindow::startGfx()
 	if (display == EGL_NO_DISPLAY)
 	{
 		utilsLogBreak("eglGetDisplay failed!");
-		stopGfx();
 		return false;
 	}
 
 	if (!eglInitialize(display, 0, 0))
 	{
 		utilsLogBreak("egInitialize failed!");
-		stopGfx();
 		return false;
 	}
 
 	if (!eglChooseConfig(display, DISPLAY_ATTRIBS, &config, 1, &numConfigs) || (numConfigs <= 0))
 	{
 		utilsLogBreak("eglChooseConfig failed!");
-		stopGfx();
 		return false;
 	}
 
 	if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
 	{
 		utilsLogBreak("eglGetConfigAttrib failed!");
-		stopGfx();
 		return false;
 	}
 
 	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, format) != 0)
 	{
 		utilsLogBreak("ANativeWindow_setBufferGeometry failed!");
-		stopGfx();
 		return false;
 	}
 
@@ -253,7 +254,6 @@ bool RenderWindow::startGfx()
 	if (surface == EGL_NO_SURFACE)
 	{
 		utilsLogBreak("eglCreateWindowSurface failed!");
-		stopGfx();
 		return false;
 	}
 
@@ -261,7 +261,6 @@ bool RenderWindow::startGfx()
 	if (context == EGL_NO_CONTEXT)
 	{
 		utilsLogBreak("eglCreateContext failed!");
-		stopGfx();
 		return false;
 	}
 
@@ -270,11 +269,14 @@ bool RenderWindow::startGfx()
 		(renderWidth <= 0) || (renderHeight <= 0))
 	{
 		utilsLogBreak("eglMakeCurrent failed!");
-		stopGfx();
 		return false;
 	}
 
-	eglSwapInterval(display, 1);
+	if (eglSwapInterval(display, 1) == EGL_FALSE)
+	{
+		utilsLogBreak("eglSwapInteral failed!");
+		return false;
+	}
 
 	CallGL(glViewport(0, 0, renderWidth, renderHeight));
 	CallGL(glDisable(GL_DEPTH_TEST));
