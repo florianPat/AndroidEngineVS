@@ -25,9 +25,6 @@ protected:
 
 	std::unique_ptr<Level> newLevel = nullptr;
 	bool endLevel = false;
-
-	//Test
-	RectangleShape body;
 protected:
 	std::function<void(EventData*)> eventLevelReloadFunction = std::bind(&Level::eventLevelReloadHandler, this, std::placeholders::_1);
 	DelegateFunction delegateLevelReload = utils::getDelegateFromFunction(eventLevelReloadFunction);
