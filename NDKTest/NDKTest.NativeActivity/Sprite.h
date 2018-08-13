@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "Rect.h"
 #include "Mat4x4.h"
+#include "Color.h"
 
 class Sprite
 {
@@ -12,6 +13,7 @@ class Sprite
 	Vector2f pos = { 0.0f, 0.0f }, org = { 0.0f, 0.0f };
 	Vector2f scl = { 1.0f, 1.0f };
 	float rot = 0.0f;
+	Color color = Color::White();
 public:
 	Sprite() = default;
 	Sprite(const Texture* texture);
@@ -39,4 +41,6 @@ public:
 	const Vector2f& getScale() const;
 	const Vector2f& getOrigin() const;
 	const Mat4x4 getTransform() const;
+	void setColor(const Color& c);
+	const Color& getColor() const;
 };

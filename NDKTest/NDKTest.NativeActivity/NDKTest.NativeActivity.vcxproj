@@ -220,6 +220,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventLevelReload.h" />

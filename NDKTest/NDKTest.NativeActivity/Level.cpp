@@ -18,6 +18,7 @@ void Level::updateModel()
 	sprite.setPosition(sprite.getPosition().x + 10.0f * dt, sprite.getPosition().y + 10.0f * dt);
 	sprite.setRotation(sprite.getRotation() + 70.0f * dt);
 	sprite.setScale(sinf(counter));
+	sprite.setColor(Color::Red());
 
 	gom.updateActors(dt);
 

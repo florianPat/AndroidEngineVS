@@ -104,8 +104,11 @@ void RenderWindow::draw(const Sprite & sprite)
 
 	Mat4x4 mvp = orhtoProj * sprite.getTransform();
 
+	Color c = sprite.getColor();
+
 	//shader.bind();
 	shader.setUniformMat4f("u_mvp", mvp);
+	shader.setUniform4f("u_color", c.r / 255, c.g / 255, c.b / 255, c.a / 255);
 
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 }

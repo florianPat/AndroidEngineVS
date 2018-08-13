@@ -144,3 +144,13 @@ const Mat4x4 Sprite::getTransform() const
 
 	return result;
 }
+
+void Sprite::setColor(const Color & c)
+{
+	color = c;
+}
+
+const Color & Sprite::getColor() const
+{
+	return color;
+}
