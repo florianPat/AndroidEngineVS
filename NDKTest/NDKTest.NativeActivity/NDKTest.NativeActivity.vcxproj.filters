@@ -39,6 +39,7 @@
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="RectangleShape.h" />
+    <ClInclude Include="CircleShape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -70,5 +71,6 @@
     <ClCompile Include="VertexLayout.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="RectangleShape.cpp" />
+    <ClCompile Include="CircleShape.cpp" />
   </ItemGroup>
 </Project>

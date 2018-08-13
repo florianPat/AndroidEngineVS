@@ -27,12 +27,18 @@ void Level::composeFrame()
 
 	physics.debugRenderBodies(window);
 
+	window.draw(c);
+
 	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
 gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName)
 {
+	/*c.setFillColor(Colors::Yellow);
+	c.setPosition(300.0f, 300.0f);
+	c.setRadius(50.0f);*/
+
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Utils.h"
 #include "RectangleShape.h"
+#include "CircleShape.h"
 
 void Physics::handleCollision(Body* itBody, Body* collideElementBody, Collider & bodyCollider,
 	const Collider& elementCollider)
@@ -258,7 +259,7 @@ void Physics::debugRenderBodies(RenderWindow & window)
 				}
 				case Collider::Type::circle:
 				{
-					/*sf::CircleShape body;
+					CircleShape body;
 
 					FloatCircle circle = collider->collider.circle;
 
@@ -266,7 +267,7 @@ void Physics::debugRenderBodies(RenderWindow & window)
 					body.setRadius(circle.radius);
 					body.setFillColor(Colors::Yellow);
 
-					window.draw(body);*/
+					window.draw(body);
 
 					break;
 				}

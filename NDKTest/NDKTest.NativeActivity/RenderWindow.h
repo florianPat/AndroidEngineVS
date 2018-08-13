@@ -14,6 +14,7 @@
 #include "AssetManager.h"
 #include "RectangleShape.h"
 #include <memory>
+#include "CircleShape.h"
 
 class RenderWindow
 {
@@ -39,6 +40,7 @@ public:
 	void clear();
 	void draw(const Sprite& sprite);
 	void draw(const RectangleShape& rect);
+	void draw(const CircleShape& circle);
 	void render();
 	TextureAssetManager* getAssetManager();
 private:

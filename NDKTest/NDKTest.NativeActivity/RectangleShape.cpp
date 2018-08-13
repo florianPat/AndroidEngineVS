@@ -5,9 +5,19 @@ void RectangleShape::setSize(const Vector2f & sizeIn)
 	size = sizeIn;
 }
 
+void RectangleShape::setSize(float sizeX, float sizeY)
+{
+	size = { sizeX, sizeY };
+}
+
 void RectangleShape::setPosition(const Vector2f & position)
 {
 	pos = position;
+}
+
+void RectangleShape::setPosition(float x, float y)
+{
+	pos = { x, y };
 }
 
 void RectangleShape::setFillColor(const Color & color)
@@ -18,6 +28,11 @@ void RectangleShape::setFillColor(const Color & color)
 void RectangleShape::setOrigin(const Vector2f & origin)
 {
 	org = origin;
+}
+
+void RectangleShape::setOrigin(float orgX, float orgY)
+{
+	org = { orgX, orgY };
 }
 
 void RectangleShape::setRotation(float rotation)

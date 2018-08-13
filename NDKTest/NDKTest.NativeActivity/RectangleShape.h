@@ -14,9 +14,12 @@ class RectangleShape
 public:
 	RectangleShape() = default;
 	void setSize(const Vector2f& size);
+	void setSize(float sizeX, float sizeY);
 	void setPosition(const Vector2f& position);
+	void setPosition(float x, float y);
 	void setFillColor(const Color& color);
 	void setOrigin(const Vector2f& origin);
+	void setOrigin(float orgX, float orgY);
 	void setRotation(float rotation);
 	Mat4x4 getTransform() const;
 	const Color& getFillColor() const;

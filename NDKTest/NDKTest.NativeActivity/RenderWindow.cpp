@@ -144,6 +144,40 @@ void RenderWindow::draw(const RectangleShape & rect)
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 }
 
+//TODO: FIX!
+void RenderWindow::draw(const CircleShape & circle)
+{
+	//Code by: https://gist.github.com/linusthe3rd/803118
+	static constexpr int triangleAmount = 20;
+
+	float twicePi = 2.0f * PIf;
+
+	float radius = circle.getRadius();
+
+	float vertices[triangleAmount * 2];
+	for (int i = 0, vertCounter = 0; i < triangleAmount; i++)
+	{
+		vertices[vertCounter++] = radius * cosf(i * twicePi / triangleAmount);
+		vertices[vertCounter++] = radius * sinf(i * twicePi / triangleAmount);
+	}
+
+	VertexBuffer vb = VertexBuffer(vertices, sizeof(vertices));
+	vb.bind();
+	VertexLayouts va;
+	va.addAttribute(2, GL_FLOAT);
+	va.set();
+
+	Mat4x4 mvp = orhtoProj * circle.getTransform();
+
+	Color c = circle.getFillColor();
+
+	shaderRectShape->bind();
+	shaderRectShape->setUniformMat4f("u_mvp", mvp);
+	shaderRectShape->setUniform4f("u_color", c.r / 255, c.g / 255, c.b / 255, c.a / 255);
+
+	CallGL(glDrawArrays(GL_TRIANGLE_FAN, 0, sizeof(vertices)));
+}
+
 void RenderWindow::render()
 {
 	EGLBoolean result;
