@@ -84,9 +84,9 @@ void RenderWindow::draw(const Sprite & sprite)
 							 { texRectLeft, texRectBottom } };
 
 	float vertices[] = {0.0f, 0.0f, texCoord[0].x, texCoord[0].y,
-						100.0f, 0.0f, texCoord[1].x, texCoord[1].y,
-						100.0f, 100.0f, texCoord[2].x, texCoord[2].y,
-						0.0f, 100.0f, texCoord[3].x, texCoord[3].y };
+						1.0f, 0.0f, texCoord[1].x, texCoord[1].y,
+						1.0f, 1.0f, texCoord[2].x, texCoord[2].y,
+						0.0f, 1.0f, texCoord[3].x, texCoord[3].y };
 
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
@@ -102,10 +102,10 @@ void RenderWindow::draw(const Sprite & sprite)
 	
 	ib.bind();
 
-	Mat4x4 mvp = sprite.getTransform() * orhtoProj;
+	Mat4x4 mvp = orhtoProj * sprite.getTransform();
 
 	//shader.bind();
-	shader.setUniformMat4f("u_mvp", orhtoProj);
+	shader.setUniformMat4f("u_mvp", mvp);
 
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 }
