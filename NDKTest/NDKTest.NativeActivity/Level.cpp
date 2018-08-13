@@ -12,14 +12,6 @@ void Level::updateModel()
 	float dt = clock.getTime().asSeconds();
 	__android_log_print(ANDROID_LOG_INFO, "FPS", "%f", dt);
 
-	static float counter = 0.0f;
-	counter += 0.1f;
-
-	sprite.setPosition(sprite.getPosition().x + 10.0f * dt, sprite.getPosition().y + 10.0f * dt);
-	sprite.setRotation(sprite.getRotation() + 70.0f * dt);
-	sprite.setScale(sinf(counter));
-	sprite.setColor(Color::Red());
-
 	gom.updateActors(dt);
 
 	physics.update(dt);
@@ -35,14 +27,11 @@ void Level::composeFrame()
 
 	//physics.debugRenderBodies(window);
 
-	window.draw(sprite);
-
 	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName), 
-texture(window.getAssetManager()->getOrAddRes("ship.png")), sprite(texture)
+gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName)
 {
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
