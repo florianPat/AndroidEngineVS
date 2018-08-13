@@ -23,16 +23,6 @@ public:
 		return result;
 	}
 
-	static const Color Black() { return Color(); }
-	static const Color White() { return Color(255, 255, 255); }
-	static const Color Red() { return Color(255, 0, 0); }
-	static const Color Green() { return Color(0, 255, 0); }
-	static const Color Blue() { return Color(0, 0, 255); }
-	static const Color Yellow() { return Color(255, 255, 0);  }
-	static const Color Magenta() { return Color(255, 0, 255); }
-	static const Color Cyan() { return Color(0, 255, 255); }
-	static const Color Transparent() { return Color(0, 0, 0, 0); }
-
 	bool operator==(const Color& rhs)
 	{
 		return toInteger() == rhs.toInteger();
@@ -73,3 +63,16 @@ public:
 		return *this;
 	}*/
 };
+
+namespace Colors
+{
+	static const Color Black = Color();
+	static const Color White = Color(255, 255, 255);
+	static const Color Red = Color(255, 0, 0);
+	static const Color Green = Color(0, 255, 0);
+	static const Color Blue = Color(0, 0, 255);
+	static const Color Yellow = Color(255, 255, 0);
+	static const Color Magenta = Color(255, 0, 255);
+	static const Color Cyan = Color(0, 255, 255);
+	static const Color Transparent = Color(0, 0, 0, 0);
+}

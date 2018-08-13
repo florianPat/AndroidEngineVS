@@ -7,7 +7,8 @@ class VertexBuffer
 	GLuint rendererId;
 public:
 	VertexBuffer(const void* data, int size);
-	virtual ~VertexBuffer();
+	//NOTE: Till now no need for copy assigment / constructor
+	~VertexBuffer();
 	void bind() const;
 	void unbind() const;
 };

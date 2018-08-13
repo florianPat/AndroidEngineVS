@@ -12,6 +12,8 @@
 #include "Shader.h"
 #include "Mat4x4.h"
 #include "AssetManager.h"
+#include "RectangleShape.h"
+#include <memory>
 
 class RenderWindow
 {
@@ -25,7 +27,8 @@ class RenderWindow
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
 	TextureAssetManager assetManager;
-	Shader shader;
+	std::unique_ptr<Shader> shaderSprite = nullptr;
+	std::unique_ptr<Shader> shaderRectShape = nullptr;
 	Mat4x4 orhtoProj;
 public:
 	RenderWindow(android_app* app, int width, int height);
@@ -35,6 +38,7 @@ public:
 	void close();
 	void clear();
 	void draw(const Sprite& sprite);
+	void draw(const RectangleShape& rect);
 	void render();
 	TextureAssetManager* getAssetManager();
 private:

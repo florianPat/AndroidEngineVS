@@ -30,8 +30,6 @@ public:
 	private:
 		friend class Physics;
 
-		static constexpr float PI = 3.1415927f;
-
 		float angle;
 		Vector2f xAxis, yAxis;
 	public:

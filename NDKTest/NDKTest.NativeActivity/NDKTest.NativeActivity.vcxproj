@@ -240,6 +240,7 @@
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="RectangleShape.h" />
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shader.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainLevel.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="RectangleShape.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Shader.cpp" />

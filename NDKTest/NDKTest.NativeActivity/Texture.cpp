@@ -132,6 +132,14 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	return result;
 }
 
+Texture::~Texture()
+{
+	if (*this)
+	{
+		CallGL(glDeleteTextures(1, &texture));
+	}
+}
+
 Texture::operator bool() const
 {
 	return (width != 0);

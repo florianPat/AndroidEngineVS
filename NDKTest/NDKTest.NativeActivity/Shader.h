@@ -5,13 +5,15 @@
 #include <unordered_map>
 #include "Mat4x4.h"
 #include "android_native_app_glue.h"
+#include <vector>
 
 class Shader
 {
 public:
+	//NOTE: I just use it as a unique_ptr, because othervise copy / destructor stuff is not nice
 	Shader() = default;
-	Shader(const std::string& filename, AAssetManager* assetManager);
-	virtual ~Shader();
+	Shader(const std::string& filename, AAssetManager* assetManager, const std::vector<std::string>& attribLocs);
+	~Shader();
 
 	void bind() const;
 	void unbind() const;

@@ -25,7 +25,9 @@ void Level::composeFrame()
 	gom.sortActors();
 	gom.drawActors();
 
-	//physics.debugRenderBodies(window);
+	physics.debugRenderBodies(window);
+
+	window.draw(body);
 
 	window.render();
 }
@@ -33,6 +35,10 @@ void Level::composeFrame()
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
 gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName)
 {
+	body.setSize(Vector2f(100.0f, 100.0f));
+	body.setPosition(Vector2f(300.0f, 300.0f));
+	body.setFillColor(Colors::Yellow);
+
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
 

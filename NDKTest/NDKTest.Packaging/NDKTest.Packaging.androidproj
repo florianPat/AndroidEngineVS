@@ -119,8 +119,10 @@
     </AntPackage>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Content Include="assets\BasicShader.fs" />
-    <Content Include="assets\BasicShader.vs" />
+    <Content Include="assets\ShaderRectShape.fs" />
+    <Content Include="assets\ShaderRectShape.vs" />
+    <Content Include="assets\ShaderSprite.fs" />
+    <Content Include="assets\ShaderSprite.vs" />
     <Content Include="assets\ship.png" />
     <Content Include="res\values\strings.xml" />
     <AntBuildXml Include="build.xml" />

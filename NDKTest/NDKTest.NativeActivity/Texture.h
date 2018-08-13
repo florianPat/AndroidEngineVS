@@ -16,6 +16,7 @@ private:
 	bool loadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
 public:
 	Texture() = default;
+	~Texture();
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
 	Vector2i getSize() const { return Vector2i{ width, height }; }

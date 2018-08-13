@@ -13,7 +13,7 @@ class Sprite
 	Vector2f pos = { 0.0f, 0.0f }, org = { 0.0f, 0.0f };
 	Vector2f scl = { 1.0f, 1.0f };
 	float rot = 0.0f;
-	Color color = Color::White();
+	Color color = Colors::White;
 public:
 	Sprite() = default;
 	Sprite(const Texture* texture);
@@ -34,7 +34,9 @@ public:
 	void setScale(float factor);
 	void setScale(float factorX, float factorY);
 	void setScale(const Vector2f &factors);
+	//NOTE: Origin in -halfWidth to halfWidth space, not 0 - 1 space. Same in y
 	void setOrigin(float x, float y);
+	//NOTE: Origin in -halfWidth to halfWidth space, not 0 - 1 space. Same in y
 	void setOrigin(const Vector2f &origin);
 	const Vector2f& getPosition() const;
 	float getRotation() const;

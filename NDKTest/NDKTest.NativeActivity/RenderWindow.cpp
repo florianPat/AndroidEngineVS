@@ -106,9 +106,40 @@ void RenderWindow::draw(const Sprite & sprite)
 
 	Color c = sprite.getColor();
 
-	//shader.bind();
-	shader.setUniformMat4f("u_mvp", mvp);
-	shader.setUniform4f("u_color", c.r / 255, c.g / 255, c.b / 255, c.a / 255);
+	shaderSprite->bind();
+	shaderSprite->setUniformMat4f("u_mvp", mvp);
+	shaderSprite->setUniform4f("u_color", c.r / 255, c.g / 255, c.b / 255, c.a / 255);
+
+	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
+}
+
+void RenderWindow::draw(const RectangleShape & rect)
+{
+	float vertices[] = { -0.5f, -0.5f,
+						  0.5f, -0.5f,
+						  0.5f,  0.5f,
+						 -0.5f,  0.5f };
+
+	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
+
+	VertexBuffer vb = VertexBuffer(vertices, sizeof(vertices));
+	IndexBuffer ib = IndexBuffer(indices, arrayCount(indices));
+
+	vb.bind();
+
+	VertexLayouts va;
+	va.addAttribute(2, GL_FLOAT);
+	va.set();
+
+	ib.bind();
+
+	Mat4x4 mvp = orhtoProj * rect.getTransform();
+
+	Color c = rect.getFillColor();
+
+	shaderRectShape->bind();
+	shaderRectShape->setUniformMat4f("u_mvp", mvp);
+	shaderRectShape->setUniform4f("u_color", c.r / 255, c.g / 255, c.b / 255, c.a / 255);
 
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 }
@@ -129,6 +160,9 @@ void RenderWindow::deactivate()
 {
 	if (initFinished)
 	{
+		shaderSprite.reset();
+		shaderRectShape.reset();
+
 		stopGfx();
 		initFinished = false;
 	}
@@ -156,7 +190,8 @@ void RenderWindow::processAppEvent(int32_t command)
 				else
 				{
 					//NOTE: Init graphics things here!
-					shader = Shader("BasicShader", app->activity->assetManager);
+					shaderSprite = std::make_unique<Shader>("ShaderSprite", app->activity->assetManager, std::vector<std::string>{ "position", "texCoord" });
+					shaderRectShape = std::make_unique<Shader>("ShaderRectShape", app->activity->assetManager, std::vector<std::string>{ "position" });
 				}
 			}
 

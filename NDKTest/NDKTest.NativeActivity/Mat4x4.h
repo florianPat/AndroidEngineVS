@@ -1,17 +1,8 @@
 #pragma once
 
 #include "Vector2.h"
-
+#include "Utils.h"
 #include <math.h>
-static constexpr float PIf = 3.1415927f;
-
-static constexpr float PiOver180 = PIf / 180;
-
-inline float degreesToRadians(float degree)
-{
-	float radians = PiOver180 * degree;
-	return radians;
-}
 
 struct Mat4x4
 {
@@ -105,8 +96,8 @@ public:
 
 		if (rot != 0.0f)
 		{
-			float cosA = cosf(degreesToRadians(rot));
-			float sinA = sinf(degreesToRadians(rot));
+			float cosA = cosf(utils::degreesToRadians(rot));
+			float sinA = sinf(utils::degreesToRadians(rot));
 
 			Mat4x4 rot = identity();
 			rot.matrix[0 * 4 + 0] = cosA;

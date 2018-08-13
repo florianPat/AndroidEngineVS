@@ -8,6 +8,7 @@ class IndexBuffer
 	int count;
 public:
 	IndexBuffer(unsigned int* indices, int count);
+	//NOTE: Till now no need for copy assigment / constructor
 	~IndexBuffer();
 	void bind() const;
 	void unbind() const;

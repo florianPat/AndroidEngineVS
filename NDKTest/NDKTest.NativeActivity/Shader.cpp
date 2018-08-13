@@ -77,7 +77,7 @@ GLuint createShader(const std::string& text, GLenum shaderType)
 	return shader;
 }
 
-Shader::Shader(const std::string & filename, AAssetManager* assetManager) : uniformCache()
+Shader::Shader(const std::string & filename, AAssetManager* assetManager, const std::vector<std::string>& attribLocs) : uniformCache()
 {
 	CallGL(program = glCreateProgram());
 
@@ -89,8 +89,10 @@ Shader::Shader(const std::string & filename, AAssetManager* assetManager) : unif
 		CallGL(glAttachShader(program, shaders[i]));
 	}
 
-	CallGL(glBindAttribLocation(program, 0, "position"));
-	CallGL(glBindAttribLocation(program, 1, "texCoord"));
+	for (int i = 0; i < attribLocs.size(); ++i)
+	{
+		CallGL(glBindAttribLocation(program, i, attribLocs[i].c_str()));
+	}
 
 	CallGL(glLinkProgram(program));
 	checkShaderError(program, GL_LINK_STATUS, true, "Error: Shader program linking failed");

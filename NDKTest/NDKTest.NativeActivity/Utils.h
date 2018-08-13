@@ -23,6 +23,11 @@
 #define Megabyte(x) Kilobyte(x) * 1024ll
 #define Gigabyte(x) Megabyte(x) * 1024ll
 
+static constexpr float PIf = 3.1415927f;
+
+static constexpr float PiOver180 = PIf / 180;
+static constexpr float _180OverPi = 180 / PIf;
+
 namespace utils
 {
 	unsigned int getGUID();
@@ -30,4 +35,6 @@ namespace utils
 	DelegateFunction getDelegateFromFunction(std::function<void(EventData*)>& function);
 	std::string getWordBetweenChars(const std::string& lineContent, char first, char last);
 	float lerp(float v0, float v1, float t);
+	float degreesToRadians(float degree);
+	float radiansToDegrees(float radians);
 }
