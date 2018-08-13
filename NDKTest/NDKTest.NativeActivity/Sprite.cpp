@@ -85,6 +85,11 @@ void Sprite::setRotation(float angle)
 	rot = angle;
 }
 
+void Sprite::setScale(float factor)
+{
+	scl = { factor, factor };
+}
+
 void Sprite::setScale(float factorX, float factorY)
 {
 	scl = { factorX, factorY };
@@ -129,12 +134,13 @@ const Mat4x4 Sprite::getTransform() const
 {
 	Mat4x4 result = Mat4x4::identity();
 
-	result *= Mat4x4::scale({ getWidth(), getHeight() });
+	result *= Mat4x4::translate(pos);
+
+	result *= Mat4x4::rotate(rot);
 
 	result *= Mat4x4::translate(org);
 
-	result *= Mat4x4::rotate(rot);
-	result *= Mat4x4::translate(pos);
+	result *= Mat4x4::scale({ getWidth(), getHeight() });
 
 	return result;
 }

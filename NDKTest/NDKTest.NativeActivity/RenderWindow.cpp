@@ -83,10 +83,10 @@ void RenderWindow::draw(const Sprite & sprite)
 							 { texRectRight, texRectBottom },
 							 { texRectLeft, texRectBottom } };
 
-	float vertices[] = {0.0f, 0.0f, texCoord[0].x, texCoord[0].y,
-						1.0f, 0.0f, texCoord[1].x, texCoord[1].y,
-						1.0f, 1.0f, texCoord[2].x, texCoord[2].y,
-						0.0f, 1.0f, texCoord[3].x, texCoord[3].y };
+	float vertices[] = {-0.5f, -0.5f, texCoord[0].x, texCoord[0].y,
+						0.5f, -0.5f, texCoord[1].x, texCoord[1].y,
+						0.5f, 0.5f, texCoord[2].x, texCoord[2].y,
+						-0.5f, 0.5f, texCoord[3].x, texCoord[3].y };
 
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
