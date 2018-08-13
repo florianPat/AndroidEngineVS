@@ -126,6 +126,9 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 
 	delete[] image;
 
+	this->width = width;
+	this->height = height;
+
 	return result;
 }
 

@@ -2,8 +2,6 @@
 
 #include <string>
 #include <vector>
-#include "TextureAtlas.h"
-#include "Animation.h"
 #include "EventManager.h"
 
 #undef assert

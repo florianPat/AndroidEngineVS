@@ -71,13 +71,23 @@ void RenderWindow::draw(const Sprite & sprite)
 	const Texture* texture = sprite.getTexture();
 	assert(*texture);
 
-	CallGL(glActiveTexture(GL_TEXTURE0));
 	texture->bind();
 
-	float vertices[] = {-1.0f, -1.0f, 0.0f, 0.0f,
-						 1.0f,  -1.0f, 1.0f, 0.0f,
-						 1.0f,  1.0f, 1.0f, 1.0f,
-						-1.0f,  1.0f, 0.0f, 1.0f };
+	float texRectLeft = sprite.getTextureRect().left / texture->getWidth();
+	float texRectTop = sprite.getTextureRect().top / texture->getHeight();
+	float texRectRight = sprite.getTextureRect().getRight() / texture->getWidth();
+	float texRectBottom = sprite.getTextureRect().getBottom() / texture->getHeight();
+
+	Vector2f texCoord[4] = { { texRectLeft, texRectTop },
+							 { texRectRight, texRectTop },
+							 { texRectRight, texRectBottom },
+							 { texRectLeft, texRectBottom } };
+
+	float vertices[] = {0.0f, 0.0f, texCoord[0].x, texCoord[0].y,
+						100.0f, 0.0f, texCoord[1].x, texCoord[1].y,
+						100.0f, 100.0f, texCoord[2].x, texCoord[2].y,
+						0.0f, 100.0f, texCoord[3].x, texCoord[3].y };
+
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
 	VertexBuffer vb = VertexBuffer(vertices, sizeof(vertices));
@@ -94,10 +104,10 @@ void RenderWindow::draw(const Sprite & sprite)
 
 	Mat4x4 mvp = sprite.getTransform() * orhtoProj;
 
-	shader.setUniformMat4f("u_mvp", mvp);
-	shader.bind();
+	//shader.bind();
+	shader.setUniformMat4f("u_mvp", orhtoProj);
 
-	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, indices);
+	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 }
 
 void RenderWindow::render()

@@ -5,10 +5,10 @@ attribute vec2 texCoord;
 
 varying vec2 v_texCoord;
 
-uniform mat4 mvp;
+uniform mat4 u_mvp;
 
 void main()
 {
 	v_texCoord = texCoord;
-	gl_Position = mvp * vec4(position, 1.0, 1.0);
+	gl_Position = u_mvp * vec4(position, 1.0, 1.0);
 }

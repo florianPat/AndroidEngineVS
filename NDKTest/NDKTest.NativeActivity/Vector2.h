@@ -7,9 +7,9 @@ public:
 	Vector2() = default;
 	Vector2(T x, T y) : x(x), y(y) {}
 	//Vector2(const Vector2& vect) : Vector2(vect.x, vect.y) {}
-	
+
 	template <typename T2>
-	explicit operator Vector2<T2>() const
+	explicit operator Vector2<T2>()
 	{
 		return{ (T2)x,(T2)y };
 	}

@@ -218,7 +218,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 					Texture* source = currentLayer.tiles[mapWidth * y + x].source;
 					if (source == nullptr)
 						continue;
-					Sprite sprite(*source);
+					Sprite sprite(source);
 					sprite.setPosition((float)x * tileWidth, (float)y * tileHeight);
 
 					if(toGameObjects.empty())
@@ -244,7 +244,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 		}
 		texture.display();
 
-		textureSprite = Sprite(texture.getTexture());
+		textureSprite = Sprite(&texture.getTexture());
 	}
 	else
 	{

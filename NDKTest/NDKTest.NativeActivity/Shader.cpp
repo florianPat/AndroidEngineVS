@@ -90,6 +90,7 @@ Shader::Shader(const std::string & filename, AAssetManager* assetManager) : unif
 	}
 
 	CallGL(glBindAttribLocation(program, 0, "position"));
+	CallGL(glBindAttribLocation(program, 1, "texCoord"));
 
 	CallGL(glLinkProgram(program));
 	checkShaderError(program, GL_LINK_STATUS, true, "Error: Shader program linking failed");
@@ -146,6 +147,7 @@ int Shader::getUniformLoc(const std::string & var)
 	{
 		GLint loc = 0;
 		CallGL(loc = glGetUniformLocation(program, var.c_str()));
+		assert(loc != -1);
 		uniformCache.emplace(std::make_pair<>(var, loc));
 		return loc;
 	}

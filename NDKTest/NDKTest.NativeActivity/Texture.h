@@ -7,12 +7,15 @@
 
 class Texture
 {
+	friend class TextureAssetManager;
+
 	int width = 0;
 	int height = 0;
 	GLuint texture = 0;
+private:
+	bool loadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
 public:
 	Texture() = default;
-	bool loadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
 	Vector2i getSize() const { return Vector2i{ width, height }; }

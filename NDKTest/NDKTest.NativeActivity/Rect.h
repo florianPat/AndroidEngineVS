@@ -30,7 +30,6 @@ public:
 	{
 		return p.top >= top && p.getBottom() <= getBottom() && p.left >= left && p.getRight() <= getRight();
 	}
-private:
 	inline T getBottom() const
 	{
 		return top + height;

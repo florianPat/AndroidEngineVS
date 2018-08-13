@@ -5,24 +5,27 @@
 #include "Rect.h"
 #include "Mat4x4.h"
 
-//TODO: Texture Rect!!
-
 class Sprite
 {
 	const Texture* texture = nullptr;
 	IntRect rect;
-	Vector2f pos, org;
+	Vector2f pos = { 0.0f, 0.0f }, org = { 0.0f, 0.0f };
 	Vector2f scl = { 1.0f, 1.0f };
-	float rot;
+	float rot = 0.0f;
 public:
 	Sprite() = default;
-	Sprite(const Texture& texture);
-	Sprite(const Texture& texture, const IntRect& rect);
-	void setTexture(const Texture& texture, bool resetRect = false);
+	Sprite(const Texture* texture);
+	Sprite(const Texture* texture, const IntRect& rect);
+	void setTexture(const Texture* texture, bool resetRect = false);
+	//NOTE: Texture rect in texture widht/height "space". Not 0 - 1 space!!
 	void setTextureRect(const IntRect& rect);
 	const Texture* getTexture() const;
+	//NOTE: Texture rect in texture widht/height "space". Not 0 - 1 space!!
 	const IntRect& getTextureRect() const;
 	FloatRect getGlobalBounds() const;
+	Vector2f getSize() const;
+	float getWidth() const;
+	float getHeight() const;
 	void setPosition(float x, float y);
 	void setPosition(const Vector2f &position);
 	void setRotation(float angle);

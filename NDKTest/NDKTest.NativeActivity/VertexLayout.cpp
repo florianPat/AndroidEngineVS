@@ -1,6 +1,7 @@
 #include "VertexLayout.h"
 #include "Utils.h"
 #include "GLUtils.h"
+#include <GLES2/gl2.h>
 
 int VertexLayouts::sizeofType(GLenum type) const
 {

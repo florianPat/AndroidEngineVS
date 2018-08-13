@@ -27,11 +27,14 @@ void Level::composeFrame()
 
 	//physics.debugRenderBodies(window);
 
+	window.draw(sprite);
+
 	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName)
+gom(), clock(), eventManager(), /*map(tiledMapName, gom, eventManager, window),*/ levelName(tiledMapName), 
+texture(window.getAssetManager()->getOrAddRes("ship.png")), sprite(texture)
 {
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

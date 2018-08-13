@@ -1,18 +1,20 @@
 #include "Sprite.h"
-
+#include "Utils.h"
 #include "Mat4x4.h"
 
-Sprite::Sprite(const Texture & texture) : texture(&texture), rect(0, 0, texture.getWidth(), texture.getHeight())
+Sprite::Sprite(const Texture* texture) : texture(texture), rect(0, 0, texture->getWidth(), texture->getHeight())
 {
 }
 
-Sprite::Sprite(const Texture & texture, const IntRect & rect) : texture(&texture), rect(rect)
+Sprite::Sprite(const Texture* texture, const IntRect & rect) : texture(texture), rect(rect)
 {
 }
 
-void Sprite::setTexture(const Texture & textureIn, bool resetRect)
+void Sprite::setTexture(const Texture* textureIn, bool resetRect)
 {
-	texture = &textureIn;
+	assert(texture != nullptr);
+	assert(*textureIn);
+	texture = textureIn;
 	if (resetRect)
 	{
 		rect = { 0, 0, texture->getWidth(), texture->getHeight() };
@@ -21,6 +23,10 @@ void Sprite::setTexture(const Texture & textureIn, bool resetRect)
 
 void Sprite::setTextureRect(const IntRect & rectIn)
 {
+	assert(rectIn.left >= 0);
+	assert(rectIn.top >= 0);
+	assert(rectIn.getRight() <= texture->getWidth());
+	assert(rectIn.getBottom() <= texture->getHeight());
 	rect = rectIn;
 }
 
@@ -36,8 +42,8 @@ const IntRect & Sprite::getTextureRect() const
 
 FloatRect Sprite::getGlobalBounds() const
 {
-	float halfWidth = texture->getWidth() / 2.0f;
-	float halfHeight = texture->getHeight() / 2.0f;
+	float halfWidth = (rect.getRight() - rect.left) / 2.0f;
+	float halfHeight = (rect.getBottom() - rect.top) / 2.0f;
 
 	auto transform = getTransform();
 
@@ -47,6 +53,21 @@ FloatRect Sprite::getGlobalBounds() const
 	FloatRect result = FloatRect(leftTop.x, leftTop.y, (rightBottom.x - leftTop.x), (rightBottom.y - leftTop.y));
 
 	return result;
+}
+
+Vector2f Sprite::getSize() const
+{
+	return Vector2f{ getWidth(), getHeight() };
+}
+
+float Sprite::getWidth() const
+{
+	return (rect.getRight() - rect.left) * scl.x;
+}
+
+float Sprite::getHeight() const
+{
+	return (rect.getBottom() - rect.top) * scl.y;
 }
 
 void Sprite::setPosition(float x, float y)
@@ -106,13 +127,14 @@ const Vector2f & Sprite::getOrigin() const
 
 const Mat4x4 Sprite::getTransform() const
 {
-	Mat4x4 result;
+	Mat4x4 result = Mat4x4::identity();
 
-	result.translate(org);
+	result *= Mat4x4::scale({ getWidth(), getHeight() });
 
-	result.scale(scl);
-	result.rotate(rot);
-	result.translate(pos);
+	result *= Mat4x4::translate(org);
+
+	result *= Mat4x4::rotate(rot);
+	result *= Mat4x4::translate(pos);
 
 	return result;
 }
