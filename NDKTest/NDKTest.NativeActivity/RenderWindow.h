@@ -33,8 +33,6 @@ class RenderWindow
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
 	View view;
 	Mat4x4 orhtoProj;
-	int width = 0;
-	int height = 0;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();

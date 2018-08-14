@@ -12,6 +12,7 @@
 class RenderTexture
 {
 	GLuint renderTexture;
+	GLint screenTexture;
 	Texture texture;
 	Mat4x4 orhtoProj;
 	Shader* shaderSprite = nullptr;

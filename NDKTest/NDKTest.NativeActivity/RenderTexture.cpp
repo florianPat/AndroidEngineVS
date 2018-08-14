@@ -11,6 +11,8 @@ bool RenderTexture::create(uint width, uint height, Shader* shaderSpriteIn, floa
 	windowWidth = windowWidthIn;
 	windowHeight = windowHeightIn;
 
+	CallGL(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &screenTexture));
+
 	CallGL(glGenFramebuffers(1, &renderTexture));
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, renderTexture));
 
@@ -35,7 +37,9 @@ bool RenderTexture::create(uint width, uint height, Shader* shaderSpriteIn, floa
 	CallGL(result = glCheckFramebufferStatus(GL_FRAMEBUFFER));
 	assert(result == GL_FRAMEBUFFER_COMPLETE);
 
-	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	CallGL(glBindTexture(GL_TEXTURE_2D, 0));
+
+	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, screenTexture));
 
 	return true;
 }
@@ -44,10 +48,14 @@ void RenderTexture::clear()
 {
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, renderTexture));
 
+	CallGL(glViewport(0, 0, texture.width, texture.height));
+
 	CallGL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	CallGL(glClear(GL_COLOR_BUFFER_BIT));
 
-	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, screenTexture));
+
+	CallGL(glViewport(0, 0, windowWidth, windowWidth));
 }
 
 const Texture & RenderTexture::getTexture() const
@@ -111,7 +119,7 @@ void RenderTexture::draw(const Sprite & sprite)
 
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 
-	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, screenTexture));
 
 	CallGL(glViewport(0, 0, windowWidth, windowWidth));
 }

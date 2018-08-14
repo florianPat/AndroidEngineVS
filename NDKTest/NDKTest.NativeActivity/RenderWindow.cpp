@@ -14,8 +14,7 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
-																	   width(width), height(height)
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -201,12 +200,12 @@ View & RenderWindow::getDefaultView()
 
 int RenderWindow::getWdith() const
 {
-	return width;
+	return renderWidth;
 }
 
 int RenderWindow::getHeight() const
 {
-	return height;
+	return renderHeight;
 }
 
 void RenderWindow::deactivate()
@@ -380,6 +379,7 @@ bool RenderWindow::startGfx()
 	}
 
 	CallGL(glViewport(0, 0, renderWidth, renderHeight));
+
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));
 	CallGL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));

@@ -10,6 +10,7 @@
 #include "Clock.h"
 #include "Sprite.h"
 #include "CircleShape.h"
+#include "Texture.h"
 
 class Level
 {
