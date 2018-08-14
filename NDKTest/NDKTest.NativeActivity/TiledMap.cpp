@@ -1,5 +1,5 @@
 #include "TiledMap.h"
-#include <fstream>
+#include "Ifstream.h"
 #include <stdlib.h>
 #include "Utils.h"
 #include "TiledMapRenderComponent.h"
@@ -7,22 +7,22 @@
 TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
-	std::ifstream file;
+	Ifstream file(assetManager->getAAssetManager());
 	file.open(filepath);
 
-	if (!file.good())
+	if (!file)
 	{
 		utilsLogBreak("Cant open file!");
 	}
 
 	std::string temp;
-	std::getline(file, temp);
+	file.getline(temp);
 
 	if (!file.eof())
 	{
 		std::string lineContent;
-		std::getline(file, lineContent);
-
+		file.getline(lineContent);
+		assert(utils::isWordInLine("<map", lineContent));
 
 		if (!utils::isWordInLine("orthogonal", lineContent))
 		{
@@ -136,7 +136,7 @@ std::string TiledMap::getLineContentBetween(std::string & lineContent, const std
 		return result;
 }
 
-void TiledMap::ParseLayer(std::ifstream & file, std::string& lineContent)
+void TiledMap::ParseLayer(Ifstream & file, std::string& lineContent)
 {
 	while (utils::isWordInLine("<layer", lineContent))
 	{
@@ -148,13 +148,13 @@ void TiledMap::ParseLayer(std::ifstream & file, std::string& lineContent)
 
 		auto currentLayer = layers.find(layerName);
 
-		std::getline(file, lineContent); //  <data encoding="csv">
+		file.getline(lineContent); //  <data encoding="csv">
 		if (!utils::isWordInLine("csv", lineContent))
 		{
 			utilsLogBreak("Maps encoding has to be \"csv\"");
 		}
 
-		std::getline(file, lineContent); //Begin of encoding
+		file.getline(lineContent); //Begin of encoding
 
 		for (int y = 0; y < layerHeight; ++y)
 		{
@@ -169,24 +169,28 @@ void TiledMap::ParseLayer(std::ifstream & file, std::string& lineContent)
 					nextTile = tiles.find(nextTileId)->second;
 				currentLayer->second.tiles.push_back(nextTile);
 			}
-			std::getline(file, lineContent);
+			file.getline(lineContent);
 		}
-		std::getline(file, lineContent); // </layer>
-		std::getline(file, lineContent); //Maybe new <layer>
+		assert(utils::isWordInLine("</data>", lineContent));
+		file.getline(lineContent); // </layer>
+		assert(utils::isWordInLine("</layer>", lineContent));
+		file.getline(lineContent); //Maybe new <layer>
 	}
 }
 
-void TiledMap::ParseObjectGroups(std::ifstream & file, std::string & lineContent)
+void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 {
 	//ObjectGroup
 	while (utils::isWordInLine("<objectgroup", lineContent))
 	{
 		std::string objectGroupName = getLineContentBetween(lineContent, "name", '"');
-		std::getline(file, lineContent);
+		file.getline(lineContent);
 
 		std::vector<Physics::Collider> objectVector;
 		while (!utils::isWordInLine("</objectgroup>", lineContent))
 		{
+			assert(utils::isWordInLine("<object", lineContent));
+
 			int x = atoi(getLineContentBetween(lineContent, "x", '"').c_str());
 			int y = atoi(getLineContentBetween(lineContent, "y", '"').c_str());
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
@@ -194,17 +198,17 @@ void TiledMap::ParseObjectGroups(std::ifstream & file, std::string & lineContent
 
 			objectVector.push_back(FloatRect((float)x, (float)y, (float)width, (float)height));
 
-			std::getline(file, lineContent);
+			file.getline(lineContent);
 		}
 		objectGroups.emplace(objectGroupName, ObjectGroup{ objectGroupName, objectVector });
 
-		std::getline(file, lineContent);
+		file.getline(lineContent);
 	}
 }
 
 void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
-	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight))
+	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader()))
 	{
 		texture.clear();
 
@@ -252,13 +256,18 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 	}
 }
 
-std::string TiledMap::ParseTiles(std::ifstream & file)
+std::string TiledMap::ParseTiles(Ifstream & file)
 {
 	std::string lineContent;
-	std::getline(file, lineContent);
+	file.getline(lineContent);
 
+	bool gridInFile = false;
 	std::string temp;
-	std::getline(file, temp); // <grid...
+	file.getline(temp); // <grid...
+	if (utils::isWordInLine("<grid", temp))
+	{
+		gridInFile = true;
+	}
 
 	while (utils::isWordInLine("<tileset", lineContent))
 	{
@@ -266,19 +275,32 @@ std::string TiledMap::ParseTiles(std::ifstream & file)
 		int tileCount = atoi(getLineContentBetween(lineContent, "tilecount", '"').c_str());
 		for (int i = 0; i < tileCount; ++i)
 		{
-			std::getline(file, lineContent);
+			if (gridInFile)
+			{
+				file.getline(lineContent);
+			}
+			else
+			{
+				lineContent = temp;
+				//NOTE: Just set it here, because in the next it`s it will get the next line
+				gridInFile = true;
+			}
+			assert(utils::isWordInLine("<tile", lineContent));
 			int id = atoi(getLineContentBetween(lineContent, "id", '"').c_str()) + firstgrid;
 
-			std::getline(file, lineContent);
+			file.getline(lineContent);
+			assert(utils::isWordInLine("<image", lineContent));
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 			std::string source = getLineContentBetween(lineContent, "source", '"');
 			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes(source) });
 
-			std::getline(file, lineContent); //</tile>
+			file.getline(lineContent); //</tile>
+			assert(utils::isWordInLine("</tile>", lineContent));
 		}
-		std::getline(file, lineContent); //</tileset>
-		std::getline(file, lineContent); //Maybe new <tileset>...
+		file.getline(lineContent); //</tileset>
+		assert(utils::isWordInLine("</tileset>", lineContent));
+		file.getline(lineContent); //Maybe new <tileset>...
 	}
 
 	return lineContent;

@@ -1,29 +1,29 @@
 #include "TextureAtlas.h"
-#include <fstream>
+#include "Ifstream.h"
 #include <stdlib.h>
 #include "Utils.h"
 #include "Rect.h"
 
 TextureAtlas::TextureAtlas(const std::string& filepath, TextureAssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
 {
-	std::ifstream file;
+	Ifstream file(assetManager->getAAssetManager());
 	file.open(filepath);
 
-	if (!file.good())
+	if (!file)
 	{
 		utilsLogBreak("Cant open file!");
 	}
 
 	std::string tempString;
 
-	std::getline(file, tempString);
+	file.getline(tempString);
 
 	if (!file.eof())
 	{
 		for (int i = 0; i < FILE_HEADER_LINE_SIZE; ++i)
 		{
 			std::string lineContent;
-			std::getline(file, lineContent);
+			file.getline(lineContent);
 
 			switch (i)
 			{
@@ -87,7 +87,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, TextureAssetManager* ass
 			}
 
 			std::string lineContent;
-			std::getline(file, lineContent);
+			file.getline(lineContent);
 
 			switch (i)
 			{

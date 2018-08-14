@@ -391,6 +391,11 @@ void RenderWindow::stopGfx()
 	}
 }
 
+Shader * RenderWindow::getSpriteShader() const
+{
+	return shaderSprite.get();
+}
+
 //GLuint RenderWindow::compileShader(const std::string& shaderFilename, const GLuint type)
 //{
 //	GLint result;

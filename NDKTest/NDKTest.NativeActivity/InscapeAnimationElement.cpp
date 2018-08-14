@@ -1,11 +1,13 @@
 #include "InscapeAnimationElement.h"
 #include "Utils.h"
-#include <fstream>
+#include "Ifstream.h"
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames) : elementMap()
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, TextureAssetManager* assetManager)
+	: elementMap()
 {
-	std::ifstream file(inkscapeFileName);
-	assert(file.good());
+	Ifstream file(assetManager->getAAssetManager());
+	file.open(inkscapeFileName);
+	assert(file);
 
 	std::string lineContent;
 
@@ -20,22 +22,22 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 			utilsLogBreak("There is an element outside a group!!");
 		}
 
-		std::getline(file, lineContent);
+		file.getline(lineContent);
 
 		while (FindGroupLayer(lineContent))
 		{
-			std::getline(file, lineContent);
+			file.getline(lineContent);
 		}
 
-		for (std::getline(file, lineContent); lineContent.find("<g") != std::string::npos; std::getline(file, lineContent))
+		for (file.getline(lineContent); lineContent.find("<g") != std::string::npos; file.getline(lineContent))
 		{
-			std::getline(file, lineContent); //<g
+			file.getline(lineContent); //<g
 			std::string groupId;
 			std::map<std::string, IntRect> rectMap;
 			Vector2i translationVec = { 0, 0 };
 			Vector2i scalingVec = { 1, 1 };
 			bool shouldAdd = true;
-			for (; shouldAdd && lineContent.find("</g>") == std::string::npos; std::getline(file, lineContent))
+			for (; shouldAdd && lineContent.find("</g>") == std::string::npos; file.getline(lineContent))
 			{
 				if (lineContent.find("id") != std::string::npos)
 				{
@@ -65,7 +67,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 					Vector2i beforeTranslationVec = translationVec;
 					Vector2i beforeScalingVec = scalingVec;
 
-					for (std::getline(file, lineContent); shouldAdd; std::getline(file, lineContent))
+					for (file.getline(lineContent); shouldAdd; file.getline(lineContent))
 					{
 						if (lineContent.find("x") != std::string::npos)
 						{
@@ -160,12 +162,12 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 						scalingVec = beforeScalingVec;
 						translationVec = beforeTranslationVec;
 
-						for (; lineContent.find("/>") == std::string::npos; std::getline(file, lineContent));
+						for (; lineContent.find("/>") == std::string::npos; file.getline(lineContent));
 					}
 				}
 				else if (lineContent.find("<") != std::string::npos)
 				{
-					for (std::getline(file, lineContent); lineContent.find("/>") == std::string::npos; std::getline(file, lineContent));
+					for (file.getline(lineContent); lineContent.find("/>") == std::string::npos; file.getline(lineContent));
 				}
 				else if (lineContent.find("transform") != std::string::npos)
 				{
@@ -181,7 +183,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 				}
 			}
 
-			for (; lineContent.find("</g>") == std::string::npos; std::getline(file, lineContent));
+			for (; lineContent.find("</g>") == std::string::npos; file.getline(lineContent));
 
 			if (!rectMap.empty())
 			{
@@ -219,7 +221,8 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 	}
 }
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName) : InkscapeAnimationElement(inkscapeFileName, { "Process all groups" })
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName, TextureAssetManager* assetManager) 
+	: InkscapeAnimationElement(inkscapeFileName, { "Process all groups" }, assetManager)
 {
 }
 

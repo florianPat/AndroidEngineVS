@@ -19,4 +19,5 @@ public:
 	bool unloadNotUsedRes(const std::string& filename);
 	void clear();
 	bool isLoaded(const std::string& filename);
+	AAssetManager* getAAssetManager();
 };

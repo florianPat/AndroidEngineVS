@@ -7,6 +7,7 @@
 #include "GameObjectManager.h"
 #include "RenderTexture.h"
 #include "AssetManager.h"
+#include "Ifstream.h"
 
 class TiledMap
 {
@@ -34,7 +35,7 @@ class TiledMap
 
 	RenderTexture texture;
 	Sprite textureSprite;
-	TextureAssetManager* assetManager;
+	TextureAssetManager* assetManager = nullptr;
 public:
 	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects = std::vector<std::string>{});
 	std::vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);
@@ -44,8 +45,8 @@ private:
 	size_t getEndOfWord(const std::string& word, const std::string& lineContent, bool* result);
 	std::string getLineContentBetween(std::string& lineContent, const std::string& endOfFirst, char secound);
 
-	std::string ParseTiles(std::ifstream& file);
-	void ParseLayer(std::ifstream& file, std::string& lineContent);
-	void ParseObjectGroups(std::ifstream& file, std::string& lineContent);
+	std::string ParseTiles(Ifstream& file);
+	void ParseLayer(Ifstream& file, std::string& lineContent);
+	void ParseObjectGroups(Ifstream& file, std::string& lineContent);
 	void MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
 };

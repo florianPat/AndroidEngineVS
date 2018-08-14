@@ -119,11 +119,26 @@
     </AntPackage>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Content Include="assets\assetsRaw\64x64\Brick1.png" />
+    <Content Include="assets\assetsRaw\64x64\Brick2.png" />
+    <Content Include="assets\assetsRaw\64x64\Brick3.png" />
+    <Content Include="assets\assetsRaw\64x64\Brick4.png" />
+    <Content Include="assets\assetsRaw\64x64\Key.png" />
+    <Content Include="assets\assetsRaw\64x64\Schalter.png" />
+    <Content Include="assets\assetsRaw\64x64\Truhe.png" />
+    <Content Include="assets\assetsRaw\nicht64x64\Diamond.png" />
+    <Content Include="assets\assetsRaw\nicht64x64\fackel.png" />
+    <Content Include="assets\assetsRaw\player\PlayerIdel.png" />
+    <Content Include="assets\assetsRaw\player\PlayerJump.png" />
+    <Content Include="assets\assetsRaw\player\PlayerWalk1.png" />
+    <Content Include="assets\assetsRaw\player\PlayerWalk2.png" />
     <Content Include="assets\ShaderRectShape.fs" />
     <Content Include="assets\ShaderRectShape.vs" />
     <Content Include="assets\ShaderSprite.fs" />
     <Content Include="assets\ShaderSprite.vs" />
     <Content Include="assets\ship.png" />
+    <Content Include="assets\testLevel.tmx" />
+    <Content Include="assets\Truhe.png" />
     <Content Include="res\values\strings.xml" />
     <AntBuildXml Include="build.xml" />
     <AndroidManifest Include="AndroidManifest.xml" />

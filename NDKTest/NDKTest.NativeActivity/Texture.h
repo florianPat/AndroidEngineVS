@@ -8,6 +8,7 @@
 class Texture
 {
 	friend class TextureAssetManager;
+	friend class RenderTexture;
 
 	int width = 0;
 	int height = 0;

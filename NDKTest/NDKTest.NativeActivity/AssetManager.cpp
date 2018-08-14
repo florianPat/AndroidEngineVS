@@ -64,3 +64,8 @@ bool TextureAssetManager::isLoaded(const std::string & filename)
 	auto i = ressourceCache.find(filename);
 	return i != ressourceCache.end();
 }
+
+AAssetManager * TextureAssetManager::getAAssetManager()
+{
+	return aassetManager;
+}

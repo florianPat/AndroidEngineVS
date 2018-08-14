@@ -49,4 +49,8 @@ private:
 	static void AppEventCallback(android_app* app, int32_t command);
 	bool startGfx();
 	void stopGfx();
+private:
+	friend class TiledMap;
+	//NOTE: Only for TiledMap
+	Shader* getSpriteShader() const;
 };

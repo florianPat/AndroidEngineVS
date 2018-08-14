@@ -19,7 +19,7 @@ protected:
 	GameObjectManager gom;
 	Clock clock;
 	EventManager eventManager;
-	//TiledMap map;
+	TiledMap map;
 
 	std::string levelName;
 
