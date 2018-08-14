@@ -15,6 +15,8 @@ void Level::updateModel()
 	gom.updateActors(dt);
 
 	physics.update(dt);
+
+	window.getDefaultView().setCenter(window.getDefaultView().getCenter() + Vector2f{50.0f * dt, 0.0f});
 }
 
 void Level::composeFrame()

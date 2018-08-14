@@ -15,6 +15,7 @@
 #include "RectangleShape.h"
 #include <memory>
 #include "CircleShape.h"
+#include "View.h"
 
 class RenderWindow
 {
@@ -30,6 +31,7 @@ class RenderWindow
 	TextureAssetManager assetManager;
 	std::unique_ptr<Shader> shaderSprite = nullptr;
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
+	View view;
 	Mat4x4 orhtoProj;
 public:
 	RenderWindow(android_app* app, int width, int height);
@@ -43,6 +45,7 @@ public:
 	void draw(const CircleShape& circle);
 	void render();
 	TextureAssetManager* getAssetManager();
+	View& getDefaultView();
 private:
 	void deactivate();
 	void processAppEvent(int32_t command);

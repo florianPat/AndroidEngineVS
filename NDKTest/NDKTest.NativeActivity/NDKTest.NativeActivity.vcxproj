@@ -256,6 +256,7 @@
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexLayout.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -288,6 +289,7 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexLayout.cpp" />
+    <ClCompile Include="View.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,7 +14,7 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-												orhtoProj(Mat4x4::orthoProj(-1.0f, 1.0f, 0.0f, 0.0f, (float)renderWidth, (float)renderHeight))
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -183,11 +183,19 @@ void RenderWindow::render()
 	EGLBoolean result;
 	CallGL((result = eglSwapBuffers(display, surface)));
 	assert(result == EGL_TRUE);
+
+	if (view.updated())
+		orhtoProj = view.getOrthoProj();
 }
 
 TextureAssetManager * RenderWindow::getAssetManager()
 {
 	return &assetManager;
+}
+
+View & RenderWindow::getDefaultView()
+{
+	return view;
 }
 
 void RenderWindow::deactivate()
