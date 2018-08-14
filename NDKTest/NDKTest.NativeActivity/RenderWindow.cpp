@@ -1,5 +1,5 @@
 #include "RenderWindow.h"
-
+#include "TouchInput.h"
 #include "Utils.h"
 #include "Types.h"
 #include "Utils.h"
@@ -12,18 +12,87 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 	renderWindow.processAppEvent(command);
 }
 
+int RenderWindow::processInputEvent(AInputEvent * event)
+{
+	if (!initFinished)
+		return 0;
+
+	int eventType = AInputEvent_getType(event);
+
+	switch (eventType)
+	{
+		case AINPUT_EVENT_TYPE_MOTION:
+		{
+			int source = AInputEvent_getSource(event);
+			switch (source)
+			{
+				case AINPUT_SOURCE_TOUCHSCREEN:
+				{
+					int action = AMotionEvent_getAction(event);
+					if (action == AMOTION_EVENT_ACTION_MOVE || action == AMOTION_EVENT_ACTION_DOWN)
+					{
+						//Needs conversion because coord system is from topLeft, but game uses bottomLeft
+						float x = AMotionEvent_getX(event, 0);
+						float y = AMotionEvent_getY(event, 0) - renderHeight;
+
+						TouchInput::setPosition(x, y);
+						TouchInput::setTouched(true);
+					}
+					else if (action == AMOTION_EVENT_ACTION_UP)
+					{
+						float x = AMotionEvent_getX(event, 0);
+						float y = AMotionEvent_getY(event, 0) - renderHeight;
+
+						TouchInput::setPosition(x, y);
+						TouchInput::setTouched(true);
+						TouchInput::setShouldUp(true);
+					}
+					else if (action == AMOTION_EVENT_ACTION_CANCEL)
+					{
+						TouchInput::setTouched(false);
+					}
+				}
+				default:
+				{
+					break;
+				}
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+
+	return 0;
+}
+
+int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
+{
+	RenderWindow& renderWindow = *(RenderWindow*)app->userData;
+	return renderWindow.processInputEvent(event);
+}
+
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
 																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
+	app->onInputEvent = InputEventCallback;
 
 	processEvents();
 }
 
 void RenderWindow::processEvents()
 {
+	if (TouchInput::getShouldUp())
+	{
+		TouchInput::setShouldUp(false);
+		TouchInput::setTouched(false);
+	}
+
 	int32_t events;
 	android_poll_source* source;
 

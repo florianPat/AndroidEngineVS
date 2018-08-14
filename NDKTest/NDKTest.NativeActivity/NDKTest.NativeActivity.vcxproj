@@ -251,6 +251,7 @@
     <ClInclude Include="TiledMap.h" />
     <ClInclude Include="TiledMapRenderComponent.h" />
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="TouchInput.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector2.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="TextureAtlas.cpp" />
     <ClCompile Include="TiledMap.cpp" />
     <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="TouchInput.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexLayout.cpp" />

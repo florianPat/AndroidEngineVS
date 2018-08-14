@@ -54,6 +54,8 @@ private:
 	void deactivate();
 	void processAppEvent(int32_t command);
 	static void AppEventCallback(android_app* app, int32_t command);
+	int processInputEvent(AInputEvent* event);
+	static int InputEventCallback(android_app* app, AInputEvent* event);
 	bool startGfx();
 	void stopGfx();
 private:
