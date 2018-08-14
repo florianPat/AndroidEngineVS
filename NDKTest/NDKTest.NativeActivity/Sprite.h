@@ -34,9 +34,9 @@ public:
 	void setScale(float factor);
 	void setScale(float factorX, float factorY);
 	void setScale(const Vector2f &factors);
-	//NOTE: Origin in -halfWidth to halfWidth space, not 0 - 1 space. Same in y
+	//NOTE: Origin in texture widht/height "space". Not 0 - 1 space!!
 	void setOrigin(float x, float y);
-	//NOTE: Origin in -halfWidth to halfWidth space, not 0 - 1 space. Same in y
+	//NOTE: Origin in texture widht/height "space". Not 0 - 1 space!!
 	void setOrigin(const Vector2f &origin);
 	const Vector2f& getPosition() const;
 	float getRotation() const;

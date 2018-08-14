@@ -14,7 +14,8 @@ void RenderWindow::AppEventCallback(android_app * app, int32_t command)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
+																	   width(width), height(height)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -83,10 +84,10 @@ void RenderWindow::draw(const Sprite & sprite)
 							 { texRectRight, texRectBottom },
 							 { texRectLeft, texRectBottom } };
 
-	float vertices[] = {-0.5f, -0.5f, texCoord[0].x, texCoord[0].y,
-						0.5f, -0.5f, texCoord[1].x, texCoord[1].y,
-						0.5f, 0.5f, texCoord[2].x, texCoord[2].y,
-						-0.5f, 0.5f, texCoord[3].x, texCoord[3].y };
+	float vertices[] = {0.0f, 0.0f, texCoord[0].x, texCoord[0].y,
+						1.0f, 0.0f, texCoord[1].x, texCoord[1].y,
+						1.0f, 1.0f, texCoord[2].x, texCoord[2].y,
+						0.0f, 1.0f, texCoord[3].x, texCoord[3].y };
 
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
@@ -115,10 +116,10 @@ void RenderWindow::draw(const Sprite & sprite)
 
 void RenderWindow::draw(const RectangleShape & rect)
 {
-	float vertices[] = { -0.5f, -0.5f,
-						  0.5f, -0.5f,
-						  0.5f,  0.5f,
-						 -0.5f,  0.5f };
+	float vertices[] = { 0.0f, 0.0f,
+						 1.0f, 0.0f,
+						 1.0f, 1.0f,
+						 0.0f, 1.0f };
 
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
@@ -196,6 +197,16 @@ TextureAssetManager * RenderWindow::getAssetManager()
 View & RenderWindow::getDefaultView()
 {
 	return view;
+}
+
+int RenderWindow::getWdith() const
+{
+	return width;
+}
+
+int RenderWindow::getHeight() const
+{
+	return height;
 }
 
 void RenderWindow::deactivate()

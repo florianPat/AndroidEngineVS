@@ -44,7 +44,7 @@ Mat4x4 View::getOrthoProj() const
 {
 	float halfWidth = width / 2.0f;
 	float halfHeight = height / 2.0f;
-	return Mat4x4::orthoProj(-1.0f, 1.0f, center.x - halfWidth, center.y - halfWidth, center.x + halfWidth, center.y + halfHeight);
+	return Mat4x4::orthoProj(-1.0f, 1.0f, center.x - halfWidth, center.y - halfHeight, center.x + halfWidth, center.y + halfHeight);
 }
 
 bool View::updated()

@@ -33,6 +33,8 @@ class RenderWindow
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
 	View view;
 	Mat4x4 orhtoProj;
+	int width = 0;
+	int height = 0;
 public:
 	RenderWindow(android_app* app, int width, int height);
 	void processEvents();
@@ -46,6 +48,10 @@ public:
 	void render();
 	TextureAssetManager* getAssetManager();
 	View& getDefaultView();
+	int getWdith() const;
+	int getHeight() const;
+
+	Shader* getSpriteShader() const;
 private:
 	void deactivate();
 	void processAppEvent(int32_t command);
@@ -55,5 +61,4 @@ private:
 private:
 	friend class TiledMap;
 	//NOTE: Only for TiledMap
-	Shader* getSpriteShader() const;
 };

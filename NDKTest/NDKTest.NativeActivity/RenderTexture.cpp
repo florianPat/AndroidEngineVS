@@ -5,9 +5,11 @@
 #include "VertexLayout.h"
 #include "IndexBuffer.h"
 
-bool RenderTexture::create(uint width, uint height, Shader* shaderSpriteIn)
+bool RenderTexture::create(uint width, uint height, Shader* shaderSpriteIn, float windowWidthIn, float windowHeightIn)
 {
 	shaderSprite = shaderSpriteIn;
+	windowWidth = windowWidthIn;
+	windowHeight = windowHeightIn;
 
 	CallGL(glGenFramebuffers(1, &renderTexture));
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, renderTexture));
@@ -27,7 +29,7 @@ bool RenderTexture::create(uint width, uint height, Shader* shaderSpriteIn)
 	
 	texture.width = width;
 	texture.height = height;
-	orhtoProj = Mat4x4::orthoProj(-1.0f, 1.0f, 0.0f, 0.0f, (float)texture.width, (float)texture.height);
+	orhtoProj = Mat4x4::orthoProj(-1.0f, 1.0f, 0.0f, 0.0f, width, height);
 
 	GLenum result;
 	CallGL(result = glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -61,6 +63,8 @@ void RenderTexture::draw(const Sprite & sprite)
 {
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, renderTexture));
 
+	CallGL(glViewport(0, 0, texture.width, texture.height));
+
 	const Texture* texture = sprite.getTexture();
 	assert(*texture);
 
@@ -76,10 +80,10 @@ void RenderTexture::draw(const Sprite & sprite)
 	{ texRectRight, texRectBottom },
 	{ texRectLeft, texRectBottom } };
 
-	float vertices[] = { -0.5f, -0.5f, texCoord[0].x, texCoord[0].y,
-		0.5f, -0.5f, texCoord[1].x, texCoord[1].y,
-		0.5f, 0.5f, texCoord[2].x, texCoord[2].y,
-		-0.5f, 0.5f, texCoord[3].x, texCoord[3].y };
+	float vertices[] = { 0.0f, 0.0f, texCoord[0].x, texCoord[0].y,
+		1.0f, 0.0f, texCoord[1].x, texCoord[1].y,
+		1.0f, 1.0f, texCoord[2].x, texCoord[2].y,
+		0.0f, 1.0f, texCoord[3].x, texCoord[3].y };
 
 	unsigned int indices[] = { 0, 2, 3, 0, 1, 2 };
 
@@ -97,6 +101,8 @@ void RenderTexture::draw(const Sprite & sprite)
 
 	Mat4x4 mvp = orhtoProj * sprite.getTransform();
 
+	Vector2f vec = mvp * Vector2f(1.0f, 1.0f);
+
 	Color c = sprite.getColor();
 
 	shaderSprite->bind();
@@ -106,4 +112,6 @@ void RenderTexture::draw(const Sprite & sprite)
 	CallGL(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0));
 
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	CallGL(glViewport(0, 0, windowWidth, windowWidth));
 }

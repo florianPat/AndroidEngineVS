@@ -15,9 +15,11 @@ class RenderTexture
 	Texture texture;
 	Mat4x4 orhtoProj;
 	Shader* shaderSprite = nullptr;
+	float windowWidth = 0;
+	float windowHeight = 0;
 public:
 	RenderTexture() = default;
-	bool create(uint width, uint height, Shader* shaderSprite);
+	bool create(uint width, uint height, Shader* shaderSprite, float windowWidth, float windowHeight);
 	void clear();
 	const Texture& getTexture() const;
 	void display();

@@ -48,7 +48,7 @@ Mat4x4 RectangleShape::getTransform() const
 
 	result *= Mat4x4::rotate(rot);
 
-	result *= Mat4x4::translate(org);
+	result *= Mat4x4::translate(-org);
 
 	result *= Mat4x4::scale({ getWidth(), getHeight() });
 

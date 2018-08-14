@@ -15,8 +15,6 @@ void Level::updateModel()
 	gom.updateActors(dt);
 
 	physics.update(dt);
-
-	window.getDefaultView().setCenter(window.getDefaultView().getCenter() + Vector2f{50.0f * dt, 0.0f});
 }
 
 void Level::composeFrame()
@@ -30,16 +28,24 @@ void Level::composeFrame()
 	physics.debugRenderBodies(window);
 
 	window.draw(c);
+	Sprite s = Sprite(&rt.getTexture());
+	window.draw(s);
+	window.draw(sprite);
 
 	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName)
+gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
+texture(window.getAssetManager()->getOrAddRes("ship.png")), sprite(texture), rt()
 {
 	/*c.setFillColor(Colors::Yellow);
 	c.setPosition(300.0f, 300.0f);
 	c.setRadius(50.0f);*/
+
+	rt.create(300.0f, 300.0f, window.getSpriteShader(), (float)window.getWdith(), (float)window.getHeight());
+	rt.clear();
+	rt.draw(sprite);
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
