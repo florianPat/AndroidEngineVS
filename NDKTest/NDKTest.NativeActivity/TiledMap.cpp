@@ -214,7 +214,8 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 
 		for (auto it = layers.begin(); it != layers.end(); ++it)
 		{
-			for (int y = 0; y < mapHeight; ++y)
+			//NOTE: posY is needed here, because renderTexture 0 is bottom, but here it is top...
+			for (int y = 0, posY = mapHeight - 1; y < mapHeight; ++y, --posY)
 			{
 				for (int x = 0; x < mapWidth; ++x)
 				{
@@ -223,7 +224,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 					if (source == nullptr)
 						continue;
 					Sprite sprite(source);
-					sprite.setPosition((float)x * tileWidth, (float)y * tileHeight);
+					sprite.setPosition((float)x * tileWidth, (float)posY * tileHeight);
 
 					if(toGameObjects.empty())
 						texture.draw(sprite);
