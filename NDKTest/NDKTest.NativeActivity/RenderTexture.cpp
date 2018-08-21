@@ -109,8 +109,6 @@ void RenderTexture::draw(const Sprite & sprite)
 
 	Mat4x4 mvp = orhtoProj * sprite.getTransform();
 
-	Vector2f vec = mvp * Vector2f(1.0f, 1.0f);
-
 	Color c = sprite.getColor();
 
 	shaderSprite->bind();

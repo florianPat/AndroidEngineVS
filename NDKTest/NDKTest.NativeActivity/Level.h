@@ -10,6 +10,7 @@
 #include "Clock.h"
 #include "Sprite.h"
 #include "CircleShape.h"
+#include "RectangleShape.h"
 #include "Texture.h"
 
 class Level
@@ -28,6 +29,9 @@ protected:
 	bool endLevel = false;
 	//Test
 	CircleShape c;
+	RectangleShape r;
+	Texture* texture = window.getAssetManager()->getOrAddRes("ship.png");
+	Sprite sprite = Sprite(texture);
 protected:
 	std::function<void(EventData*)> eventLevelReloadFunction = std::bind(&Level::eventLevelReloadHandler, this, std::placeholders::_1);
 	DelegateFunction delegateLevelReload = utils::getDelegateFromFunction(eventLevelReloadFunction);

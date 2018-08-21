@@ -1,5 +1,6 @@
 #include "Level.h"
 #include "EventLevelReload.h"
+#include "TouchInput.h"
 
 /*void Level::eventLevelReloadHandler(EventData* eventData)
 {
@@ -21,23 +22,36 @@ void Level::composeFrame()
 {
 	window.clear();
 
-	map.draw(window);
+	//map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
 
 	physics.debugRenderBodies(window);
 
-	window.draw(c);
+	//window.draw(c);
+
+	if (TouchInput::isTouched())
+	{
+		//r.setPosition(TouchInput::getPosition());
+		sprite.setPosition(TouchInput::getPosition());
+	}
+
+	window.draw(r);
+	window.draw(sprite);
 
 	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName)
+gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
+r()
 {
-	/*c.setFillColor(Colors::Yellow);
-	c.setPosition(300.0f, 300.0f);
-	c.setRadius(50.0f);*/
+	c.setFillColor(Colors::Yellow);
+	//c.setPosition(300.0f, 300.0f);
+	c.setRadius(50.0f);
+
+	r.setSize(30.0f, 30.0f);
+	r.setOrigin(5.0f, 5.0f);
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

@@ -31,9 +31,12 @@ int RenderWindow::processInputEvent(AInputEvent * event)
 					int action = AMotionEvent_getAction(event);
 					if (action == AMOTION_EVENT_ACTION_MOVE || action == AMOTION_EVENT_ACTION_DOWN)
 					{
-						//Needs conversion because coord system is from topLeft, but game uses bottomLeft
+						//Needs conversion because coord system is from topLeft, but game uses bottomLeft and other window dimensions
 						float x = AMotionEvent_getX(event, 0);
-						float y = AMotionEvent_getY(event, 0) - renderHeight;
+						float y = (AMotionEvent_getY(event, 0) - screenHeight) * -1.0f;
+
+						x = x / screenWidth * renderWidth;
+						y = y / screenHeight * renderHeight;
 
 						TouchInput::setPosition(x, y);
 						TouchInput::setTouched(true);
@@ -41,7 +44,10 @@ int RenderWindow::processInputEvent(AInputEvent * event)
 					else if (action == AMOTION_EVENT_ACTION_UP)
 					{
 						float x = AMotionEvent_getX(event, 0);
-						float y = AMotionEvent_getY(event, 0) - renderHeight;
+						float y = (AMotionEvent_getY(event, 0) - screenHeight) * -1.0f;
+
+						x = x / screenWidth * renderWidth;
+						y = y / screenHeight * renderHeight;
 
 						TouchInput::setPosition(x, y);
 						TouchInput::setTouched(true);
@@ -76,7 +82,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
+																	   view(), orhtoProj(view.getOrthoProj())
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -267,12 +273,22 @@ View & RenderWindow::getDefaultView()
 	return view;
 }
 
-int RenderWindow::getWdith() const
+int RenderWindow::getScreenWdidth() const
+{
+	return screenWidth;
+}
+
+int RenderWindow::getScreenHeight() const
+{
+	return screenHeight;
+}
+
+int RenderWindow::getRenderWidth() const
 {
 	return renderWidth;
 }
 
-int RenderWindow::getHeight() const
+int RenderWindow::getRenderHeight() const
 {
 	return renderHeight;
 }
@@ -434,8 +450,8 @@ bool RenderWindow::startGfx()
 	}
 
 	if (!eglMakeCurrent(display, surface, surface, context) ||
-		!eglQuerySurface(display, surface, EGL_WIDTH, &renderWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &renderHeight) ||
-		(renderWidth <= 0) || (renderHeight <= 0))
+		!eglQuerySurface(display, surface, EGL_WIDTH, &screenWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &screenHeight) ||
+		(screenWidth <= 0) || (screenHeight <= 0))
 	{
 		utilsLogBreak("eglMakeCurrent failed!");
 		return false;
@@ -447,7 +463,10 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
-	CallGL(glViewport(0, 0, renderWidth, renderHeight));
+	CallGL(glViewport(0, 0, screenWidth, screenHeight));
+
+	view = View(screenWidth, screenHeight);
+	orhtoProj = view.getOrthoProj();
 
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));

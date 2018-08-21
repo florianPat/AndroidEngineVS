@@ -25,6 +25,7 @@ class RenderWindow
 	Clock timeManager;
 
 	int32_t renderWidth = 0, renderHeight = 0;
+	int screenWidth = 0, screenHeight = 0;
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
@@ -46,8 +47,10 @@ public:
 	void render();
 	TextureAssetManager* getAssetManager();
 	View& getDefaultView();
-	int getWdith() const;
-	int getHeight() const;
+	int getScreenWdidth() const;
+	int getScreenHeight() const;
+	int getRenderWidth() const;
+	int getRenderHeight() const;
 
 	Shader* getSpriteShader() const;
 private:
