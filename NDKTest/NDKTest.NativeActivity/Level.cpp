@@ -22,7 +22,7 @@ void Level::composeFrame()
 {
 	window.clear();
 
-	//map.draw(window);
+	map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
 
@@ -51,7 +51,6 @@ r()
 	c.setRadius(50.0f);
 
 	r.setSize(30.0f, 30.0f);
-	r.setOrigin(5.0f, 5.0f);
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

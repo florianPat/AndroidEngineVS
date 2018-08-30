@@ -17,8 +17,8 @@ private:
 	View(float width, float height);
 	Mat4x4 getOrthoProj() const;
 	bool updated();
-	View() = default;
 public:
+	View() = delete;
 	void setCenter(const Vector2f& center);
 	void setCenter(float x, float y);
 	void setSize(const Vector2f& size);

@@ -82,7 +82,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-																	   view(), orhtoProj(view.getOrthoProj())
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -457,16 +457,16 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
+	//float width = (float)screenHeight * ((float)renderWidth / (float)renderHeight);
+	//screenWidth = (int)width;
+
 	if (eglSwapInterval(display, 1) == EGL_FALSE)
 	{
 		utilsLogBreak("eglSwapInteral failed!");
 		return false;
 	}
 
-	CallGL(glViewport(0, 0, screenWidth, screenHeight));
-
-	view = View(screenWidth, screenHeight);
-	orhtoProj = view.getOrthoProj();
+	CallGL(glViewport(0, 0, renderWidth, renderHeight));
 
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));

@@ -61,7 +61,4 @@ private:
 	static int InputEventCallback(android_app* app, AInputEvent* event);
 	bool startGfx();
 	void stopGfx();
-private:
-	friend class TiledMap;
-	//NOTE: Only for TiledMap
 };
