@@ -3,7 +3,7 @@
 
 void android_main(android_app* app)
 {
-	RenderWindow window(app, 900, 600);
+	RenderWindow window(app, 900, 600, RenderWindow::ViewportType::FIT);
 
 	Game game(window, std::make_unique<MainLevel>(window, "testLevel.tmx"));
 

@@ -19,6 +19,12 @@
 
 class RenderWindow
 {
+public:
+	enum class ViewportType
+	{
+		FIT
+	};
+private:
 	android_app* app = nullptr;
 	bool initFinished = false;
 	bool running = true;
@@ -26,16 +32,18 @@ class RenderWindow
 
 	int32_t renderWidth = 0, renderHeight = 0;
 	int screenWidth = 0, screenHeight = 0;
+	int viewportWidth = 0, viewportHeight = 0;
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
 	TextureAssetManager assetManager;
 	std::unique_ptr<Shader> shaderSprite = nullptr;
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
-	View view;
-	Mat4x4 orhtoProj;
+	View view = View();
+	Mat4x4 orhtoProj = Mat4x4();
+	ViewportType viewportType;
 public:
-	RenderWindow(android_app* app, int width, int height);
+	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
 	void processEvents();
 
 	bool isOpen() const;
@@ -47,10 +55,8 @@ public:
 	void render();
 	TextureAssetManager* getAssetManager();
 	View& getDefaultView();
-	int getScreenWdidth() const;
-	int getScreenHeight() const;
-	int getRenderWidth() const;
-	int getRenderHeight() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 
 	Shader* getSpriteShader() const;
 private:
@@ -61,4 +67,5 @@ private:
 	static int InputEventCallback(android_app* app, AInputEvent* event);
 	bool startGfx();
 	void stopGfx();
+	void getAndSetTouchInputPos(AInputEvent* event);
 };

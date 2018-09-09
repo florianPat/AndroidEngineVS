@@ -208,7 +208,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 
 void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
-	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader(), (float)window.getRenderWidth(), (float)window.getRenderWidth()))
+	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader(), (float)window.getViewportWidth(), (float)window.getViewportHeight()))
 	{
 		texture.clear();
 

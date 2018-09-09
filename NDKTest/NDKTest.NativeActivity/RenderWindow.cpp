@@ -31,25 +31,12 @@ int RenderWindow::processInputEvent(AInputEvent * event)
 					int action = AMotionEvent_getAction(event);
 					if (action == AMOTION_EVENT_ACTION_MOVE || action == AMOTION_EVENT_ACTION_DOWN)
 					{
-						//Needs conversion because coord system is from topLeft, but game uses bottomLeft and other window dimensions
-						float x = AMotionEvent_getX(event, 0);
-						float y = (AMotionEvent_getY(event, 0) - screenHeight) * -1.0f;
-
-						x = x / screenWidth * renderWidth;
-						y = y / screenHeight * renderHeight;
-
-						TouchInput::setPosition(x, y);
+						getAndSetTouchInputPos(event);
 						TouchInput::setTouched(true);
 					}
 					else if (action == AMOTION_EVENT_ACTION_UP)
 					{
-						float x = AMotionEvent_getX(event, 0);
-						float y = (AMotionEvent_getY(event, 0) - screenHeight) * -1.0f;
-
-						x = x / screenWidth * renderWidth;
-						y = y / screenHeight * renderHeight;
-
-						TouchInput::setPosition(x, y);
+						getAndSetTouchInputPos(event);
 						TouchInput::setTouched(true);
 						TouchInput::setShouldUp(true);
 					}
@@ -80,9 +67,10 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 	return renderWindow.processInputEvent(event);
 }
 
-RenderWindow::RenderWindow(android_app * app, int width, int height) : app(app), timeManager(), renderWidth(width), renderHeight(height),
+RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
+																	   renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
-																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj())
+																	   viewportType(viewportType)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -273,24 +261,14 @@ View & RenderWindow::getDefaultView()
 	return view;
 }
 
-int RenderWindow::getScreenWdidth() const
+int RenderWindow::getViewportWidth() const
 {
-	return screenWidth;
+	return viewportWidth;
 }
 
-int RenderWindow::getScreenHeight() const
+int RenderWindow::getViewportHeight() const
 {
-	return screenHeight;
-}
-
-int RenderWindow::getRenderWidth() const
-{
-	return renderWidth;
-}
-
-int RenderWindow::getRenderHeight() const
-{
-	return renderHeight;
+	return viewportHeight;
 }
 
 void RenderWindow::deactivate()
@@ -457,8 +435,21 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
-	//float width = (float)screenHeight * ((float)renderWidth / (float)renderHeight);
-	//screenWidth = (int)width;
+	//TODO: Implement Extend
+	float ratioScreen = (float)screenWidth / (float)screenHeight;
+	float ratioGame = (float)renderWidth / (float)renderHeight;
+	if (ratioScreen > ratioGame)
+	{
+		viewportWidth = (int)((float)screenHeight * ratioGame);
+		viewportHeight = screenHeight;
+	}
+	else
+	{
+		viewportWidth = screenWidth;
+		viewportHeight = (int)((float)screenWidth / ratioGame);
+	}
+	view = View(renderWidth, renderHeight);
+	orhtoProj = Mat4x4(view.getOrthoProj());
 
 	if (eglSwapInterval(display, 1) == EGL_FALSE)
 	{
@@ -466,7 +457,7 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
-	CallGL(glViewport(0, 0, renderWidth, renderHeight));
+	CallGL(glViewport(0, 0, viewportWidth, viewportHeight));
 
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));
@@ -498,73 +489,19 @@ void RenderWindow::stopGfx()
 	}
 }
 
+void RenderWindow::getAndSetTouchInputPos(AInputEvent * event)
+{
+	//Needs conversion because coord system is from topLeft, but game uses bottomLeft and other window dimensions
+	float x = AMotionEvent_getX(event, 0);
+	float y = (AMotionEvent_getY(event, 0) - viewportHeight) * -1.0f;
+
+	x = x / viewportWidth * renderWidth;
+	y = y / viewportHeight * renderHeight;
+
+	TouchInput::setPosition(x, y);
+}
+
 Shader * RenderWindow::getSpriteShader() const
 {
 	return shaderSprite.get();
 }
-
-//GLuint RenderWindow::compileShader(const std::string& shaderFilename, const GLuint type)
-//{
-//	GLint result;
-//	char log[256];
-//	GLuint shader;
-//
-//	Ifstream shaderFile(app->activity->assetManager);
-//	shaderFile.open(shaderFilename);
-//
-//	char* shaderSource = new char[shaderFile.getSize()];
-//	shaderFile.getFullData(shaderSource);
-//
-//	CallGL(shader = glCreateShader(type));
-//	CallGL(glShaderSource(shader, 1, &shaderSource, nullptr));
-//
-//	delete[] shaderSource;
-//	shaderFile.close();
-//
-//	CallGL(glCompileShader(shader));
-//	CallGL(glGetShaderiv(shader, GL_COMPILE_STATUS, &result));
-//	if (result == GL_FALSE)
-//	{
-//		CallGL(glGetShaderInfoLog(shader, sizeof(log), 0, log));
-//		utilsLog("shader compilation failed!");
-//		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
-//
-//		if (shader > 0) CallGL(glDeleteShader(shader));
-//	}
-//
-//	return shader;
-//}
-//
-//void RenderWindow::linkShaders(GLuint vertexShader, GLuint fragmentShader)
-//{
-//	GLint result;
-//	char log[256];
-//
-//	CallGL(shaderProgram = glCreateProgram());
-//	CallGL(glAttachShader(shaderProgram, vertexShader));
-//	CallGL(glAttachShader(shaderProgram, fragmentShader));
-//	CallGL(glLinkProgram(shaderProgram));
-//	CallGL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result));
-//
-//	if (result == GL_FALSE)
-//	{
-//		CallGL(glGetProgramInfoLog(shaderProgram, sizeof(log), nullptr, log));
-//		utilsLog("ShaderProgram linking failed!");
-//		__android_log_assert(nullptr, __FUNCTION__, "%s", log);
-//	}
-//
-//	CallGL(glDetachShader(shaderProgram, vertexShader));
-//	CallGL(glDeleteShader(vertexShader));
-//	CallGL(glDetachShader(shaderProgram, fragmentShader));
-//	CallGL(glDeleteShader(fragmentShader));
-//}
-//
-//void RenderWindow::loadShaders(const std::string & vertexShaderFilename, const std::string & fragmentShaderFilename)
-//{
-//	GLuint vertexShader = compileShader(vertexShaderFilename, GL_VERTEX_SHADER);
-//	GLuint fragmentShader = compileShader(fragmentShaderFilename, GL_FRAGMENT_SHADER);
-//
-//	linkShaders(vertexShader, fragmentShader);
-//
-//	CallGL(glUseProgram(shaderProgram));
-//}
