@@ -39,8 +39,8 @@ private:
 	TextureAssetManager assetManager;
 	std::unique_ptr<Shader> shaderSprite = nullptr;
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
-	View view = View();
-	Mat4x4 orhtoProj = Mat4x4();
+	View view;
+	Mat4x4 orhtoProj;
 	ViewportType viewportType;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
@@ -57,6 +57,8 @@ public:
 	View& getDefaultView();
 	int getViewportWidth() const;
 	int getViewportHeight() const;
+	int getRenderWidth() const;
+	int getRenderHeight() const;
 
 	Shader* getSpriteShader() const;
 private:

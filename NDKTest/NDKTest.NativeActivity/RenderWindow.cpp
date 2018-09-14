@@ -70,6 +70,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
 																	   renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
 																	   viewportType(viewportType)
 {
 	app->userData = this;
@@ -271,6 +272,16 @@ int RenderWindow::getViewportHeight() const
 	return viewportHeight;
 }
 
+int RenderWindow::getRenderWidth() const
+{
+	return renderWidth;
+}
+
+int RenderWindow::getRenderHeight() const
+{
+	return renderHeight;
+}
+
 void RenderWindow::deactivate()
 {
 	if (initFinished)
@@ -448,8 +459,6 @@ bool RenderWindow::startGfx()
 		viewportWidth = screenWidth;
 		viewportHeight = (int)((float)screenWidth / ratioGame);
 	}
-	view = View(renderWidth, renderHeight);
-	orhtoProj = Mat4x4(view.getOrthoProj());
 
 	if (eglSwapInterval(display, 1) == EGL_FALSE)
 	{

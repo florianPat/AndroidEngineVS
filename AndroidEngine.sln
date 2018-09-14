@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NDKTest", "NDKTest", "{0241BE1E-AA92-4ACC-A797-8D568793ABB0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidEngine", "AndroidEngine", "{0241BE1E-AA92-4ACC-A797-8D568793ABB0}"
 EndProject
 Project("{39E2626F-3545-4960-A6E8-258AD8476CE5}") = "NDKTest.Packaging", "NDKTest\NDKTest.Packaging\NDKTest.Packaging.androidproj", "{DF94999C-878C-440C-A2CD-F987024492F0}"
 EndProject

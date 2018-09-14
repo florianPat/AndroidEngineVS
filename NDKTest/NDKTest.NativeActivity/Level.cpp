@@ -50,7 +50,8 @@ r()
 	//c.setPosition(300.0f, 300.0f);
 	c.setRadius(50.0f);
 
-	r.setSize(30.0f, 30.0f);
+	r.setSize(30.0f, 10.0f);
+	r.setPosition({ 0.0f, window.getRenderHeight() / 2.0f });
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
