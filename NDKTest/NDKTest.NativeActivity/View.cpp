@@ -40,11 +40,13 @@ const Vector2f & View::getCenter() const
 	return center;
 }
 
-Mat4x4 View::getOrthoProj() const
+Mat4x4 View::getOrthoProj(const Vector2f& scaleFactor) const
 {
 	float halfWidth = width / 2.0f;
 	float halfHeight = height / 2.0f;
-	return Mat4x4::orthoProj(-1.0f, 1.0f, center.x - halfWidth, center.y - halfHeight, center.x + halfWidth, center.y + halfHeight);
+	Mat4x4 result = Mat4x4::orthoProj(-1.0f, 1.0f, center.x - halfWidth, center.y - halfHeight, center.x + halfWidth, center.y + halfHeight);
+	//result.scale(scaleFactor);
+	return result;
 }
 
 bool View::updated()

@@ -15,7 +15,7 @@ class View
 private:
 	friend class RenderWindow;
 	View(float width, float height);
-	Mat4x4 getOrthoProj() const;
+	Mat4x4 getOrthoProj(const Vector2f& scaleFactor = { 1.0f, 1.0f }) const;
 	bool updated();
 	View() = default;
 public:

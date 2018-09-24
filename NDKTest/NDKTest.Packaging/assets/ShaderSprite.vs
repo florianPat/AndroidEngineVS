@@ -13,5 +13,5 @@ void main()
 {
 	v_texCoord = texCoord;
 	v_color = u_color;
-	gl_Position = u_mvp * vec4(position, 1.0, 1.0);
+	gl_Position = u_mvp * vec4(position, 0.0, 1.0);
 }

@@ -69,9 +69,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
 																	   renderWidth(width), renderHeight(height),
-																	   assetManager(app->activity->assetManager),
-																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
-																	   viewportType(viewportType)
+																	   assetManager(app->activity->assetManager), viewportType(viewportType)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -446,27 +444,38 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
-	//TODO: Implement Extend
-	float ratioScreen = (float)screenWidth / (float)screenHeight;
-	float ratioGame = (float)renderWidth / (float)renderHeight;
-	if (ratioScreen > ratioGame)
-	{
-		viewportWidth = (int)((float)screenHeight * ratioGame);
-		viewportHeight = screenHeight;
-	}
-	else
-	{
-		viewportWidth = screenWidth;
-		viewportHeight = (int)((float)screenWidth / ratioGame);
-	}
-
 	if (eglSwapInterval(display, 1) == EGL_FALSE)
 	{
 		utilsLogBreak("eglSwapInteral failed!");
 		return false;
 	}
 
-	CallGL(glViewport(0, 0, viewportWidth, viewportHeight));
+	Vector2f sceneScaling = {0.0f, 0.0f};
+
+	//TODO: Implement Extend
+	if (viewportType == ViewportType::FIT)
+	{
+		float ratioScreen = (float)screenWidth / (float)screenHeight;
+		float ratioGame = (float)renderWidth / (float)renderHeight;
+		if (ratioScreen > ratioGame)
+		{
+			viewportWidth = (int)((float)screenHeight * ratioGame);
+			viewportHeight = screenHeight;
+		}
+		else
+		{
+			viewportWidth = screenWidth;
+			viewportHeight = (int)((float)screenWidth / ratioGame);
+		}
+
+		sceneScaling.x = viewportWidth / renderWidth / 2.0f;
+		sceneScaling.y = viewportHeight / renderHeight / 2.0f;
+	}
+
+	view = View(renderWidth, renderHeight);
+	orhtoProj = view.getOrthoProj();
+
+	CallGL(glViewport(0, 0, screenWidth, screenHeight));
 
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));
