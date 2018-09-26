@@ -69,7 +69,9 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
 																	   renderWidth(width), renderHeight(height),
-																	   assetManager(app->activity->assetManager), viewportType(viewportType)
+																	   assetManager(app->activity->assetManager), 
+																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
+																	   viewportType(viewportType)
 {
 	app->userData = this;
 	app->onAppCmd = AppEventCallback;
@@ -468,14 +470,11 @@ bool RenderWindow::startGfx()
 			viewportHeight = (int)((float)screenWidth / ratioGame);
 		}
 
-		sceneScaling.x = viewportWidth / renderWidth / 2.0f;
-		sceneScaling.y = viewportHeight / renderHeight / 2.0f;
+		sceneScaling.x = viewportWidth / renderWidth;
+		sceneScaling.y = viewportHeight / renderHeight;
 	}
 
-	view = View(renderWidth, renderHeight);
-	orhtoProj = view.getOrthoProj();
-
-	CallGL(glViewport(0, 0, screenWidth, screenHeight));
+	CallGL(glViewport(0, 0, viewportWidth, viewportHeight));
 
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));

@@ -15,10 +15,10 @@ class View
 private:
 	friend class RenderWindow;
 	View(float width, float height);
-	Mat4x4 getOrthoProj(const Vector2f& scaleFactor = { 1.0f, 1.0f }) const;
+	Mat4x4 getOrthoProj(const Vector2f scale = { 1.0f, 1.0f }) const;
 	bool updated();
-	View() = default;
 public:
+	View() = delete;
 	void setCenter(const Vector2f& center);
 	void setCenter(float x, float y);
 	void setSize(const Vector2f& size);
