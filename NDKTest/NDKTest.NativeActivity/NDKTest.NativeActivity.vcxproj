@@ -114,11 +114,17 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
@@ -131,9 +137,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -151,9 +161,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -171,9 +185,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -474,6 +474,10 @@ bool RenderWindow::startGfx()
 		sceneScaling.y = viewportHeight / renderHeight;
 	}
 
+	Vector2f vec = orhtoProj * Vector2f{ (float)renderWidth, (float)renderHeight };
+	assert(vec.x <= 1.0f && vec.y <= 1.0f);
+	assert(viewportWidth <= screenWidth && viewportHeight <= screenHeight);
+
 	CallGL(glViewport(0, 0, viewportWidth, viewportHeight));
 
 	CallGL(glDisable(GL_DEPTH_TEST));
