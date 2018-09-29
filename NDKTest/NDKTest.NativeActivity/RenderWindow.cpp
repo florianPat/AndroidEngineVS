@@ -290,6 +290,7 @@ void RenderWindow::deactivate()
 		shaderRectShape.reset();
 
 		stopGfx();
+		stopSnd();
 		initFinished = false;
 	}
 }
@@ -318,6 +319,13 @@ void RenderWindow::processAppEvent(int32_t command)
 					//NOTE: Init graphics things here!
 					shaderSprite = std::make_unique<Shader>("ShaderSprite", app->activity->assetManager, std::vector<std::string>{ "position", "texCoord" });
 					shaderRectShape = std::make_unique<Shader>("ShaderRectShape", app->activity->assetManager, std::vector<std::string>{ "position" });
+				}
+
+				if (!startSnd())
+				{
+					running = false;
+					deactivate();
+					ANativeActivity_finish(app->activity);
 				}
 			}
 
@@ -529,6 +537,66 @@ void RenderWindow::getAndSetTouchInputPos(AInputEvent * event)
 	y = y / viewportHeight * renderHeight;
 
 	TouchInput::setPosition(x, y);
+}
+
+bool RenderWindow::startSnd()
+{
+	const SLuint32 engineMixIfCount = 1;
+	const SLInterfaceID engineMixIfs[] = { SL_IID_ENGINE };
+	//NOTE: Is the interface required for the program to work?
+	const SLboolean engineMixIfsReq[] = { SL_BOOLEAN_TRUE };
+
+	const SLuint32 outputMixIfCount = 1;
+	const SLInterfaceID outputMixIfs[] = {};
+	const SLboolean outputMixIfsReq[] = {};
+
+	if(slCreateEngine(&engineObj, 0, 0, engineMixIfCount, engineMixIfs, engineMixIfsReq) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("slCreateEngine failed!");
+		return false;
+	}
+
+	if((*engineObj)->Realize(engineObj, SL_BOOLEAN_FALSE) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("Realize failed!");
+		return false;
+	}
+
+	if((*engineObj)->GetInterface(engineObj, SL_IID_ENGINE, &engine) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("GetInterface failed!");
+		return false;
+	}
+
+	if ((*engine)->CreateOutputMix(engine, &outputMix, outputMixIfCount, outputMixIfs, outputMixIfsReq) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("CreateOutputMix failed!");
+		return false;
+	}
+
+	if((*outputMix)->Realize(outputMix, SL_BOOLEAN_FALSE))
+	{
+		utilsLogBreak("Realize failed!");
+		return false;
+	}
+
+	return true;
+}
+
+void RenderWindow::stopSnd()
+{
+	if (outputMix != 0)
+	{
+		(*outputMix)->Destroy(outputMix);
+		outputMix = 0;
+	}
+
+	if (engineObj != 0)
+	{
+		(*engineObj)->Destroy(engineObj);
+		engineObj = 0;
+		engine = 0;
+	}
 }
 
 Shader * RenderWindow::getSpriteShader() const

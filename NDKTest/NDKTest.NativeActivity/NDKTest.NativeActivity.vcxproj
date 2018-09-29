@@ -141,7 +141,7 @@
       <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
@@ -151,9 +151,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -165,7 +168,7 @@
       <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
@@ -175,9 +178,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
+      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -189,7 +196,7 @@
       <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
@@ -199,9 +206,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
+      <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -214,7 +224,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
@@ -229,7 +239,7 @@
       <CppLanguageStandard>c++1y</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>

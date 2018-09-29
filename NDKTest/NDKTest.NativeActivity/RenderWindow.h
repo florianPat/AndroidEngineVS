@@ -16,6 +16,7 @@
 #include <memory>
 #include "CircleShape.h"
 #include "View.h"
+#include <SLES/OpenSLES.h>
 
 class RenderWindow
 {
@@ -43,6 +44,10 @@ private:
 	View view;
 	Mat4x4 orhtoProj;
 	ViewportType viewportType;
+	
+	SLObjectItf engineObj = 0;
+	SLEngineItf engine = 0;
+	SLObjectItf outputMix = 0;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
 	void processEvents();
@@ -71,4 +76,6 @@ private:
 	bool startGfx();
 	void stopGfx();
 	void getAndSetTouchInputPos(AInputEvent* event);
+	bool startSnd();
+	void stopSnd();
 };
