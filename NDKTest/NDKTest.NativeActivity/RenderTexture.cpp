@@ -55,7 +55,7 @@ void RenderTexture::clear()
 
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, screenTexture));
 
-	CallGL(glViewport(0, 0, windowWidth, windowWidth));
+	CallGL(glViewport(0, 0, windowWidth, windowHeight));
 }
 
 const Texture & RenderTexture::getTexture() const
@@ -119,5 +119,5 @@ void RenderTexture::draw(const Sprite & sprite)
 
 	CallGL(glBindFramebuffer(GL_FRAMEBUFFER, screenTexture));
 
-	CallGL(glViewport(0, 0, windowWidth, windowWidth));
+	CallGL(glViewport(0, 0, windowWidth, windowHeight));
 }
