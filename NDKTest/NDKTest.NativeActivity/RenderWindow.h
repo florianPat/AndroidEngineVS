@@ -22,7 +22,8 @@ class RenderWindow
 public:
 	enum class ViewportType
 	{
-		FIT
+		FIT,
+		EXTEND
 	};
 private:
 	android_app* app = nullptr;
