@@ -69,7 +69,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 
 RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
 																	   renderWidth(width), renderHeight(height),
-																	   assetManager(app->activity->assetManager), 
+																	   assetManager(app->activity->assetManager),
 																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
 																	   viewportType(viewportType)
 {
@@ -452,31 +452,40 @@ bool RenderWindow::startGfx()
 		return false;
 	}
 
-	Vector2f sceneScaling = {0.0f, 0.0f};
-
-	//TODO: Implement Extend
-	if (viewportType == ViewportType::FIT)
+	//NOTE: For ViewportType::FIT, but also needed for extend!
+	float ratioScreen = (float)screenWidth / (float)screenHeight;
+	float ratioGame = (float)renderWidth / (float)renderHeight;
+	if (ratioScreen > ratioGame)
 	{
-		float ratioScreen = (float)screenWidth / (float)screenHeight;
-		float ratioGame = (float)renderWidth / (float)renderHeight;
-		if (ratioScreen > ratioGame)
-		{
-			viewportWidth = (int)((float)screenHeight * ratioGame);
-			viewportHeight = screenHeight;
-		}
-		else
-		{
-			viewportWidth = screenWidth;
-			viewportHeight = (int)((float)screenWidth / ratioGame);
-		}
-
-		sceneScaling.x = viewportWidth / renderWidth;
-		sceneScaling.y = viewportHeight / renderHeight;
+		viewportWidth = (int)((float)screenHeight * ratioGame);
+		viewportHeight = screenHeight;
+	}
+	else
+	{
+		viewportWidth = screenWidth;
+		viewportHeight = (int)((float)screenWidth / ratioGame);
 	}
 
-	Vector2f vec = orhtoProj * Vector2f{ (float)renderWidth, (float)renderHeight };
-	assert(vec.x <= 1.0f && vec.y <= 1.0f);
-	assert(viewportWidth <= screenWidth && viewportHeight <= screenHeight);
+	if (viewportType == ViewportType::EXTEND)
+	{
+		if (viewportWidth == screenWidth)
+		{
+			float remainingSpace = screenHeight - viewportHeight;
+			renderHeight += remainingSpace * (renderHeight / viewportHeight);
+			viewportHeight = screenHeight;
+		}
+		else if (viewportHeight == screenHeight)
+		{
+			float remainingSpace = screenWidth - viewportWidth;
+			renderWidth += remainingSpace * ((float)renderWidth / (float)viewportWidth);
+			viewportWidth = screenWidth;
+		}
+		else
+			InvalidCodePath;
+
+		view = View(renderWidth, renderHeight);
+		orhtoProj = view.getOrthoProj();
+	}
 
 	CallGL(glViewport(0, 0, viewportWidth, viewportHeight));
 
