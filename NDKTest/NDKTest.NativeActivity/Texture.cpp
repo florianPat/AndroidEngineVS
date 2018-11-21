@@ -132,6 +132,16 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	return result;
 }
 
+bool Texture::reloadFromFile(const std::string& filename, AAssetManager * assetManager, bool pixeld)
+{
+	if (texture != 0)
+	{
+		CallGL(glDeleteTextures(1, &texture));
+	}
+
+	return loadFromFile(filename, assetManager, pixeld);
+}
+
 Texture::~Texture()
 {
 	if (*this)

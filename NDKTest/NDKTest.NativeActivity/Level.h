@@ -19,7 +19,7 @@ protected:
 	RenderWindow& window;
 	Physics physics;
 	GameObjectManager gom;
-	Clock clock;
+	Clock& clock;
 	EventManager eventManager;
 	TiledMap map;
 

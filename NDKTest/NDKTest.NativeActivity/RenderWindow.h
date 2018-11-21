@@ -30,7 +30,7 @@ private:
 	android_app* app = nullptr;
 	bool initFinished = false;
 	bool running = true;
-	Clock timeManager;
+	Clock clock;
 
 	int32_t renderWidth = 0, renderHeight = 0;
 	int screenWidth = 0, screenHeight = 0;
@@ -44,6 +44,7 @@ private:
 	View view;
 	Mat4x4 orhtoProj;
 	ViewportType viewportType;
+	bool glContextLost = false;
 	
 	SLObjectItf engineObj = 0;
 	SLEngineItf engine = 0;
@@ -54,7 +55,7 @@ public:
 
 	bool isOpen() const;
 	void close();
-	void clear();
+	bool clear();
 	void draw(const Sprite& sprite);
 	void draw(const RectangleShape& rect);
 	void draw(const CircleShape& circle);
@@ -65,6 +66,8 @@ public:
 	int getViewportHeight() const;
 	int getRenderWidth() const;
 	int getRenderHeight() const;
+	void recoverFromContextLoss();
+	Clock& getClock() const;
 
 	Shader* getSpriteShader() const;
 private:
@@ -74,6 +77,9 @@ private:
 	int processInputEvent(AInputEvent* event);
 	static int InputEventCallback(android_app* app, AInputEvent* event);
 	bool startGfx();
+	bool initDisplay(EGLConfig& config);
+	bool initSurface(EGLConfig& config);
+	bool initContext(EGLConfig& config);
 	void stopGfx();
 	void getAndSetTouchInputPos(AInputEvent* event);
 	bool startSnd();

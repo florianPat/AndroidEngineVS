@@ -67,7 +67,7 @@ int RenderWindow::InputEventCallback(android_app * app, AInputEvent * event)
 	return renderWindow.processInputEvent(event);
 }
 
-RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), timeManager(), 
+RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportType viewportType) : app(app), clock(), 
 																	   renderWidth(width), renderHeight(height),
 																	   assetManager(app->activity->assetManager),
 																	   view(renderWidth, renderHeight), orhtoProj(view.getOrthoProj()),
@@ -124,10 +124,15 @@ void RenderWindow::close()
 	ANativeActivity_finish(app->activity);
 }
 
-void RenderWindow::clear()
+bool RenderWindow::clear()
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	if (!glContextLost)
+	{
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	
+	return glContextLost == false;
 }
 
 void RenderWindow::draw(const Sprite & sprite)
@@ -245,8 +250,54 @@ void RenderWindow::draw(const CircleShape & circle)
 void RenderWindow::render()
 {
 	EGLBoolean result;
-	CallGL((result = eglSwapBuffers(display, surface)));
-	assert(result == EGL_TRUE);
+	result = eglSwapBuffers(display, surface);
+	if (result == GL_FALSE)
+	{
+		GLenum errorCode = glGetError();
+
+		switch (errorCode)
+		{
+		case EGL_BAD_DISPLAY:
+		{
+			if (display != EGL_NO_DISPLAY)
+			{
+				eglTerminate(display);
+				display = EGL_NO_DISPLAY;
+			}
+
+			glContextLost = true;
+			break;
+		}
+		case EGL_CONTEXT_LOST:
+		case EGL_BAD_CONTEXT:
+		{
+			if (context != EGL_NO_CONTEXT)
+			{
+				eglDestroyContext(display, context);
+				context = EGL_NO_CONTEXT;
+			}
+
+			glContextLost = true;
+			break;
+		}
+		case EGL_BAD_SURFACE:
+		{
+			if (surface != EGL_NO_SURFACE)
+			{
+				eglDestroySurface(display, surface);
+				surface = EGL_NO_SURFACE;
+			}
+
+			glContextLost = true;
+			break;
+		}
+		default:
+		{
+			__android_log_print(ANDROID_LOG_ERROR, "OpenGL error", "OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, "render", __LINE__, __FILE__);
+			break;
+		}
+		}
+	}
 
 	if (view.updated())
 		orhtoProj = view.getOrthoProj();
@@ -280,6 +331,51 @@ int RenderWindow::getRenderWidth() const
 int RenderWindow::getRenderHeight() const
 {
 	return renderHeight;
+}
+
+void RenderWindow::recoverFromContextLoss()
+{
+	assert(glContextLost == true);
+
+	EGLConfig config;
+
+	if (display == EGL_NO_DISPLAY)
+	{
+		if (initDisplay(config) == false)
+			return;
+	}
+
+	if (surface == EGL_NO_SURFACE)
+	{
+		if (initSurface(config) == false)
+			return;
+	}
+
+	if (context == EGL_NO_CONTEXT)
+	{
+		if (initContext(config) == false)
+			return;
+	}
+
+	if (!eglMakeCurrent(display, surface, surface, context) ||
+		!eglQuerySurface(display, surface, EGL_WIDTH, &screenWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &screenHeight) ||
+		(screenWidth <= 0) || (screenHeight <= 0))
+	{
+		utilsLogBreak("eglMakeCurrent failed!");
+		return;
+	}
+
+	glContextLost = false;
+
+	if (!glContextLost)
+	{
+		assetManager.reloadAllRes();
+	}
+}
+
+Clock & RenderWindow::getClock() const
+{
+	return (Clock&)clock;
 }
 
 void RenderWindow::deactivate()
@@ -321,17 +417,16 @@ void RenderWindow::processAppEvent(int32_t command)
 					shaderRectShape = std::make_unique<Shader>("ShaderRectShape", app->activity->assetManager, std::vector<std::string>{ "position" });
 				}
 
-				if (!startSnd())
+				/*if (!startSnd())
 				{
 					running = false;
 					deactivate();
 					ANativeActivity_finish(app->activity);
-				}
+				}*/
 			}
 
-			//clock.reset();
-
 			initFinished = true;
+			clock.restart();
 			break;
 		}
 		case APP_CMD_DESTROY:
@@ -340,10 +435,13 @@ void RenderWindow::processAppEvent(int32_t command)
 		}
 		case APP_CMD_GAINED_FOCUS:
 		{
+			initFinished = true;
+			clock.restart();
 			break;
 		}
 		case APP_CMD_LOST_FOCUS:
 		{
+			initFinished = false;
 			break;
 		}
 		case APP_CMD_LOW_MEMORY:
@@ -383,68 +481,16 @@ void RenderWindow::processAppEvent(int32_t command)
 
 bool RenderWindow::startGfx()
 {
-	EGLint format, numConfigs;
 	EGLConfig config;
 
-	constexpr EGLint DISPLAY_ATTRIBS[] = {
-		EGL_RENDERABLE_TYPE,
-		EGL_OPENGL_ES2_BIT,
-		EGL_BLUE_SIZE, 8,
-		EGL_GREEN_SIZE, 8,
-		EGL_RED_SIZE, 8,
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_NONE
-	};
-
-	constexpr EGLint CONTEXT_ATTRIBS[] = {
-		EGL_CONTEXT_CLIENT_VERSION, 2,
-		EGL_NONE
-	};
-
-	display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	if (display == EGL_NO_DISPLAY)
-	{
-		utilsLogBreak("eglGetDisplay failed!");
+	if (initDisplay(config) == false)
 		return false;
-	}
 
-	if (!eglInitialize(display, 0, 0))
-	{
-		utilsLogBreak("egInitialize failed!");
+	if (initSurface(config) == false)
 		return false;
-	}
 
-	if (!eglChooseConfig(display, DISPLAY_ATTRIBS, &config, 1, &numConfigs) || (numConfigs <= 0))
-	{
-		utilsLogBreak("eglChooseConfig failed!");
+	if (initContext(config) == false)
 		return false;
-	}
-
-	if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
-	{
-		utilsLogBreak("eglGetConfigAttrib failed!");
-		return false;
-	}
-
-	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, format) != 0)
-	{
-		utilsLogBreak("ANativeWindow_setBufferGeometry failed!");
-		return false;
-	}
-
-	surface = eglCreateWindowSurface(display, config, app->window, nullptr);
-	if (surface == EGL_NO_SURFACE)
-	{
-		utilsLogBreak("eglCreateWindowSurface failed!");
-		return false;
-	}
-
-	context = eglCreateContext(display, config, 0, CONTEXT_ATTRIBS);
-	if (context == EGL_NO_CONTEXT)
-	{
-		utilsLogBreak("eglCreateContext failed!");
-		return false;
-	}
 
 	if (!eglMakeCurrent(display, surface, surface, context) ||
 		!eglQuerySurface(display, surface, EGL_WIDTH, &screenWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &screenHeight) ||
@@ -500,6 +546,82 @@ bool RenderWindow::startGfx()
 	CallGL(glDisable(GL_DEPTH_TEST));
 	CallGL(glEnable(GL_BLEND));
 	CallGL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+
+	return true;
+}
+
+bool RenderWindow::initDisplay(EGLConfig& config)
+{
+	EGLint format, numConfigs;
+	constexpr EGLint DISPLAY_ATTRIBS[] = {
+		EGL_RENDERABLE_TYPE,
+		EGL_OPENGL_ES2_BIT,
+		EGL_BLUE_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_RED_SIZE, 8,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_NONE
+	};
+
+	display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (display == EGL_NO_DISPLAY)
+	{
+		utilsLogBreak("eglGetDisplay failed!");
+		return false;
+	}
+
+	if (!eglInitialize(display, 0, 0))
+	{
+		utilsLogBreak("egInitialize failed!");
+		return false;
+	}
+
+	if (!eglChooseConfig(display, DISPLAY_ATTRIBS, &config, 1, &numConfigs) || (numConfigs <= 0))
+	{
+		utilsLogBreak("eglChooseConfig failed!");
+		return false;
+	}
+
+	if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
+	{
+		utilsLogBreak("eglGetConfigAttrib failed!");
+		return false;
+	}
+
+	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, format) != 0)
+	{
+		utilsLogBreak("ANativeWindow_setBufferGeometry failed!");
+		return false;
+	}
+
+	return true;
+}
+
+bool RenderWindow::initSurface(EGLConfig& config)
+{
+	surface = eglCreateWindowSurface(display, config, app->window, nullptr);
+	if (surface == EGL_NO_SURFACE)
+	{
+		utilsLogBreak("eglCreateWindowSurface failed!");
+		return false;
+	}
+
+	return true;
+}
+
+bool RenderWindow::initContext(EGLConfig& config)
+{
+	constexpr EGLint CONTEXT_ATTRIBS[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+
+	context = eglCreateContext(display, config, 0, CONTEXT_ATTRIBS);
+	if (context == EGL_NO_CONTEXT)
+	{
+		utilsLogBreak("eglCreateContext failed!");
+		return false;
+	}
 
 	return true;
 }

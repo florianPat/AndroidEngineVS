@@ -15,6 +15,7 @@ class Texture
 	GLuint texture = 0;
 private:
 	bool loadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
+	bool reloadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
 public:
 	Texture() = default;
 	~Texture();

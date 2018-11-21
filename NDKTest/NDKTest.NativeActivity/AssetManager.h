@@ -20,4 +20,5 @@ public:
 	void clear();
 	bool isLoaded(const std::string& filename);
 	AAssetManager* getAAssetManager();
+	void reloadAllRes();
 };

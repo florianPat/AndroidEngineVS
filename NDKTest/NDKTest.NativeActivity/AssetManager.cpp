@@ -69,3 +69,14 @@ AAssetManager * TextureAssetManager::getAAssetManager()
 {
 	return aassetManager;
 }
+
+void TextureAssetManager::reloadAllRes()
+{
+	for (auto it = ressourceCache.begin(); it != ressourceCache.end(); ++it)
+	{
+		if(!it->second->reloadFromFile(it->first, aassetManager))
+		{
+			utilsLogBreak("Could not reload texture!");
+		}
+	}
+}

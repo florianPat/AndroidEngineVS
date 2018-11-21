@@ -20,8 +20,6 @@ void Level::updateModel()
 
 void Level::composeFrame()
 {
-	window.clear();
-
 	map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
@@ -38,12 +36,10 @@ void Level::composeFrame()
 
 	window.draw(r);
 	window.draw(sprite);
-
-	window.render();
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
-gom(), clock(), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
+gom(), clock(window.getClock()), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
 r()
 {
 	c.setFillColor(Colors::Yellow);
@@ -63,7 +59,16 @@ std::unique_ptr<Level> Level::Go()
 		window.processEvents();
 
 		updateModel();
-		composeFrame();
+		bool shouldContinue = window.clear();
+		if (shouldContinue)
+		{
+			composeFrame();
+			window.render();
+		}
+		else
+		{
+			window.recoverFromContextLoss();
+		}
 	}
 
 	if (!window.isOpen())
