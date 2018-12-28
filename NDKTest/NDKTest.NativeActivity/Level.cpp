@@ -26,11 +26,8 @@ void Level::composeFrame()
 
 	physics.debugRenderBodies(window);
 
-	//window.draw(c);
-
 	if (TouchInput::isTouched())
 	{
-		//r.setPosition(TouchInput::getPosition());
 		sprite.setPosition(TouchInput::getPosition());
 	}
 
@@ -43,7 +40,6 @@ gom(), clock(window.getClock()), eventManager(), map(tiledMapName, gom, eventMan
 r()
 {
 	c.setFillColor(Colors::Yellow);
-	//c.setPosition(300.0f, 300.0f);
 	c.setRadius(50.0f);
 
 	r.setSize(30.0f, 10.0f);

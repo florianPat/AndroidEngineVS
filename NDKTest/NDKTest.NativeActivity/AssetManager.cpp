@@ -19,7 +19,7 @@ Texture* TextureAssetManager::getOrAddRes(const std::string & filename)
 			return nullptr;
 		}
 
-		currentSize += texture->getSize().x * texture->getSize().y * sizeof(int); //One pixel is one int also in SFML, right?
+		currentSize += texture->getSize().x * texture->getSize().y * sizeof(int);
 		if (currentSize > maxSize)
 		{
 			do

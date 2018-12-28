@@ -417,12 +417,12 @@ void RenderWindow::processAppEvent(int32_t command)
 					shaderRectShape = std::make_unique<Shader>("ShaderRectShape", app->activity->assetManager, std::vector<std::string>{ "position" });
 				}
 
-				/*if (!startSnd())
+				if (!startSnd())
 				{
 					running = false;
 					deactivate();
 					ANativeActivity_finish(app->activity);
-				}*/
+				}
 			}
 
 			initFinished = true;
@@ -668,7 +668,7 @@ bool RenderWindow::startSnd()
 	//NOTE: Is the interface required for the program to work?
 	const SLboolean engineMixIfsReq[] = { SL_BOOLEAN_TRUE };
 
-	const SLuint32 outputMixIfCount = 1;
+	const SLuint32 outputMixIfCount = 0;
 	const SLInterfaceID outputMixIfs[] = {};
 	const SLboolean outputMixIfsReq[] = {};
 
