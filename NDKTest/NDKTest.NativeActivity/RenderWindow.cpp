@@ -378,8 +378,19 @@ Clock & RenderWindow::getClock() const
 	return (Clock&)clock;
 }
 
-void RenderWindow::play(const Sound * snd)
+void callback_sound(SLAndroidSimpleBufferQueueItf playerBuffer, void* context)
 {
+	utilsLog("Sound finished!");
+}
+
+void RenderWindow::play(const Sound* snd)
+{
+	(*playerBuffer)->Clear(playerBuffer);
+
+	//NOTE: Only call this if the buffer is stopped!
+	/*assert((*player)->SetCallbackEventsMask(player, SL_PLAYEVENT_HEADATEND) == SL_RESULT_SUCCESS);
+	assert((*playerBuffer)->RegisterCallback(playerBuffer, callback_sound, nullptr) == SL_RESULT_SUCCESS);*/
+
 	assert((*playerBuffer)->Enqueue(playerBuffer, (void*)snd->getBuffer(), snd->getSize()) == SL_RESULT_SUCCESS);
 }
 
@@ -707,7 +718,7 @@ bool RenderWindow::startSnd()
 	}
 
 	SLDataLocator_AndroidSimpleBufferQueue dataLocatorIn = { 0 };
-	dataLocatorIn.locatorType = SL_DATALOCATOR_ANDROIDBUFFERQUEUE;
+	dataLocatorIn.locatorType = SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE;
 	dataLocatorIn.numBuffers = 1;
 
 	SLDataFormat_PCM dataFormat = { 0 };
@@ -732,39 +743,35 @@ bool RenderWindow::startSnd()
 	dataSink.pFormat = nullptr;
 
 	const SLuint32 soundPlayerIIdCount = 2;
-	const SLInterfaceID soundPlayerIIds[] = { SL_IID_PLAY, SL_IID_BUFFERQUEUE };
+	const SLInterfaceID soundPlayerIIds[] = { SL_IID_PLAY, SL_IID_ANDROIDSIMPLEBUFFERQUEUE };
 	const SLboolean soundPlayerReqs[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
-	/*if ((*engine)->CreateAudioPlayer(engine, &playerObj, &dataSource, &dataSink,
+	if ((*engine)->CreateAudioPlayer(engine, &playerObj, &dataSource, &dataSink,
 		soundPlayerIIdCount, soundPlayerIIds, soundPlayerReqs) != SL_RESULT_SUCCESS)
 	{
 		utilsLogBreak("CreateAudioPlayer failed!");
-		return false;
+		InvalidCodePath;
 	}
 
 	if ((*playerObj)->Realize(playerObj, SL_BOOLEAN_FALSE) != SL_RESULT_SUCCESS)
 	{
 		utilsLogBreak("Realize failed!");
-		return false;
+		InvalidCodePath;
 	}
 
 	if ((*playerObj)->GetInterface(playerObj, SL_IID_PLAY, &player) != SL_RESULT_SUCCESS)
 	{
 		utilsLogBreak("GetInterface failed!");
-		return false;
+		InvalidCodePath;
 	}
 
 	if ((*playerObj)->GetInterface(playerObj, SL_IID_BUFFERQUEUE, &playerBuffer) != SL_RESULT_SUCCESS)
 	{
 		utilsLogBreak("GetInterface failed!");
-		return false;
+		InvalidCodePath;
 	}
 
-	if ((*player)->SetPlayState(player, SL_PLAYSTATE_PLAYING) != SL_RESULT_SUCCESS)
-	{
-		utilsLogBreak("SetPlayState failed!");
-		return false;
-	}*/
+	assert((*player)->SetPlayState(player, SL_PLAYSTATE_PLAYING) == SL_RESULT_SUCCESS);
 
 	return true;
 }

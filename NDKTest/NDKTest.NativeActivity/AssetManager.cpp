@@ -10,8 +10,7 @@ bool AssetManager::unloadNotUsedRes(const std::string & filename)
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
 	{
-		//NOTE: I think I do not have to do that
-		//res->second.reset();
+		res->second.release();
 		ressourceCache.erase(res);
 		return true;
 	}

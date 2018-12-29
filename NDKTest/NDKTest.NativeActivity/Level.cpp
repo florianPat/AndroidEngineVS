@@ -45,7 +45,7 @@ r()
 	r.setSize(30.0f, 10.0f);
 	r.setPosition({ window.getRenderWidth() - r.getSize().x, window.getRenderHeight() - r.getSize().y });
 
-	//window.play(sound);
+	window.play(sound);
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }

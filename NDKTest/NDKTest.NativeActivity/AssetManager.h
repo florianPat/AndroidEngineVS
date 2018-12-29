@@ -61,6 +61,7 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 				auto it = ressourceCache.find(*id);
 				assert(it != ressourceCache.end());
 				currentSize -= it->second->getSize();
+				it->second.release();
 				ressourceCache.erase(it);
 				timeOfInsertCache.erase(id);
 			} while (currentSize > maxSize);

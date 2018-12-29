@@ -59,8 +59,6 @@ class Sound : public Asset
 public:
 	static constexpr Asset::AssetId assetId = Asset::AssetId::SOUND;
 private:
-	friend class AssetManager;
-private:
 	std::vector<std::vector<short>> samples;
 	int nChannels = 0;
 	int nSamples = 0;

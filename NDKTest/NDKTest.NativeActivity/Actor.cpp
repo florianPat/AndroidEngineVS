@@ -19,7 +19,10 @@ void Actor::removeComponent(unsigned int componentId)
 	auto it = components.find(componentId);
 
 	if (it != components.end())
+	{
+		it->second.release();
 		components.erase(it);
+	}
 }
 
 void Actor::update(float dt)

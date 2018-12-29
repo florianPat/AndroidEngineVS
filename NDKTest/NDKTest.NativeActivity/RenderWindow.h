@@ -54,7 +54,7 @@ private:
 
 	SLObjectItf playerObj = 0;
 	SLPlayItf player = 0;
-	SLBufferQueueItf playerBuffer = 0;
+	SLAndroidSimpleBufferQueueItf playerBuffer = 0;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
 	void processEvents();
