@@ -15,10 +15,10 @@ class Component
 protected:
 	const unsigned int id;
 	EventManager* eventManager;
-	TextureAssetManager* assetManager;
+	AssetManager* assetManager;
 	Actor* owner;
 public:
-	Component(int id, EventManager* eventManager, TextureAssetManager* assetManager, Actor* owner) : id(id), eventManager(eventManager), 
+	Component(int id, EventManager* eventManager, AssetManager* assetManager, Actor* owner) : id(id), eventManager(eventManager), 
 																									 assetManager(assetManager), owner(owner) {};
 	virtual void update(float dt) = 0;
 	virtual void draw() = 0;

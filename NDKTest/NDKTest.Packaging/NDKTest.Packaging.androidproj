@@ -132,6 +132,7 @@
     <Content Include="assets\assetsRaw\player\PlayerJump.png" />
     <Content Include="assets\assetsRaw\player\PlayerWalk1.png" />
     <Content Include="assets\assetsRaw\player\PlayerWalk2.png" />
+    <Content Include="assets\nice.wav" />
     <Content Include="assets\ShaderRectShape.fs" />
     <Content Include="assets\ShaderRectShape.vs" />
     <Content Include="assets\ShaderSprite.fs" />

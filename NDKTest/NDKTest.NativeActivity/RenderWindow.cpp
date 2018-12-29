@@ -303,7 +303,7 @@ void RenderWindow::render()
 		orhtoProj = view.getOrthoProj();
 }
 
-TextureAssetManager * RenderWindow::getAssetManager()
+AssetManager * RenderWindow::getAssetManager()
 {
 	return &assetManager;
 }
@@ -376,6 +376,11 @@ void RenderWindow::recoverFromContextLoss()
 Clock & RenderWindow::getClock() const
 {
 	return (Clock&)clock;
+}
+
+void RenderWindow::play(const Sound * snd)
+{
+	assert((*playerBuffer)->Enqueue(playerBuffer, (void*)snd->getBuffer(), snd->getSize()) == SL_RESULT_SUCCESS);
 }
 
 void RenderWindow::deactivate()
@@ -665,7 +670,6 @@ bool RenderWindow::startSnd()
 {
 	const SLuint32 engineMixIfCount = 1;
 	const SLInterfaceID engineMixIfs[] = { SL_IID_ENGINE };
-	//NOTE: Is the interface required for the program to work?
 	const SLboolean engineMixIfsReq[] = { SL_BOOLEAN_TRUE };
 
 	const SLuint32 outputMixIfCount = 0;
@@ -702,11 +706,77 @@ bool RenderWindow::startSnd()
 		return false;
 	}
 
+	SLDataLocator_AndroidSimpleBufferQueue dataLocatorIn = { 0 };
+	dataLocatorIn.locatorType = SL_DATALOCATOR_ANDROIDBUFFERQUEUE;
+	dataLocatorIn.numBuffers = 1;
+
+	SLDataFormat_PCM dataFormat = { 0 };
+	dataFormat.formatType = SL_DATAFORMAT_PCM;
+	dataFormat.numChannels = 1;
+	dataFormat.samplesPerSec = SL_SAMPLINGRATE_44_1;
+	dataFormat.bitsPerSample = SL_PCMSAMPLEFORMAT_FIXED_16;
+	dataFormat.containerSize = SL_PCMSAMPLEFORMAT_FIXED_16;
+	dataFormat.channelMask = SL_SPEAKER_FRONT_CENTER;
+	dataFormat.endianness = SL_BYTEORDER_LITTLEENDIAN;
+
+	SLDataSource dataSource = { 0 };
+	dataSource.pLocator = &dataLocatorIn;
+	dataSource.pFormat = &dataFormat;
+
+	SLDataLocator_OutputMix dataLocatorOut = { 0 };
+	dataLocatorOut.locatorType = SL_DATALOCATOR_OUTPUTMIX;
+	dataLocatorOut.outputMix = outputMix;
+
+	SLDataSink dataSink = { 0 };
+	dataSink.pLocator = &dataLocatorOut;
+	dataSink.pFormat = nullptr;
+
+	const SLuint32 soundPlayerIIdCount = 2;
+	const SLInterfaceID soundPlayerIIds[] = { SL_IID_PLAY, SL_IID_BUFFERQUEUE };
+	const SLboolean soundPlayerReqs[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+
+	/*if ((*engine)->CreateAudioPlayer(engine, &playerObj, &dataSource, &dataSink,
+		soundPlayerIIdCount, soundPlayerIIds, soundPlayerReqs) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("CreateAudioPlayer failed!");
+		return false;
+	}
+
+	if ((*playerObj)->Realize(playerObj, SL_BOOLEAN_FALSE) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("Realize failed!");
+		return false;
+	}
+
+	if ((*playerObj)->GetInterface(playerObj, SL_IID_PLAY, &player) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("GetInterface failed!");
+		return false;
+	}
+
+	if ((*playerObj)->GetInterface(playerObj, SL_IID_BUFFERQUEUE, &playerBuffer) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("GetInterface failed!");
+		return false;
+	}
+
+	if ((*player)->SetPlayState(player, SL_PLAYSTATE_PLAYING) != SL_RESULT_SUCCESS)
+	{
+		utilsLogBreak("SetPlayState failed!");
+		return false;
+	}*/
+
 	return true;
 }
 
 void RenderWindow::stopSnd()
 {
+	if (playerObj != 0)
+	{
+		(*playerObj)->Destroy(playerObj);
+		playerObj = 0;
+	}
+
 	if (outputMix != 0)
 	{
 		(*outputMix)->Destroy(outputMix);

@@ -17,6 +17,8 @@
 #include "CircleShape.h"
 #include "View.h"
 #include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
+#include "Sound.h"
 
 class RenderWindow
 {
@@ -38,7 +40,7 @@ private:
 	EGLDisplay display = EGL_NO_DISPLAY;
 	EGLSurface surface = EGL_NO_SURFACE;
 	EGLContext context = EGL_NO_CONTEXT;
-	TextureAssetManager assetManager;
+	AssetManager assetManager;
 	std::unique_ptr<Shader> shaderSprite = nullptr;
 	std::unique_ptr<Shader> shaderRectShape = nullptr;
 	View view;
@@ -49,6 +51,10 @@ private:
 	SLObjectItf engineObj = 0;
 	SLEngineItf engine = 0;
 	SLObjectItf outputMix = 0;
+
+	SLObjectItf playerObj = 0;
+	SLPlayItf player = 0;
+	SLBufferQueueItf playerBuffer = 0;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
 	void processEvents();
@@ -60,7 +66,7 @@ public:
 	void draw(const RectangleShape& rect);
 	void draw(const CircleShape& circle);
 	void render();
-	TextureAssetManager* getAssetManager();
+	AssetManager* getAssetManager();
 	View& getDefaultView();
 	int getViewportWidth() const;
 	int getViewportHeight() const;
@@ -68,6 +74,7 @@ public:
 	int getRenderHeight() const;
 	void recoverFromContextLoss();
 	Clock& getClock() const;
+	void play(const Sound* snd);
 
 	Shader* getSpriteShader() const;
 private:

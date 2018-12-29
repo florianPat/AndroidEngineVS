@@ -13,7 +13,9 @@
 #else
 #define utilsLog(string)
 #define utilsLogBreak(string)
-#define assert(exp)
+//NOTE: I do this so that the expression in the assert gets executed, because sometimes I have "critical" code in there (which may
+// is a bad idea)
+#define assert(exp) if(!((exp) && true)) utilsLog("assert would have fired now!");
 #endif
 #define arrayCount(x) sizeof(x) / sizeof(x[0])
 

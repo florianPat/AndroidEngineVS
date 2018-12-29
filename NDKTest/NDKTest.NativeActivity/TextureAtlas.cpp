@@ -4,7 +4,7 @@
 #include "Utils.h"
 #include "Rect.h"
 
-TextureAtlas::TextureAtlas(const std::string& filepath, TextureAssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
+TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
 {
 	Ifstream file(assetManager->getAAssetManager());
 	file.open(filepath);
@@ -181,18 +181,18 @@ Vector2i TextureAtlas::getLineContentRegionValues(std::string & lineContent, cha
 	return result;
 }
 
-void TextureRegion::initSprite(TextureAssetManager* assetManager)
+void TextureRegion::initSprite(AssetManager* assetManager)
 {
 	assert(textureAtlasFileName != "" || filename != "");
 
-	atlasTexture = assetManager->getOrAddRes(textureAtlasFileName);
+	atlasTexture = assetManager->getOrAddRes<Texture>(textureAtlasFileName);
 	regionSprite = Sprite(atlasTexture, IntRect(xy.x, xy.y, size.x, size.y));
 }
 
 void TextureRegion::setRegion(int x, int y, int widht, int height)
 {
 	if(x >= 0 && y >= 0)
-		if ((unsigned int)widht <= regionSprite.getTexture()->getSize().x && (unsigned int)height <= regionSprite.getTexture()->getSize().y)
+		if ((unsigned int)widht <= regionSprite.getTexture()->getWidth() && (unsigned int)height <= regionSprite.getTexture()->getHeight())
 		{
 			regionSprite.setTextureRect(IntRect(x, y, widht, height));
 			xy.x = x;

@@ -7,8 +7,6 @@
 #include "Rect.h"
 #include "RenderWindow.h"
 
-//TODO: Add GJK just for implementatin ;)
-
 class Physics
 {
 public:

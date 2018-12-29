@@ -1,16 +1,9 @@
 #include "Utils.h"
-//#include <Windows.h>
-
-//#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
 
 static int counter = 0;
 
 unsigned int utils::getGUID()
 {
-	/*UUID uuid;
-	UuidCreate(&uuid);
-	return uuid.Data1;*/
-
 	return counter++;
 }
 

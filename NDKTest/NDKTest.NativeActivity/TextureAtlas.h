@@ -22,7 +22,7 @@ class TextureRegion
 	Sprite regionSprite;
 private:
 	TextureRegion() = default;
-	void initSprite(TextureAssetManager* assetManager);
+	void initSprite(AssetManager* assetManager);
 public:
 	std::string getAtlasFileName() { return textureAtlasFileName; }
 	std::string getRegionName() { return filename; }
@@ -44,7 +44,7 @@ class TextureAtlas
 		std::string repeat;
 	};
 public:
-	TextureAtlas(const std::string& filepath, TextureAssetManager* assetManger);
+	TextureAtlas(const std::string& filepath, AssetManager* assetManger);
 
 	std::unique_ptr<TextureRegion> findRegion(const std::string& name) const;
 	std::vector<TextureRegion> getRegions();
@@ -57,5 +57,5 @@ private:
 	static constexpr int FILE_HEADER_LINE_SIZE = 5;
 	static constexpr int FILE_LINES_PER_REGION = 7;
 	FileHeader fileHeader;
-	TextureAssetManager* assetManager = nullptr;
+	AssetManager* assetManager = nullptr;
 };

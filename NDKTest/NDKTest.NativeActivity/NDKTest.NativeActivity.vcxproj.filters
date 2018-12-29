@@ -42,6 +42,8 @@
     <ClInclude Include="CircleShape.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="TouchInput.h" />
+    <ClInclude Include="Asset.h" />
+    <ClInclude Include="Sound.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -76,5 +78,7 @@
     <ClCompile Include="CircleShape.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="TouchInput.cpp" />
+    <ClCompile Include="Asset.cpp" />
+    <ClCompile Include="Sound.cpp" />
   </ItemGroup>
 </Project>

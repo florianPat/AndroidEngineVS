@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "Ifstream.h"
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, TextureAssetManager* assetManager)
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, AssetManager* assetManager)
 	: elementMap()
 {
 	Ifstream file(assetManager->getAAssetManager());
@@ -61,7 +61,6 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 					std::string id;
 					IntRect rect;
 					bool shouldAdd = true;
-					//TODO: Think about how to make this nicer!
 					bool addWidth = false;
 
 					Vector2i beforeTranslationVec = translationVec;
@@ -221,7 +220,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 	}
 }
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName, TextureAssetManager* assetManager) 
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName, AssetManager* assetManager) 
 	: InkscapeAnimationElement(inkscapeFileName, { "Process all groups" }, assetManager)
 {
 }

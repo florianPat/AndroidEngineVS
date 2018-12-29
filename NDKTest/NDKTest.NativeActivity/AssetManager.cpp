@@ -1,46 +1,11 @@
 #include "AssetManager.h"
 #include "Utils.h"
 
-TextureAssetManager::TextureAssetManager(AAssetManager * aassetManager) : ressourceCache(), timeOfInsertCache(), aassetManager(aassetManager)
+AssetManager::AssetManager(AAssetManager * aassetManager) : ressourceCache(), timeOfInsertCache(), aassetManager(aassetManager)
 {
 }
 
-Texture* TextureAssetManager::getOrAddRes(const std::string & filename)
-{
-	auto res = ressourceCache.find(filename);
-	if (res != ressourceCache.end())
-		return res->second.get();
-	else
-	{
-		std::unique_ptr<Texture> texture = std::make_unique<Texture>();
-		if(!texture->loadFromFile(filename, aassetManager))
-		{
-			utilsLogBreak("Could not load texture!");
-			return nullptr;
-		}
-
-		currentSize += texture->getSize().x * texture->getSize().y * sizeof(int);
-		if (currentSize > maxSize)
-		{
-			do
-			{
-				auto id = timeOfInsertCache.begin();
-				auto it = ressourceCache.find(*id);
-				assert(it != ressourceCache.end());
-				currentSize -= it->second->getSize().x * it->second->getSize().y * sizeof(int);
-				ressourceCache.erase(it);
-				timeOfInsertCache.erase(id);
-			} while (currentSize > maxSize);
-		}
-
-		auto result = ressourceCache.emplace(std::pair<std::string, std::unique_ptr<Texture>>{ filename, std::move(texture) });
-		timeOfInsertCache.push_back(filename);
-		assert(result.second);
-		return result.first->second.get();
-	}
-}
-
-bool TextureAssetManager::unloadNotUsedRes(const std::string & filename)
+bool AssetManager::unloadNotUsedRes(const std::string & filename)
 {
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
@@ -54,23 +19,23 @@ bool TextureAssetManager::unloadNotUsedRes(const std::string & filename)
 		return false;
 }
 
-void TextureAssetManager::clear()
+void AssetManager::clear()
 {
 	ressourceCache.clear();
 }
 
-bool TextureAssetManager::isLoaded(const std::string & filename)
+bool AssetManager::isLoaded(const std::string & filename)
 {
 	auto i = ressourceCache.find(filename);
 	return i != ressourceCache.end();
 }
 
-AAssetManager * TextureAssetManager::getAAssetManager()
+AAssetManager * AssetManager::getAAssetManager()
 {
 	return aassetManager;
 }
 
-void TextureAssetManager::reloadAllRes()
+void AssetManager::reloadAllRes()
 {
 	for (auto it = ressourceCache.begin(); it != ressourceCache.end(); ++it)
 	{

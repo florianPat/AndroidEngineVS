@@ -294,7 +294,7 @@ std::string TiledMap::ParseTiles(Ifstream & file)
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 			std::string source = getLineContentBetween(lineContent, "source", '"');
-			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes(source) });
+			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes<Texture>(source) });
 
 			file.getline(lineContent); //</tile>
 			assert(utils::isWordInLine("</tile>", lineContent));

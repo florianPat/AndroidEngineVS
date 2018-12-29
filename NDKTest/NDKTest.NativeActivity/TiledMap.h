@@ -35,7 +35,7 @@ class TiledMap
 
 	RenderTexture texture;
 	Sprite textureSprite;
-	TextureAssetManager* assetManager = nullptr;
+	AssetManager* assetManager = nullptr;
 public:
 	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects = std::vector<std::string>{});
 	std::vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);

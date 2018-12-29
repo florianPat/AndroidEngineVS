@@ -4,26 +4,29 @@
 #include "android_native_app_glue.h"
 #include <string>
 #include "Vector2.h"
+#include "Asset.h"
 
-class Texture
+class Texture : public Asset
 {
-	friend class TextureAssetManager;
+public:
+	static constexpr Asset::AssetId assetId = Asset::AssetId::TEXTURE;
+private:
 	friend class RenderTexture;
+
+	static constexpr bool pixeld = false;
 
 	int width = 0;
 	int height = 0;
 	GLuint texture = 0;
 private:
-	bool loadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
-	bool reloadFromFile(const std::string& filename, AAssetManager* assetManager, bool pixeld = false);
+	bool loadFromFile(const std::string& filename, AAssetManager* assetManager) override;
+	bool reloadFromFile(const std::string& filename, AAssetManager* assetManager) override;
 public:
-	Texture() = default;
+	Texture();
 	~Texture();
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
-	Vector2i getSize() const { return Vector2i{ width, height }; }
+	long long getSize() const override { return width * height * sizeof(int32_t); }
 	explicit operator bool() const;
 	void bind(int slot = 0) const;
-private:
-	void read(AAsset* asset, void * buffer, size_t size);
 };

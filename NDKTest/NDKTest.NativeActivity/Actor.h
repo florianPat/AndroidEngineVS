@@ -30,10 +30,14 @@ inline T* Actor::getComponent(unsigned int componentId)
 {
 	auto result = components.find(componentId);
 	auto componentPtr = result->second.get();
-	//TODO: Without rtti?
-	if (result != components.end() && typeid((*componentPtr)) == typeid(T))
+	if (result != components.end())
 	{
-		return dynamic_cast<T*>(componentPtr);
+		//NOTE: Only used to really verify that it is ok what I am doing. RTTI should be switched off in release mode
+#ifndef NDEBUG
+		assert(typeid((*componentPtr)) == typeid(T));
+		assert(dynamic_cast<T*>(componentPtr) != nullptr);
+#endif
+		return (T*) componentPtr;
 	}
 	else
 		return nullptr;

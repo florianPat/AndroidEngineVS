@@ -9,15 +9,13 @@ void callback_readPng(png_structp pStruct, png_bytep pData, png_size_t pSize) {
 	asset->read(pData, pSize);
 }
 
-bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetManager, bool pixeld)
+bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetManager)
 {
-	bool result = true;
-
 	Ifstream asset = Ifstream(assetManager);
 	asset.open(filename);
 
 	if (!asset)
-		result = false;
+		return false;
 
 	GLint format;
 	png_byte header[8];
@@ -30,14 +28,14 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 
 	asset.read(header, sizeof(header));
 	if (png_sig_cmp(header, 0, 8) != 0)
-		result = false;
+		return false;
 
 	png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!png)
-		result = false;
+		return false;
 	info = png_create_info_struct(png);
 	if (!info)
-		result = false;
+		return false;
 
 	png_set_read_fn(png, &asset, callback_readPng);
 
@@ -98,7 +96,7 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 
 	rowSize = png_get_rowbytes(png, info);
 	if (rowSize <= 0)
-		result = false;
+		return false;
 
 	image = new png_byte[rowSize * height];
 	rowPtrs = new png_bytep[height];
@@ -129,17 +127,21 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	this->width = width;
 	this->height = height;
 
-	return result;
+	return true;
 }
 
-bool Texture::reloadFromFile(const std::string& filename, AAssetManager * assetManager, bool pixeld)
+bool Texture::reloadFromFile(const std::string& filename, AAssetManager * assetManager)
 {
 	if (texture != 0)
 	{
 		CallGL(glDeleteTextures(1, &texture));
 	}
 
-	return loadFromFile(filename, assetManager, pixeld);
+	return loadFromFile(filename, assetManager);
+}
+
+Texture::Texture() : Asset(assetId)
+{
 }
 
 Texture::~Texture()
@@ -159,9 +161,4 @@ void Texture::bind(int slot) const
 {
 	CallGL(glActiveTexture(GL_TEXTURE0 + slot));
 	CallGL(glBindTexture(GL_TEXTURE_2D, texture));
-}
-
-void Texture::read(AAsset * asset, void * buffer, size_t size)
-{
-	assert(AAsset_read(asset, buffer, size) == size);
 }

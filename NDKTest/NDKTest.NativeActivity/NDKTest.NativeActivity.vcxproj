@@ -247,6 +247,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Asset.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="CircleShape.h" />
     <ClInclude Include="Color.h" />
@@ -273,6 +274,7 @@
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureAtlas.h" />
@@ -291,6 +293,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="CircleShape.cpp" />
     <ClCompile Include="EventLevelReload.cpp" />
@@ -310,6 +313,7 @@
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureAtlas.cpp" />

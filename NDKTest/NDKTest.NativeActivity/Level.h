@@ -12,6 +12,7 @@
 #include "CircleShape.h"
 #include "RectangleShape.h"
 #include "Texture.h"
+#include "Sound.h"
 
 class Level
 {
@@ -30,8 +31,9 @@ protected:
 	//Test
 	CircleShape c;
 	RectangleShape r;
-	Texture* texture = window.getAssetManager()->getOrAddRes("ship.png");
+	Texture* texture = window.getAssetManager()->getOrAddRes<Texture>("ship.png");
 	Sprite sprite = Sprite(texture);
+	Sound* sound = window.getAssetManager()->getOrAddRes<Sound>("nice.wav");
 protected:
 	std::function<void(EventData*)> eventLevelReloadFunction = std::bind(&Level::eventLevelReloadHandler, this, std::placeholders::_1);
 	DelegateFunction delegateLevelReload = utils::getDelegateFromFunction(eventLevelReloadFunction);
