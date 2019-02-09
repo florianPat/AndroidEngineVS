@@ -4,9 +4,9 @@
 #include <iostream>
 #include "GLUtils.h"
 
-std::string loadShader(const std::string& filename, AAssetManager* assetManager)
+std::string loadShader(const std::string& filename)
 {
-	Ifstream file(assetManager);
+	Ifstream file;
 	file.open(filename);
 	assert(file);
 
@@ -47,8 +47,8 @@ void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const std::str
 			CallGL(glGetShaderInfoLog(shader, sizeof(error), nullptr, error));
 		}
 
-		__android_log_write(ANDROID_LOG_ERROR, "", errorMessage.c_str());
-		__android_log_print(ANDROID_LOG_ERROR, __FUNCTION__, "%s", error);
+		utils::logFBreak("", errorMessage.c_str());
+		utils::logFBreak("%s", error);
 		InvalidCodePath;
 	}
 }
@@ -60,7 +60,7 @@ GLuint createShader(const std::string& text, GLenum shaderType)
 
 	if (shader == 0)
 	{
-		utilsLogBreak("glCreateShader failed!");
+		utils::logBreak("glCreateShader failed!");
 	}
 
 	const GLchar* shaderSourceStrings[1];
@@ -77,12 +77,14 @@ GLuint createShader(const std::string& text, GLenum shaderType)
 	return shader;
 }
 
-Shader::Shader(const std::string & filename, AAssetManager* assetManager, const std::vector<std::string>& attribLocs) : uniformCache()
+Shader::Shader(const std::string & filename, const std::vector<std::string>& attribLocs) : uniformCache()
 {
+	GLuint shaders[NUM_SHADERS];
+
 	CallGL(program = glCreateProgram());
 
-	shaders[0] = createShader(loadShader(filename + ".vs", assetManager), GL_VERTEX_SHADER);
-	shaders[1] = createShader(loadShader(filename + ".fs", assetManager), GL_FRAGMENT_SHADER);
+	shaders[0] = createShader(loadShader(filename + ".vs"), GL_VERTEX_SHADER);
+	shaders[1] = createShader(loadShader(filename + ".fs"), GL_FRAGMENT_SHADER);
 
 	for (unsigned int i = 0; i < NUM_SHADERS; ++i)
 	{
@@ -107,6 +109,25 @@ Shader::Shader(const std::string & filename, AAssetManager* assetManager, const 
 	}
 
 	bind();
+}
+
+Shader::Shader(Shader && other) : program(std::exchange(other.program, 0)), uniformCache(std::move(other.uniformCache))
+{
+}
+
+Shader & Shader::operator=(Shader && rhs)
+{
+	this->~Shader();
+
+	program = std::exchange(rhs.program, 0);
+	uniformCache = std::move(rhs.uniformCache);
+
+	return *this;
+}
+
+Shader::operator bool() const
+{
+	return (program != 0);
 }
 
 Shader::~Shader()

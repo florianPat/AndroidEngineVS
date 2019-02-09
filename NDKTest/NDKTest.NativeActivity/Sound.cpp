@@ -2,14 +2,14 @@
 #include "Ifstream.h"
 #include "Utils.h"
 
-bool Sound::loadFromFile(const std::string & filename, AAssetManager * assetManager)
+bool Sound::loadFromFile(const std::string & filename)
 {
-	Ifstream file(assetManager);
+	Ifstream file;
 	file.open(filename);
 
 	if (!file)
 	{
-		utilsLogBreak("Could not open file!");
+		utils::logBreak("Could not open file!");
 	}
 
 	int fileSize = file.getSize();
@@ -78,17 +78,17 @@ bool Sound::loadFromFile(const std::string & filename, AAssetManager * assetMana
 		}
 	}
 	else
-		utilsLogBreak("Invalid channel count!");
+		utils::logBreak("Invalid channel count!");
 
 	return true;
 }
 
-bool Sound::reloadFromFile(const std::string & filename, AAssetManager * assetManager)
+bool Sound::reloadFromFile(const std::string & filename)
 {
-	return loadFromFile(filename, assetManager);
+	return loadFromFile(filename);
 }
 
-Sound::Sound() : Asset(Asset::AssetId::SOUND)
+Sound::Sound()
 {
 }
 

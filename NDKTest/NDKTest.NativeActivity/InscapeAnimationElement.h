@@ -15,8 +15,8 @@ private:
 	bool FindGroupLayer(std::string& lineContent) const;
 public:
 	InkscapeAnimationElement() = default;
-	InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, AssetManager* assetManager);
-	InkscapeAnimationElement(const std::string& inkscapeFileName, AssetManager* assetManager);
+	InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames);
+	InkscapeAnimationElement(const std::string& inkscapeFileName);
 	IntRect getElementRect(std::string& keyFrameId, std::string& elementId) const;
 	std::map<std::string, IntRect> getElementMap(const std::string& keyFrameId) const;
 	bool isElementInMap(const std::string& keyFrameId) const;

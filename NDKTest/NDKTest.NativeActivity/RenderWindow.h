@@ -30,6 +30,9 @@ public:
 	};
 private:
 	android_app* app = nullptr;
+	bool gainedFocus = false;
+	bool resumed = false;
+	bool validNativeWindow = false;
 	bool initFinished = false;
 	bool running = true;
 	Clock clock;
@@ -55,13 +58,17 @@ private:
 	SLObjectItf playerObj = 0;
 	SLPlayItf player = 0;
 	SLAndroidSimpleBufferQueueItf playerBuffer = 0;
+	std::vector<Sound*> activeSnds;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
-	void processEvents();
+	RenderWindow(const RenderWindow& other) = delete;
+	RenderWindow(RenderWindow&& other) = delete;
+	RenderWindow& operator=(const RenderWindow& rhs) = delete;
+	RenderWindow& operator=(RenderWindow&& rhs) = delete;
+	bool processEvents();
 
-	bool isOpen() const;
+	void clear();
 	void close();
-	bool clear();
 	void draw(const Sprite& sprite);
 	void draw(const RectangleShape& rect);
 	void draw(const CircleShape& circle);
@@ -75,7 +82,6 @@ public:
 	void recoverFromContextLoss();
 	Clock& getClock() const;
 	void play(const Sound* snd);
-
 	Shader* getSpriteShader() const;
 private:
 	void deactivate();
@@ -91,4 +97,6 @@ private:
 	void getAndSetTouchInputPos(AInputEvent* event);
 	bool startSnd();
 	void stopSnd();
+	void setupGfxGpu();
+	void checkIfToRecoverFromContextLoss();
 };

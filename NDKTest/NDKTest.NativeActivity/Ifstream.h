@@ -4,20 +4,23 @@
 #include <string>
 #include <ios>
 
-class Ifstream
+class Ifstream final
 {
 	AAsset* asset = nullptr;
-	AAssetManager* assetManager = nullptr;
+	AAssetManager* aassetManager = nullptr;
 	bool good = true;
 public:
-	Ifstream(const std::string& filename, AAssetManager* assetManager);
-	Ifstream(AAssetManager* assetManager);
+	Ifstream(const std::string& filename);
+	Ifstream();
+	Ifstream(const Ifstream& other) = delete;
+	Ifstream(Ifstream&& other);
+	Ifstream& operator=(const Ifstream& rhs) = delete;
+	Ifstream& operator=(Ifstream&& rhs);
 	~Ifstream();
 	explicit operator bool() const;
 	bool operator!() const;
 	bool eof();
 	void getline(std::string& line);
-	Ifstream& operator=(const Ifstream&) = delete;
 	void read(void* s, std::streamsize n);
 	char get();
 	std::streampos tellg();

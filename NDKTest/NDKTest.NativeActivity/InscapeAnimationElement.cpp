@@ -2,10 +2,10 @@
 #include "Utils.h"
 #include "Ifstream.h"
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, AssetManager* assetManager)
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames)
 	: elementMap()
 {
-	Ifstream file(assetManager->getAAssetManager());
+	Ifstream file;
 	file.open(inkscapeFileName);
 	assert(file);
 
@@ -19,7 +19,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 		}
 		else if (iteration == 1)
 		{
-			utilsLogBreak("There is an element outside a group!!");
+			utils::logBreak("There is an element outside a group!!");
 		}
 
 		file.getline(lineContent);
@@ -109,7 +109,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 								auto lasttOne = lineContent.find_last_of('1');
 								if (firstOne == lasttOne)
 								{
-									utilsLogBreak("Scaling is only allowed with a 1");
+									utils::logBreak("Scaling is only allowed with a 1");
 								}
 								else
 								{
@@ -125,7 +125,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 									else
 									{
 										//TODO: Same as in x?
-										utilsLogBreak("-1 scaling in Y is currently not implemented");
+										utils::logBreak("-1 scaling in Y is currently not implemented");
 									}
 								}
 							}
@@ -136,7 +136,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 							}
 							else
 							{
-								utilsLogBreak("Other transformations are currently not supported");
+								utils::logBreak("Other transformations are currently not supported");
 							}
 						}
 
@@ -177,7 +177,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 					}
 					else
 					{
-						utilsLogBreak("Other transformations are currently not supported");
+						utils::logBreak("Other transformations are currently not supported");
 					}
 				}
 			}
@@ -191,7 +191,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 				{
 					if (rectMap.size() == 1)
 					{
-						utilsLogBreak("Only found \"Base\" element, but there is need for more!");
+						utils::logBreak("Only found \"Base\" element, but there is need for more!");
 					}
 
 					Vector2i baseVec = { base->second.left, base->second.top };
@@ -211,7 +211,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 				}
 				else
 				{
-					utilsLogBreak("No \"Base\" found in this rect definition");
+					utils::logBreak("No \"Base\" found in this rect definition");
 				}
 
 				elementMap.emplace(groupId, rectMap);
@@ -220,8 +220,8 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 	}
 }
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName, AssetManager* assetManager) 
-	: InkscapeAnimationElement(inkscapeFileName, { "Process all groups" }, assetManager)
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName) 
+	: InkscapeAnimationElement(inkscapeFileName, { "Process all groups" })
 {
 }
 

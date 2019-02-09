@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Asset.h"
+#include "AssetLoader.h"
 #include "Utils.h"
 #include "android_native_app_glue.h"
 #include "Sound.h"
@@ -10,23 +10,27 @@
 
 class AssetManager
 {
-	static constexpr long long maxSize = Gigabyte(4);
+	friend class RenderWindow;
+	friend class Ifstream;
+
+	static constexpr long long maxSize = Gigabyte(1);
 	long long currentSize = 0;
-	std::unordered_map<std::string, std::unique_ptr<Asset>> ressourceCache;
+	std::unordered_map<std::string, std::unique_ptr<char[]>> ressourceCache;
 	std::vector<std::string> timeOfInsertCache;
-	AAssetManager* aassetManager = nullptr;
-public:
+	static AAssetManager* aassetManager;
+	std::unordered_map<std::string, AssetLoader> assetLoaderCache;
+private:
 	AssetManager(AAssetManager* aassetManager);
+public:
+	AssetManager() = delete;
 	template <typename T>
 	T* getOrAddRes(const std::string& filename);
 	bool unloadNotUsedRes(const std::string& filename);
 	void clear();
 	bool isLoaded(const std::string& filename);
-	AAssetManager* getAAssetManager();
 	void reloadAllRes();
-private:
-	template<typename T>
-	T* returnRightValue(Asset* asset);
+	void read(AAsset* asset, void * buffer, size_t size);
+	void registerAssetLoader(const std::string& fileExt, const AssetLoader& assetLoader);
 };
 
 template<typename T>
@@ -35,24 +39,27 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
 	{
-		Asset* asset = res->second.get();
-		return returnRightValue<T>(asset);
+		T* asset = (T*) res->second.get();
+		return asset;
 	}
 	else
 	{
-		std::unique_ptr<Asset> texture = nullptr;
-		texture = std::make_unique<T>();
-		//NOTE: Only used to really verify that it is ok what I am doing. RTTI should be switched off in release mode
-#ifndef NDEBUG
-		assert(dynamic_cast<Asset*>(texture.get()) != nullptr);
-#endif
-		if (!texture->loadFromFile(filename, aassetManager))
+		std::unique_ptr<char[]> asset = std::make_unique<char[]>(sizeof(T));
+		T* tP = (T*) asset.get();
+		*tP = T();
+
+		std::string ext = filename.substr(filename.find_last_of('.') + 1);
+		assert(assetLoaderCache.find(ext) != assetLoaderCache.end());
+		AssetLoader assetLoader = assetLoaderCache.at(ext);
+
+		//(TODO: Think about how to let the user also construct a asset from a stream)
+		if (!assetLoader.loadFromFile(asset.get(), filename))
 		{
-			utilsLogBreak("Could not load texture!");
+			utils::logBreak("Could not load asset!");
 			return nullptr;
 		}
 
-		currentSize += texture->getSize();
+		currentSize += assetLoader.getSize(asset.get());
 		if (currentSize > maxSize)
 		{
 			do
@@ -60,47 +67,18 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 				auto id = timeOfInsertCache.begin();
 				auto it = ressourceCache.find(*id);
 				assert(it != ressourceCache.end());
-				currentSize -= it->second->getSize();
+				AssetLoader aL = assetLoaderCache.at(it->first.substr(it->first.find_last_of('.') + 1));
+				currentSize -= aL.getSize(it->second.get());
 				it->second.release();
 				ressourceCache.erase(it);
 				timeOfInsertCache.erase(id);
 			} while (currentSize > maxSize);
 		}
 
-		auto result = ressourceCache.emplace(std::pair<std::string, std::unique_ptr<Asset>>{ filename, std::move(texture) });
+		auto result = ressourceCache.emplace(std::make_pair(filename, std::move(asset)));
 		timeOfInsertCache.push_back(filename);
 		assert(result.second);
-		Asset* asset = result.first->second.get();
-		return returnRightValue<T>(asset);
+		T* returnAsset = (T*) result.first->second.get();
+		return returnAsset;
 	}
-}
-
-template<typename T>
-T * AssetManager::returnRightValue(Asset * asset)
-{
-	switch (asset->assetId)
-	{
-		case Asset::AssetId::TEXTURE:
-		{
-			Texture* result = (Texture*)asset;
-			assert(typeid(result) == typeid(T*));
-			break;
-		}
-		case Asset::AssetId::SOUND:
-		{
-			Sound* result = (Sound*)asset;
-			assert(typeid(result) == typeid(T*));
-			break;
-		}
-		default:
-		{
-			utilsLogBreak("AssetId");
-			return nullptr;
-		}
-	}
-	//NOTE: Only used to really verify that it is ok what I am doing. RTTI should be switched off in release mode
-#ifndef NDEBUG
-	assert(dynamic_cast<T*>(asset) != nullptr);
-#endif
-	return (T*)asset;
 }

@@ -11,8 +11,8 @@
 
 class RenderTexture
 {
-	GLuint renderTexture;
-	GLint screenTexture;
+	GLuint renderTexture = 0;
+	GLint screenTexture = 0;
 	Texture texture;
 	Mat4x4 orhtoProj;
 	Shader* shaderSprite = nullptr;
@@ -20,7 +20,12 @@ class RenderTexture
 	float windowHeight = 0;
 public:
 	RenderTexture() = default;
-	bool create(uint width, uint height, Shader* shaderSprite, float windowWidth, float windowHeight);
+	RenderTexture(const RenderTexture& other) = delete;
+	RenderTexture(RenderTexture&& other);
+	RenderTexture& operator=(const RenderTexture& rhs) = delete;
+	RenderTexture& operator=(RenderTexture&& rhs);
+	~RenderTexture();
+	bool create(uint width, uint height, Shader* shaderSprite);
 	void clear();
 	const Texture& getTexture() const;
 	void display();

@@ -1,8 +1,11 @@
 #include "AssetManager.h"
 #include "Utils.h"
 
-AssetManager::AssetManager(AAssetManager * aassetManager) : ressourceCache(), timeOfInsertCache(), aassetManager(aassetManager)
+AAssetManager* AssetManager::aassetManager = nullptr;
+
+AssetManager::AssetManager(AAssetManager * aassetManager) : ressourceCache(), timeOfInsertCache()
 {
+	this->aassetManager = aassetManager;
 }
 
 bool AssetManager::unloadNotUsedRes(const std::string & filename)
@@ -29,18 +32,27 @@ bool AssetManager::isLoaded(const std::string & filename)
 	return i != ressourceCache.end();
 }
 
-AAssetManager * AssetManager::getAAssetManager()
-{
-	return aassetManager;
-}
-
 void AssetManager::reloadAllRes()
 {
 	for (auto it = ressourceCache.begin(); it != ressourceCache.end(); ++it)
 	{
-		if(!it->second->reloadFromFile(it->first, aassetManager))
+		AssetLoader assetLoader = assetLoaderCache.at(it->first.substr(it->first.find_last_of('.') + 1));
+
+		if(!assetLoader.reloadFromFile(it->second.get(), it->first))
 		{
-			utilsLogBreak("Could not reload texture!");
+			utils::logBreak("Could not reload asset!");
 		}
 	}
+}
+
+void AssetManager::read(AAsset * asset, void * buffer, size_t size)
+{
+	assert(AAsset_read(asset, buffer, size) == size);
+}
+
+void AssetManager::registerAssetLoader(const std::string & fileExt, const AssetLoader & assetLoader)
+{
+	assert(assetLoaderCache.find(fileExt) == assetLoaderCache.end());
+
+	assetLoaderCache.emplace(std::make_pair(fileExt, assetLoader));
 }

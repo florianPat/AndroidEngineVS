@@ -1,6 +1,7 @@
 #include "Level.h"
 #include "EventLevelReload.h"
 #include "TouchInput.h"
+#include "AssetLoader.h"
 
 /*void Level::eventLevelReloadHandler(EventData* eventData)
 {
@@ -11,7 +12,7 @@
 void Level::updateModel()
 {
 	float dt = clock.getTime().asSeconds();
-	__android_log_print(ANDROID_LOG_INFO, "FPS", "%f", dt);
+	utils::logF("%f", dt);
 
 	gom.updateActors(dt);
 
@@ -20,12 +21,13 @@ void Level::updateModel()
 
 void Level::composeFrame()
 {
-	map.draw(window);
+	//map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
 
 	physics.debugRenderBodies(window);
 
+	// -- test code
 	if (TouchInput::isTouched())
 	{
 		sprite.setPosition(TouchInput::getPosition());
@@ -33,46 +35,37 @@ void Level::composeFrame()
 
 	window.draw(r);
 	window.draw(sprite);
+	// -- end test code
 }
 
 Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
 gom(), clock(window.getClock()), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
 r()
 {
+	// -- test code
 	c.setFillColor(Colors::Yellow);
 	c.setRadius(50.0f);
 
 	r.setSize(30.0f, 10.0f);
 	r.setPosition({ window.getRenderWidth() - r.getSize().x, window.getRenderHeight() - r.getSize().y });
 
-	window.play(sound);
+	//window.play(sound);
+	// -- end test code
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
 
-std::unique_ptr<Level> Level::Go()
+bool Level::Go()
 {
-	while (!endLevel && window.isOpen())
-	{
-		window.processEvents();
+	updateModel();
+	window.clear();
+	composeFrame();
+	window.render();
 
-		updateModel();
-		bool shouldContinue = window.clear();
-		if (shouldContinue)
-		{
-			composeFrame();
-			window.render();
-		}
-		else
-		{
-			window.recoverFromContextLoss();
-		}
-	}
+	return endLevel;
+}
 
-	if (!window.isOpen())
-	{
-		window.close();
-	}
-
+std::unique_ptr<Level> Level::getNewLevel()
+{
 	return std::move(newLevel);
 }

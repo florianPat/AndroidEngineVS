@@ -20,7 +20,6 @@ void Actor::removeComponent(unsigned int componentId)
 
 	if (it != components.end())
 	{
-		it->second.release();
 		components.erase(it);
 	}
 }

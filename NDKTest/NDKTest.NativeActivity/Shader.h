@@ -10,9 +10,13 @@
 class Shader
 {
 public:
-	//NOTE: I just use it as a unique_ptr, because othervise copy / destructor stuff is not nice
 	Shader() = default;
-	Shader(const std::string& filename, AAssetManager* assetManager, const std::vector<std::string>& attribLocs);
+	Shader(const std::string& filename, const std::vector<std::string>& attribLocs);
+	Shader(const Shader& other) = delete;
+	Shader(Shader&& other);
+	Shader& operator=(const Shader& rhs) = delete;
+	Shader& operator=(Shader&& rhs);
+	explicit operator bool() const;
 	~Shader();
 
 	void bind() const;
@@ -24,6 +28,5 @@ private:
 private:
 	static constexpr unsigned int NUM_SHADERS = 2;
 	GLuint program = 0;
-	GLuint shaders[NUM_SHADERS];
 	std::unordered_map<std::string, GLint> uniformCache;
 };

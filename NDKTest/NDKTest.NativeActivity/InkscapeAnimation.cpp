@@ -10,8 +10,8 @@ void InkscapeAnimation::setupInkscapeKeyFrames(const std::vector<std::string>& r
 	}
 }
 
-InkscapeAnimation::InkscapeAnimation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, const std::string& inkscapeFileName, AssetManager* assetManager, int64_t frameDuration, PlayMode type)
-	: Animation(regionNames, atlas, frameDuration, type), iae(inkscapeFileName, regionNames, assetManager), inkscapeKeyFrames()
+InkscapeAnimation::InkscapeAnimation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, const std::string& inkscapeFileName, int64_t frameDuration, PlayMode type)
+	: Animation(regionNames, atlas, frameDuration, type), iae(inkscapeFileName, regionNames), inkscapeKeyFrames()
 {
 	setupInkscapeKeyFrames(regionNames);
 }
@@ -22,11 +22,11 @@ InkscapeAnimation::InkscapeAnimation(const std::vector<std::string>& regionNames
 	setupInkscapeKeyFrames(regionNames);
 }
 
-void InkscapeAnimation::setInkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames, AssetManager* assetManager)
+void InkscapeAnimation::setInkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames)
 {
 	inkscapeKeyFrames.clear();
 
-	iae = InkscapeAnimationElement(inkscapeFileName, regionNames, assetManager);
+	iae = InkscapeAnimationElement(inkscapeFileName, regionNames);
 
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{

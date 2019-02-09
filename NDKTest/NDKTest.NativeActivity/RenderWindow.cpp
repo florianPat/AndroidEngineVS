@@ -77,10 +77,13 @@ RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportTyp
 	app->onAppCmd = AppEventCallback;
 	app->onInputEvent = InputEventCallback;
 
+	assetManager.registerAssetLoader("png", AssetLoader::initLoader<Texture>());
+	assetManager.registerAssetLoader("wav", AssetLoader::initLoader<Sound>());
+
 	processEvents();
 }
 
-void RenderWindow::processEvents()
+bool RenderWindow::processEvents()
 {
 	if (TouchInput::getShouldUp())
 	{
@@ -88,51 +91,32 @@ void RenderWindow::processEvents()
 		TouchInput::setTouched(false);
 	}
 
-	int32_t events;
+	int32_t event;
 	android_poll_source* source;
 
-	while (1)
+	while ((ALooper_pollAll(initFinished ? 0 : -1, 0, &event, (void**)&source)) >= 0)
 	{
-		while ((ALooper_pollAll(initFinished ? 0 : -1, 0, &events, (void**)&source)) >= 0)
+		assert(source != nullptr);
+		source->process(app, source);
+
+		if (app->destroyRequested || (!running))
 		{
-			if (source != nullptr)
-			{
-				source->process(app, source);
-			}
-			if (app->destroyRequested)
-			{
-				utilsLog("exit event loop!");
-				running = false;
-			}
-		}
-		if (initFinished && running)
-		{
-			return;
+			return false;
 		}
 	}
+
+	return true;
 }
 
-bool RenderWindow::isOpen() const
+void RenderWindow::clear()
 {
-	return running;
+	CallGL(glClear(GL_COLOR_BUFFER_BIT));
 }
 
 void RenderWindow::close()
 {
-	utilsLog("Window close");
-	running = false;
 	ANativeActivity_finish(app->activity);
-}
-
-bool RenderWindow::clear()
-{
-	if (!glContextLost)
-	{
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
-	
-	return glContextLost == false;
+	running = false;
 }
 
 void RenderWindow::draw(const Sprite & sprite)
@@ -249,55 +233,8 @@ void RenderWindow::draw(const CircleShape & circle)
 
 void RenderWindow::render()
 {
-	EGLBoolean result;
-	result = eglSwapBuffers(display, surface);
-	if (result == GL_FALSE)
-	{
-		GLenum errorCode = glGetError();
-
-		switch (errorCode)
-		{
-		case EGL_BAD_DISPLAY:
-		{
-			if (display != EGL_NO_DISPLAY)
-			{
-				eglTerminate(display);
-				display = EGL_NO_DISPLAY;
-			}
-
-			glContextLost = true;
-			break;
-		}
-		case EGL_CONTEXT_LOST:
-		case EGL_BAD_CONTEXT:
-		{
-			if (context != EGL_NO_CONTEXT)
-			{
-				eglDestroyContext(display, context);
-				context = EGL_NO_CONTEXT;
-			}
-
-			glContextLost = true;
-			break;
-		}
-		case EGL_BAD_SURFACE:
-		{
-			if (surface != EGL_NO_SURFACE)
-			{
-				eglDestroySurface(display, surface);
-				surface = EGL_NO_SURFACE;
-			}
-
-			glContextLost = true;
-			break;
-		}
-		default:
-		{
-			__android_log_print(ANDROID_LOG_ERROR, "OpenGL error", "OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, "render", __LINE__, __FILE__);
-			break;
-		}
-		}
-	}
+	EGLBoolean result = eglSwapBuffers(display, surface);
+	assert(result == true);
 
 	if (view.updated())
 		orhtoProj = view.getOrthoProj();
@@ -361,16 +298,13 @@ void RenderWindow::recoverFromContextLoss()
 		!eglQuerySurface(display, surface, EGL_WIDTH, &screenWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &screenHeight) ||
 		(screenWidth <= 0) || (screenHeight <= 0))
 	{
-		utilsLogBreak("eglMakeCurrent failed!");
+		utils::logBreak("eglMakeCurrent failed!");
 		return;
 	}
 
-	glContextLost = false;
+	setupGfxGpu();
 
-	if (!glContextLost)
-	{
-		assetManager.reloadAllRes();
-	}
+	glContextLost = false;
 }
 
 Clock & RenderWindow::getClock() const
@@ -380,7 +314,7 @@ Clock & RenderWindow::getClock() const
 
 void callback_sound(SLAndroidSimpleBufferQueueItf playerBuffer, void* context)
 {
-	utilsLog("Sound finished!");
+	utils::log("Sound finished!");
 }
 
 void RenderWindow::play(const Sound* snd)
@@ -396,80 +330,114 @@ void RenderWindow::play(const Sound* snd)
 
 void RenderWindow::deactivate()
 {
-	if (initFinished)
-	{
-		shaderSprite.reset();
-		shaderRectShape.reset();
+	shaderSprite.release();
+	shaderSprite = nullptr;
+	shaderRectShape.release();
+	shaderRectShape = nullptr;
 
-		stopGfx();
-		stopSnd();
-		initFinished = false;
-	}
+	stopGfx();
+	stopSnd();
+
+	initFinished = false;
 }
 
 void RenderWindow::processAppEvent(int32_t command)
 {
 	switch (command)
 	{
+		case APP_CMD_WINDOW_RESIZED:
+		{
+			//NOTE: New viewport? and the RenderTexture also needs to query the new window size.
+			break;
+		}
 		case APP_CMD_CONFIG_CHANGED:
 		{
 			break;
 		}
 		case APP_CMD_INIT_WINDOW:
 		{
-			if ((!initFinished) && (app->window != NULL))
-			{
-				running = true;
-				if (!startGfx())
-				{
-					running = false;
-					deactivate();
-					ANativeActivity_finish(app->activity);
-				}
-				else
-				{
-					//NOTE: Init graphics things here!
-					shaderSprite = std::make_unique<Shader>("ShaderSprite", app->activity->assetManager, std::vector<std::string>{ "position", "texCoord" });
-					shaderRectShape = std::make_unique<Shader>("ShaderRectShape", app->activity->assetManager, std::vector<std::string>{ "position" });
-				}
+			assert(app->window != nullptr);
+			assert(!initFinished);
 
-				if (!startSnd())
-				{
-					running = false;
-					deactivate();
-					ANativeActivity_finish(app->activity);
-				}
+			if (!startGfx())
+			{
+				deactivate();
+				close();
+				break;
+			}
+			else
+				setupGfxGpu();
+
+			if (!startSnd())
+			{
+				deactivate();
+				close();
+				break;
 			}
 
-			initFinished = true;
-			clock.restart();
+			validNativeWindow = true;
+			if (resumed && gainedFocus)
+			{
+				initFinished = true;
+				clock.restart();
+			}
+
+			utils::log("initWindow");
+
 			break;
 		}
 		case APP_CMD_DESTROY:
 		{
+			running = false;
+			utils::log("destroy");
 			break;
 		}
 		case APP_CMD_GAINED_FOCUS:
 		{
-			initFinished = true;
-			clock.restart();
+			gainedFocus = true;
+			if (resumed && validNativeWindow)
+			{
+				initFinished = true;
+				clock.restart();
+			}
+
+			utils::log("gained Focus");
+
 			break;
 		}
 		case APP_CMD_LOST_FOCUS:
 		{
+			gainedFocus = false;
 			initFinished = false;
-			break;
-		}
-		case APP_CMD_LOW_MEMORY:
-		{
+			utils::log("lost focus");
 			break;
 		}
 		case APP_CMD_PAUSE:
 		{
+			resumed = false;
+			initFinished = false;
+			utils::log("pause");
 			break;
 		}
 		case APP_CMD_RESUME:
 		{
+			if (validNativeWindow)
+			{
+				clear();
+				checkIfToRecoverFromContextLoss();
+				while (glContextLost)
+					recoverFromContextLoss();
+			}
+
+			resumed = true;
+			if (gainedFocus && validNativeWindow)
+			{
+				initFinished = true;
+				clock.restart();
+			}
+
+			utils::log("resume");
+
 			break;
 		}
 		case APP_CMD_SAVE_STATE:
@@ -478,15 +446,24 @@ void RenderWindow::processAppEvent(int32_t command)
 		}
 		case APP_CMD_START:
 		{
+			//first create or recreate if there is something in the save state
+			utils::log("start");
 			break;
 		}
 		case APP_CMD_STOP:
 		{
+			//Now the app really is not visible!
+			utils::log("stop");
 			break;
 		}
 		case APP_CMD_TERM_WINDOW:
 		{
 			deactivate();
+			validNativeWindow = false;
+			initFinished = false;
+			utils::log("term window");
+
+			break;
 		}
 		default:
 		{
@@ -512,13 +489,13 @@ bool RenderWindow::startGfx()
 		!eglQuerySurface(display, surface, EGL_WIDTH, &screenWidth) || !eglQuerySurface(display, surface, EGL_HEIGHT, &screenHeight) ||
 		(screenWidth <= 0) || (screenHeight <= 0))
 	{
-		utilsLogBreak("eglMakeCurrent failed!");
+		utils::logBreak("eglMakeCurrent failed!");
 		return false;
 	}
 
 	if (eglSwapInterval(display, 1) == EGL_FALSE)
 	{
-		utilsLogBreak("eglSwapInteral failed!");
+		utils::logBreak("eglSwapInteral failed!");
 		return false;
 	}
 
@@ -582,31 +559,31 @@ bool RenderWindow::initDisplay(EGLConfig& config)
 	display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (display == EGL_NO_DISPLAY)
 	{
-		utilsLogBreak("eglGetDisplay failed!");
+		utils::logBreak("eglGetDisplay failed!");
 		return false;
 	}
 
 	if (!eglInitialize(display, 0, 0))
 	{
-		utilsLogBreak("egInitialize failed!");
+		utils::logBreak("egInitialize failed!");
 		return false;
 	}
 
 	if (!eglChooseConfig(display, DISPLAY_ATTRIBS, &config, 1, &numConfigs) || (numConfigs <= 0))
 	{
-		utilsLogBreak("eglChooseConfig failed!");
+		utils::logBreak("eglChooseConfig failed!");
 		return false;
 	}
 
 	if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format))
 	{
-		utilsLogBreak("eglGetConfigAttrib failed!");
+		utils::logBreak("eglGetConfigAttrib failed!");
 		return false;
 	}
 
 	if (ANativeWindow_setBuffersGeometry(app->window, 0, 0, format) != 0)
 	{
-		utilsLogBreak("ANativeWindow_setBufferGeometry failed!");
+		utils::logBreak("ANativeWindow_setBufferGeometry failed!");
 		return false;
 	}
 
@@ -618,7 +595,7 @@ bool RenderWindow::initSurface(EGLConfig& config)
 	surface = eglCreateWindowSurface(display, config, app->window, nullptr);
 	if (surface == EGL_NO_SURFACE)
 	{
-		utilsLogBreak("eglCreateWindowSurface failed!");
+		utils::logBreak("eglCreateWindowSurface failed!");
 		return false;
 	}
 
@@ -635,7 +612,7 @@ bool RenderWindow::initContext(EGLConfig& config)
 	context = eglCreateContext(display, config, 0, CONTEXT_ATTRIBS);
 	if (context == EGL_NO_CONTEXT)
 	{
-		utilsLogBreak("eglCreateContext failed!");
+		utils::logBreak("eglCreateContext failed!");
 		return false;
 	}
 
@@ -689,31 +666,31 @@ bool RenderWindow::startSnd()
 
 	if(slCreateEngine(&engineObj, 0, 0, engineMixIfCount, engineMixIfs, engineMixIfsReq) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("slCreateEngine failed!");
+		utils::logBreak("slCreateEngine failed!");
 		return false;
 	}
 
 	if((*engineObj)->Realize(engineObj, SL_BOOLEAN_FALSE) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("Realize failed!");
+		utils::logBreak("Realize failed!");
 		return false;
 	}
 
 	if((*engineObj)->GetInterface(engineObj, SL_IID_ENGINE, &engine) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("GetInterface failed!");
+		utils::logBreak("GetInterface failed!");
 		return false;
 	}
 
 	if ((*engine)->CreateOutputMix(engine, &outputMix, outputMixIfCount, outputMixIfs, outputMixIfsReq) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("CreateOutputMix failed!");
+		utils::logBreak("CreateOutputMix failed!");
 		return false;
 	}
 
 	if((*outputMix)->Realize(outputMix, SL_BOOLEAN_FALSE))
 	{
-		utilsLogBreak("Realize failed!");
+		utils::logBreak("Realize failed!");
 		return false;
 	}
 
@@ -749,25 +726,25 @@ bool RenderWindow::startSnd()
 	if ((*engine)->CreateAudioPlayer(engine, &playerObj, &dataSource, &dataSink,
 		soundPlayerIIdCount, soundPlayerIIds, soundPlayerReqs) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("CreateAudioPlayer failed!");
+		utils::logBreak("CreateAudioPlayer failed!");
 		InvalidCodePath;
 	}
 
 	if ((*playerObj)->Realize(playerObj, SL_BOOLEAN_FALSE) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("Realize failed!");
+		utils::logBreak("Realize failed!");
 		InvalidCodePath;
 	}
 
 	if ((*playerObj)->GetInterface(playerObj, SL_IID_PLAY, &player) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("GetInterface failed!");
+		utils::logBreak("GetInterface failed!");
 		InvalidCodePath;
 	}
 
 	if ((*playerObj)->GetInterface(playerObj, SL_IID_BUFFERQUEUE, &playerBuffer) != SL_RESULT_SUCCESS)
 	{
-		utilsLogBreak("GetInterface failed!");
+		utils::logBreak("GetInterface failed!");
 		InvalidCodePath;
 	}
 
@@ -795,6 +772,73 @@ void RenderWindow::stopSnd()
 		(*engineObj)->Destroy(engineObj);
 		engineObj = 0;
 		engine = 0;
+	}
+}
+
+//NOTE: Init graphics things here!
+void RenderWindow::setupGfxGpu()
+{
+	CallGL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
+	shaderSprite = std::make_unique<Shader>("ShaderSprite", std::vector<std::string>{ "position", "texCoord" });
+	shaderRectShape = std::make_unique<Shader>("ShaderRectShape", std::vector<std::string>{ "position" });
+
+	assetManager.reloadAllRes();
+}
+
+void RenderWindow::checkIfToRecoverFromContextLoss()
+{
+	EGLBoolean result;
+	result = eglSwapBuffers(display, surface);
+	if (result == GL_FALSE)
+	{
+		while (glGetError() != GL_NO_ERROR);
+
+		while (GLenum errorCode = glGetError())
+		{
+			switch (errorCode)
+			{
+				case EGL_NOT_INITIALIZED:
+				case EGL_BAD_DISPLAY:
+				{
+					if (display != EGL_NO_DISPLAY)
+					{
+						eglTerminate(display);
+						display = EGL_NO_DISPLAY;
+					}
+
+					glContextLost = true;
+					break;
+				}
+				case EGL_CONTEXT_LOST:
+				{
+					if (context != EGL_NO_CONTEXT)
+					{
+						eglDestroyContext(display, context);
+						context = EGL_NO_CONTEXT;
+					}
+
+					glContextLost = true;
+					break;
+				}
+				case EGL_BAD_SURFACE:
+				{
+					if (surface != EGL_NO_SURFACE)
+					{
+						eglDestroySurface(display, surface);
+						surface = EGL_NO_SURFACE;
+					}
+
+					glContextLost = true;
+					break;
+				}
+				default:
+				{
+					utils::logFBreak("OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, "render", __LINE__, __FILE__);
+					break;
+				}
+			}
+		}
 	}
 }
 

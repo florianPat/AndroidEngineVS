@@ -13,7 +13,7 @@ void checkErrors(const std::string& func)
 	while (GLenum errorCode = glGetError())
 	{
 		errorOccured = true;
-		__android_log_print(ANDROID_LOG_ERROR, "OpenGL error", "OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, func.c_str(), __LINE__, __FILE__);
+		utils::logF("OpenGL error: [%d] occured in function: %s, line: %d, file: %s '\n'", errorCode, func.c_str(), __LINE__, __FILE__);
 	}
 
 	if (errorOccured)

@@ -9,9 +9,9 @@ void callback_readPng(png_structp pStruct, png_bytep pData, png_size_t pSize) {
 	asset->read(pData, pSize);
 }
 
-bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetManager)
+bool Texture::loadFromFile(const std::string & filename)
 {
-	Ifstream asset = Ifstream(assetManager);
+	Ifstream asset;
 	asset.open(filename);
 
 	if (!asset)
@@ -130,26 +130,39 @@ bool Texture::loadFromFile(const std::string & filename, AAssetManager * assetMa
 	return true;
 }
 
-bool Texture::reloadFromFile(const std::string& filename, AAssetManager * assetManager)
+bool Texture::reloadFromFile(const std::string& filename)
 {
 	if (texture != 0)
 	{
 		CallGL(glDeleteTextures(1, &texture));
 	}
 
-	return loadFromFile(filename, assetManager);
+	return loadFromFile(filename);
 }
 
-Texture::Texture() : Asset(assetId)
+Texture::Texture(GLuint texture, int width, int height) : texture(texture), width(width), height(height)
 {
+}
+
+Texture::Texture(Texture && other) : texture(std::exchange(other.texture, 0)), width(std::exchange(other.width, 0)),
+									 height(std::exchange(other.height, 0))
+{
+}
+
+Texture & Texture::operator=(Texture && rhs)
+{
+	this->~Texture();
+
+	texture = std::exchange(rhs.texture, 0);
+	width = std::exchange(rhs.width, 0);
+	height = std::exchange(rhs.height, 0);
+
+	return *this;
 }
 
 Texture::~Texture()
 {
-	if (*this)
-	{
-		CallGL(glDeleteTextures(1, &texture));
-	}
+	CallGL(glDeleteTextures(1, &texture));
 }
 
 Texture::operator bool() const

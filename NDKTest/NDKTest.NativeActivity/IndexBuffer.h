@@ -8,9 +8,13 @@ class IndexBuffer
 	int count;
 public:
 	IndexBuffer(unsigned int* indices, int count);
-	//NOTE: Till now no need for copy assigment / constructor
+	IndexBuffer(const IndexBuffer& other) = delete;
+	IndexBuffer(IndexBuffer&& other);
+	IndexBuffer& operator=(const IndexBuffer& rhs) = delete;
+	IndexBuffer& operator=(IndexBuffer&& rhs);
 	~IndexBuffer();
 	void bind() const;
 	void unbind() const;
 	int getCount() const;
+	explicit operator bool() const;
 };

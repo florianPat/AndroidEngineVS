@@ -1,13 +1,30 @@
 #include "Ifstream.h"
 #include "Utils.h"
+#include "AssetManager.h"
 
-Ifstream::Ifstream(const std::string & filename, AAssetManager * assetManager) : assetManager(assetManager)
+Ifstream::Ifstream(const std::string & filename) : aassetManager(AssetManager::aassetManager)
 {
 	open(filename);
 }
 
-Ifstream::Ifstream(AAssetManager * assetManager) : assetManager(assetManager)
+Ifstream::Ifstream() : aassetManager(AssetManager::aassetManager)
 {
+}
+
+Ifstream::Ifstream(Ifstream && other) : asset(std::exchange(other.asset, nullptr)), aassetManager(std::exchange(other.aassetManager, nullptr)),
+										good(std::exchange(other.good, false))
+{
+}
+
+Ifstream & Ifstream::operator=(Ifstream && rhs)
+{
+	close();
+
+	asset = std::exchange(rhs.asset, nullptr);
+	aassetManager = std::exchange(rhs.aassetManager, nullptr);
+	good = std::exchange(rhs.good, false);
+
+	return *this;
 }
 
 Ifstream::~Ifstream()
@@ -52,7 +69,7 @@ long long Ifstream::getSize()
 
 void Ifstream::open(const std::string & filename)
 {
-	asset = AAssetManager_open(assetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
+	asset = AAssetManager_open(aassetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
 
 	if (!asset)
 	{
@@ -102,22 +119,17 @@ void Ifstream::seekg(std::streamoff off, std::ios_base::seekdir way)
 {
 	switch (way)
 	{
-		case std::ios_base::seekdir::_S_beg:
+		case std::ios_base::seekdir::beg:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_SET) != -1);
 			break;
 		}
-		case std::ios_base::seekdir::_S_cur:
+		case std::ios_base::seekdir::cur:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_CUR) != -1);
 			break;
 		}
-		case std::ios_base::seekdir::_S_end:
-		{
-			assert(AAsset_seek64(asset, off, SEEK_END) != -1);
-			break;
-		}
-		case std::ios_base::seekdir::_S_ios_seekdir_end:
+		case std::ios_base::seekdir::end:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_END) != -1);
 			break;

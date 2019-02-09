@@ -6,12 +6,12 @@
 
 TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
 {
-	Ifstream file(assetManager->getAAssetManager());
+	Ifstream file;
 	file.open(filepath);
 
 	if (!file)
 	{
-		utilsLogBreak("Cant open file!");
+		utils::logBreak("Cant open file!");
 	}
 
 	std::string tempString;

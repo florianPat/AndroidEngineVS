@@ -45,5 +45,6 @@ protected:
 	virtual void composeFrame();
 public:
 	Level(RenderWindow& window, std::string tiledMapName);
-	std::unique_ptr<Level> Go();
+	bool Go();
+	std::unique_ptr<Level> getNewLevel();
 };

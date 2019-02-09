@@ -293,7 +293,6 @@ bool Physics::removeElementById(std::string & id)
 {
 	auto it = bodies.find(id);
 	assert(it != bodies.end());
-	it->second.release();
 	return bodies.erase(id);
 }
 

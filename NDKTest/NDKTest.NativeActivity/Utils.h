@@ -3,19 +3,16 @@
 #include <string>
 #include <vector>
 #include "EventManager.h"
+#include <android/log.h>
 
 #undef assert
 
 #ifndef NDEBUG
-#define utilsLog(string) __android_log_write(ANDROID_LOG_INFO, __FUNCTION__, string);
 #define assert(exp) if(!((exp) && true)) __android_log_assert(nullptr, "ASSERT", #exp);
-#define utilsLogBreak(string) do { utilsLog((string)); assert(false); } while(false)
 #else
-#define utilsLog(string)
-#define utilsLogBreak(string)
 //NOTE: I do this so that the expression in the assert gets executed, because sometimes I have "critical" code in there (which may
 // is a bad idea)
-#define assert(exp) if(!((exp) && true)) utilsLog("assert would have fired now!");
+#define assert(exp) if(!((exp) && true)) utils::log("assert would have fired now!");
 #endif
 #define arrayCount(x) sizeof(x) / sizeof(x[0])
 
@@ -39,4 +36,8 @@ namespace utils
 	float lerp(float v0, float v1, float t);
 	float degreesToRadians(float degree);
 	float radiansToDegrees(float radians);
+	void logF(const char* string, ...);
+	void logFBreak(const char* string, ...);
+	void log(const char* string);
+	void logBreak(const char* string);
 }

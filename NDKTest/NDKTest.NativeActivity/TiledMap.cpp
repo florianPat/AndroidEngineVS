@@ -7,12 +7,12 @@
 TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
-	Ifstream file(assetManager->getAAssetManager());
+	Ifstream file;
 	file.open(filepath);
 
 	if (!file)
 	{
-		utilsLogBreak("Cant open file!");
+		utils::logBreak("Cant open file!");
 	}
 
 	std::string temp;
@@ -26,12 +26,12 @@ TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventMa
 
 		if (!utils::isWordInLine("orthogonal", lineContent))
 		{
-			utilsLogBreak("Map has to be orthogonal!");
+			utils::logBreak("Map has to be orthogonal!");
 		}
 
 		if (!utils::isWordInLine("right-down", lineContent))
 		{
-			utilsLogBreak("Maps render-order has to be right-down!");
+			utils::logBreak("Maps render-order has to be right-down!");
 		}
 
 
@@ -49,7 +49,7 @@ TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventMa
 
 		if (!utils::isWordInLine("</map>", lineContent))
 		{
-			utilsLogBreak("We should be at the end of the file!");
+			utils::logBreak("We should be at the end of the file!");
 		}
 
 		MakeRenderTexture(toGameObjects, gom, em, window);
@@ -151,7 +151,7 @@ void TiledMap::ParseLayer(Ifstream & file, std::string& lineContent)
 		file.getline(lineContent); //  <data encoding="csv">
 		if (!utils::isWordInLine("csv", lineContent))
 		{
-			utilsLogBreak("Maps encoding has to be \"csv\"");
+			utils::logBreak("Maps encoding has to be \"csv\"");
 		}
 
 		file.getline(lineContent); //Begin of encoding
@@ -208,7 +208,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 
 void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
-	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader(), (float)window.getViewportWidth(), (float)window.getViewportHeight()))
+	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader()))
 	{
 		texture.clear();
 
@@ -253,7 +253,7 @@ void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameOb
 	}
 	else
 	{
-		utilsLogBreak("Could not create Render Texture");
+		utils::logBreak("Could not create Render Texture");
 	}
 }
 

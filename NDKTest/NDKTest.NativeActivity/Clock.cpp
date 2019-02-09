@@ -34,7 +34,7 @@ int64_t Clock::now()
 	timespec timeVal;
 	if (clock_gettime(CLOCK_REALTIME, &timeVal) != 0)
 	{
-		utilsLogBreak("clock_gettime error!");
+		utils::logBreak("clock_gettime error!");
 	}
 	return timeVal.tv_sec * 1000000000ll + timeVal.tv_nsec;
 }

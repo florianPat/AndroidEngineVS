@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Asset.h"
 #include <vector>
+#include <string>
 
-class Sound : public Asset
+class Sound
 {
 #define RIFF_CODE(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
@@ -56,20 +56,18 @@ class Sound : public Asset
 		uint getType() const;
 		uint getChunkDataSize() const;
 	};
-public:
-	static constexpr Asset::AssetId assetId = Asset::AssetId::SOUND;
 private:
 	std::vector<std::vector<short>> samples;
 	int nChannels = 0;
 	int nSamples = 0;
-private:
-	bool loadFromFile(const std::string& filename, AAssetManager* assetManager) override;
-	bool reloadFromFile(const std::string& filename, AAssetManager* assetManager) override;
+public:
+	bool loadFromFile(const std::string& filename);
+	bool reloadFromFile(const std::string& filename);
 public:
 	Sound();
 	const std::vector<std::vector<short>>& getSamples() const;
 	const int getNSamples() const;
-	long long getSize() const override;
+	long long getSize() const;
 	const short* getBuffer() const;
 	explicit operator bool() const;
 };
