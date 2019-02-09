@@ -48,41 +48,57 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
+    <UseOfStl>c++_static</UseOfStl>
+    <AndroidAPILevel>android-21</AndroidAPILevel>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -115,22 +131,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <IncludePath>E:\MeinProgrammierdingsbums\Android\NDKTest\libpng;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libpng;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
@@ -138,11 +160,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\ARM64\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -152,11 +174,12 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)\ARM64\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -165,11 +188,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -179,11 +202,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\ARM\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\ARM\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -193,11 +216,11 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\x64\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -207,11 +230,12 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)\x64\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -219,14 +243,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\x86\Debug\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -236,18 +260,18 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CppLanguageStandard>c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;OpenSLES</LibraryDependencies>
-      <AdditionalDependencies>E:\MeinProgrammierdingsbums\Android\NDKTest\x86\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\x86\Release\liblibpng.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>-lm -lz</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="Asset.h" />
+    <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="CircleShape.h" />
     <ClInclude Include="Color.h" />
@@ -255,7 +279,6 @@
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventLevelReload.h" />
     <ClInclude Include="EventManager.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="gomSort.h" />
@@ -266,7 +289,6 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainLevel.h" />
     <ClInclude Include="Mat4x4.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Rect.h" />
@@ -293,12 +315,10 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="CircleShape.cpp" />
     <ClCompile Include="EventLevelReload.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Ifstream.cpp" />

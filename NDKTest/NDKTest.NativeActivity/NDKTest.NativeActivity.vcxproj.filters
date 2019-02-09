@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="pch.h" />
     <ClInclude Include="android_native_app_glue.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Actor.h" />
@@ -11,7 +10,6 @@
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventLevelReload.h" />
     <ClInclude Include="EventManager.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="gomSort.h" />
     <ClInclude Include="InkscapeAnimation.h" />
@@ -42,8 +40,8 @@
     <ClInclude Include="CircleShape.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="TouchInput.h" />
-    <ClInclude Include="Asset.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="AssetLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -53,7 +51,6 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="EventLevelReload.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="InkscapeAnimation.cpp" />
     <ClCompile Include="InscapeAnimationElement.cpp" />
@@ -78,7 +75,6 @@
     <ClCompile Include="CircleShape.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="TouchInput.cpp" />
-    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Sound.cpp" />
   </ItemGroup>
 </Project>
