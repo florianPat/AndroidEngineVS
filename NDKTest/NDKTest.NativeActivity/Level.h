@@ -31,9 +31,12 @@ protected:
 	//Test
 	CircleShape c;
 	RectangleShape r;
-	Texture* texture = window.getAssetManager()->getOrAddRes<Texture>("ship.png");
-	Sprite sprite = Sprite(texture);
-	Sound* sound = window.getAssetManager()->getOrAddRes<Sound>("nice.wav");
+	static constexpr int NUM_TEXTURES = 75;
+	const char* textureNames[7] = {"Truhe.png", "ship.png", "assetsRaw/64x64/Brick1.png", "assetsRaw/64x64/Brick2.png",
+		"assetsRaw/64x64/Brick3.png", "assetsRaw/64x64/Key.png", "assetsRaw/64x64/Schalter.png"};
+	Texture* texture[NUM_TEXTURES];
+	//Sprite sprite = Sprite(texture);
+	Sound* sound[100 - NUM_TEXTURES];
 protected:
 	std::function<void(EventData*)> eventLevelReloadFunction = std::bind(&Level::eventLevelReloadHandler, this, std::placeholders::_1);
 	DelegateFunction delegateLevelReload = utils::getDelegateFromFunction(eventLevelReloadFunction);

@@ -2,6 +2,7 @@
 #include "EventLevelReload.h"
 #include "TouchInput.h"
 #include "AssetLoader.h"
+#include "Benchmark.h"
 
 /*void Level::eventLevelReloadHandler(EventData* eventData)
 {
@@ -30,11 +31,11 @@ void Level::composeFrame()
 	// -- test code
 	if (TouchInput::isTouched())
 	{
-		sprite.setPosition(TouchInput::getPosition());
+		//sprite.setPosition(TouchInput::getPosition());
 	}
 
 	window.draw(r);
-	window.draw(sprite);
+	//window.draw(sprite);
 	// -- end test code
 }
 
@@ -51,6 +52,52 @@ r()
 
 	//window.play(sound);
 	// -- end test code
+
+	Benchmark& benchmark = Benchmark::getBenchmark();
+	AssetManager* assetManager = window.getAssetManager();
+	std::srand(5);
+
+	benchmark.start("Asset loading");
+	for (int i = 0; i < NUM_TEXTURES; ++i)
+	{
+		texture[i] = assetManager->getOrAddRes<Texture>(textureNames[std::rand() % 7]);
+	}
+	sound[0] = assetManager->getOrAddRes<Sound>("nice.wav");
+	benchmark.stop();
+
+	benchmark.start("One asset loading");
+	for (int i = 1; i < (100 - NUM_TEXTURES); ++i)
+	{
+		sound[i] = assetManager->getOrAddRes<Sound>("nice.wav");
+	}
+	benchmark.stop();
+
+	benchmark.start("Is asset loaded");
+	for (int i = 0; i < 30; ++i)
+	{
+		int index = std::rand() % 10;
+		if (index < 8)
+			assetManager->isLoaded(textureNames[index]);
+		else
+			assetManager->isLoaded("hahah.png");
+	}
+	benchmark.stop();
+
+	benchmark.start("Reload all assets");
+	assetManager->reloadAllRes();
+	benchmark.stop();
+
+	benchmark.start("Clear assets");
+	assetManager->clear();
+	benchmark.stop();
+
+	/*Results:
+		Asset loading: has taken: 0.046008
+		One asset loading: has taken: 0.000069
+		Is asset loaded: has taken: 0.000077
+		Reload all assets: has taken: 0.125085
+		Clear assets: has taken: 0.000063
+	*/
 
 	eventManager.addListener(EventLevelReload::eventId, delegateLevelReload);
 }
