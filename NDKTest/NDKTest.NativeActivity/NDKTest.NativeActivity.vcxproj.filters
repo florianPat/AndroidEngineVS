@@ -42,6 +42,7 @@
     <ClInclude Include="TouchInput.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="AssetLoader.h" />
+    <ClInclude Include="Benchmark.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -76,5 +77,6 @@
     <ClCompile Include="View.cpp" />
     <ClCompile Include="TouchInput.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Benchmark.cpp" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,25 @@
+#include "Benchmark.h"
+#include "Utils.h"
+
+Benchmark Benchmark::singleton;
+
+void Benchmark::start(const std::string & benchmarkNameIn)
+{
+	assert(running == false);
+	running = true;
+	benchmarkName = benchmarkNameIn;
+	clock.restart();
+}
+
+void Benchmark::stop()
+{
+	float time = clock.getTime().asSeconds();
+	assert(running == true);
+	running = false;
+	utils::logF("%s: has taken: %f", benchmarkName.c_str(), time);
+}
+
+Benchmark& Benchmark::getBenchmark()
+{
+	return singleton;
+}
