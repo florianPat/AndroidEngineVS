@@ -13,7 +13,9 @@ bool AssetManager::unloadNotUsedRes(const std::string & filename)
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
 	{
-		res->second.release();
+		AssetLoader assetLoader = assetLoaderCache.at(res->first.substr(res->first.length() - 3));
+
+		assetLoader.destruct(res->second.get());
 		ressourceCache.erase(res);
 		return true;
 	}
@@ -23,6 +25,12 @@ bool AssetManager::unloadNotUsedRes(const std::string & filename)
 
 void AssetManager::clear()
 {
+	for (auto it = ressourceCache.begin(); it != ressourceCache.end(); ++it)
+	{
+		AssetLoader assetLoader = assetLoaderCache.at(it->first.substr(it->first.length() - 3));
+
+		assetLoader.destruct(it->second.get());
+	}
 	ressourceCache.clear();
 }
 
@@ -36,7 +44,7 @@ void AssetManager::reloadAllRes()
 {
 	for (auto it = ressourceCache.begin(); it != ressourceCache.end(); ++it)
 	{
-		AssetLoader assetLoader = assetLoaderCache.at(it->first.substr(it->first.find_last_of('.') + 1));
+		AssetLoader assetLoader = assetLoaderCache.at(it->first.substr(it->first.length() - 3));
 
 		if(!assetLoader.reloadFromFile(it->second.get(), it->first))
 		{

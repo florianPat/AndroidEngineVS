@@ -75,7 +75,6 @@ void GameObjectManager::destroyActors()
 				{
 					actorIt->second->removeComponent(componentIt->second->getId());
 				}
-				actorIt->second.release();
 				actors.erase(actorIt);
 			}
 		}

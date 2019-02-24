@@ -22,7 +22,7 @@ void Level::updateModel()
 
 void Level::composeFrame()
 {
-	//map.draw(window);
+	map.draw(window);
 	gom.sortActors();
 	gom.drawActors();
 

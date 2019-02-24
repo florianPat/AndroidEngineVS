@@ -77,9 +77,6 @@ RenderWindow::RenderWindow(android_app * app, int width, int height, ViewportTyp
 	app->onAppCmd = AppEventCallback;
 	app->onInputEvent = InputEventCallback;
 
-	assetManager.registerAssetLoader("png", AssetLoader::initLoader<Texture>());
-	assetManager.registerAssetLoader("wav", AssetLoader::initLoader<Sound>());
-
 	processEvents();
 }
 

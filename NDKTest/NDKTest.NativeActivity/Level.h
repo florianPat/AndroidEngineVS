@@ -35,7 +35,7 @@ protected:
 	const char* textureNames[7] = {"Truhe.png", "ship.png", "assetsRaw/64x64/Brick1.png", "assetsRaw/64x64/Brick2.png",
 		"assetsRaw/64x64/Brick3.png", "assetsRaw/64x64/Key.png", "assetsRaw/64x64/Schalter.png"};
 	Texture* texture[NUM_TEXTURES];
-	//Sprite sprite = Sprite(texture);
+	//Sprite sprite;
 	Sound* sound[100 - NUM_TEXTURES];
 protected:
 	std::function<void(EventData*)> eventLevelReloadFunction = std::bind(&Level::eventLevelReloadHandler, this, std::placeholders::_1);

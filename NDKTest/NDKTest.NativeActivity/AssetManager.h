@@ -47,8 +47,7 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 		std::unique_ptr<char[]> asset = std::make_unique<char[]>(sizeof(T));
 		T* tP = (T*) asset.get();
 		*tP = T();
-
-		std::string ext = filename.substr(filename.find_last_of('.') + 1);
+		std::string ext = filename.substr(filename.length() - 3);
 		assert(assetLoaderCache.find(ext) != assetLoaderCache.end());
 		AssetLoader assetLoader = assetLoaderCache.at(ext);
 
@@ -67,7 +66,7 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 				auto id = timeOfInsertCache.begin();
 				auto it = ressourceCache.find(*id);
 				assert(it != ressourceCache.end());
-				AssetLoader aL = assetLoaderCache.at(it->first.substr(it->first.find_last_of('.') + 1));
+				AssetLoader aL = assetLoaderCache.at(it->first.substr(it->first.length() - 3));
 				currentSize -= aL.getSize(it->second.get());
 				it->second.release();
 				ressourceCache.erase(it);
