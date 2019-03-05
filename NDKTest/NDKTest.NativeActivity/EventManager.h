@@ -13,7 +13,7 @@ typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunctio
 class EventManager
 {
 	friend class Level;
-
+	//TODO: Why list???
 	std::unordered_map<unsigned int, std::list<DelegateFunction>> eventListenerMap;
 	std::vector<std::pair<unsigned int, DelegateFunction>> eventDeleterMap;
 public:

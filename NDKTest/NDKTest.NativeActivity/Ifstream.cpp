@@ -93,7 +93,7 @@ void Ifstream::close()
 	}
 }
 
-void Ifstream::read(void * s, std::streamsize n)
+void Ifstream::read(void * s, uint n)
 {
 	assert(AAsset_read(asset, s, n) > 0);
 }
@@ -110,26 +110,26 @@ std::streampos Ifstream::tellg()
 	return std::streampos(getSize() - AAsset_getRemainingLength64(asset));
 }
 
-void Ifstream::seekg(std::streampos pos)
+void Ifstream::seekg(uint pos)
 {
 	assert(AAsset_seek64(asset, pos, SEEK_SET) != -1);
 }
 
-void Ifstream::seekg(std::streamoff off, std::ios_base::seekdir way)
+void Ifstream::seekg(uint off, SeekDir way)
 {
 	switch (way)
 	{
-		case std::ios_base::seekdir::beg:
+		case SeekDir::beg:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_SET) != -1);
 			break;
 		}
-		case std::ios_base::seekdir::cur:
+		case SeekDir::cur:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_CUR) != -1);
 			break;
 		}
-		case std::ios_base::seekdir::end:
+		case SeekDir::end:
 		{
 			assert(AAsset_seek64(asset, off, SEEK_END) != -1);
 			break;

@@ -1,6 +1,5 @@
 #include "TextureAtlas.h"
 #include "Ifstream.h"
-#include <stdlib.h>
 #include "Utils.h"
 #include "Rect.h"
 

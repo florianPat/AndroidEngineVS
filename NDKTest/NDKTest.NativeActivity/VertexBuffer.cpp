@@ -1,6 +1,5 @@
 #include "VertexBuffer.h"
 #include "GLUtils.h"
-#include <utility>
 
 VertexBuffer::VertexBuffer(const void * data, int size)
 {

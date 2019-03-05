@@ -1,6 +1,5 @@
 #include "TiledMap.h"
 #include "Ifstream.h"
-#include <stdlib.h>
 #include "Utils.h"
 #include "TiledMapRenderComponent.h"
 

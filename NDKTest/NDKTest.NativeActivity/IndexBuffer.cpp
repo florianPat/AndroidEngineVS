@@ -1,6 +1,5 @@
 #include "IndexBuffer.h"
 #include "GLUtils.h"
-#include <utility>
 
 IndexBuffer::IndexBuffer(unsigned int * indices, int count) : count(count)
 {

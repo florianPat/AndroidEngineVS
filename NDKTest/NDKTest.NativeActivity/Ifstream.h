@@ -2,10 +2,12 @@
 
 #include "android_native_app_glue.h"
 #include <string>
-#include <ios>
 
 class Ifstream final
 {
+public:
+	enum class SeekDir {beg, cur, end};
+private:
 	AAsset* asset = nullptr;
 	AAssetManager* aassetManager = nullptr;
 	bool good = true;
@@ -21,11 +23,11 @@ public:
 	bool operator!() const;
 	bool eof();
 	void getline(std::string& line);
-	void read(void* s, std::streamsize n);
+	void read(void* s, uint n);
 	char get();
 	std::streampos tellg();
-	void seekg(std::streampos pos);
-	void seekg(std::streamoff off, std::ios_base::seekdir way);
+	void seekg(uint pos);
+	void seekg(uint off, SeekDir way);
 	long long getSize();
 	void open(const std::string& filename);
 	void getFullData(void* s);

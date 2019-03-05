@@ -1,6 +1,5 @@
 #include "Animation.h"
 #include "Utils.h"
-#include <fstream>
 
 Animation::Animation(std::vector<TextureRegion>& keyFrames, int64_t frameDuration, PlayMode type)
 	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()

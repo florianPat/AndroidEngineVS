@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Vector2.h"
-#include <algorithm>
 
 template <typename T>
 class Rect

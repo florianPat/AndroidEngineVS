@@ -1,7 +1,6 @@
 #include "Shader.h"
 #include "Ifstream.h"
 #include "Utils.h"
-#include <iostream>
 #include "GLUtils.h"
 
 std::string loadShader(const std::string& filename)
