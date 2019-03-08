@@ -1,4 +1,5 @@
 #include "MainLevel.h"
+#include "Vector.h"
 
 static void registerAssetLoaders(AssetManager* assetManager)
 {
@@ -8,6 +9,11 @@ static void registerAssetLoaders(AssetManager* assetManager)
 
 void android_main(android_app* app)
 {
+	// -- begin unit test
+	for(int i = 0; i < 10; ++i)
+		VectorTestSuit::runVectorUnitTest();
+	// -- end unit test
+
 	RenderWindow window(app, 900, 600, RenderWindow::ViewportType::EXTEND);
 	registerAssetLoaders(window.getAssetManager());
 

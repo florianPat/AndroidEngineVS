@@ -43,6 +43,8 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Benchmark.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="UnitTester.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
