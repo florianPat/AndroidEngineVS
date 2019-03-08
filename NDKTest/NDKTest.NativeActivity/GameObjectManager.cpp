@@ -1,5 +1,4 @@
 #include "GameObjectManager.h"
-#include <iostream>
 #include "Utils.h"
 
 GameObjectManager::GameObjectManager() : actors(), sortedActors(), destroyActorQueue()

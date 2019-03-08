@@ -1,6 +1,5 @@
 #include "Physics.h"
 #include <math.h>
-#include <iostream>
 #include "Utils.h"
 #include "RectangleShape.h"
 #include "CircleShape.h"

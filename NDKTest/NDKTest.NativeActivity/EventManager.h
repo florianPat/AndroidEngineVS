@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 #include "EventData.h"
-#include <iostream>
 #include <functional>
 #include <memory>
 #include <list>

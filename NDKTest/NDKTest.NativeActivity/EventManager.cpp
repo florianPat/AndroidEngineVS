@@ -1,4 +1,5 @@
 #include "EventManager.h"
+#include "Utils.h"
 
 EventManager::EventManager() : eventListenerMap()
 {
@@ -19,7 +20,7 @@ bool EventManager::addListener(unsigned int eventType, DelegateFunction & delega
 	{
 		if (delegateFunction.first == it->first)
 		{
-			std::cout << "Attempting to double - register a delegate" << std::endl;
+			utils::logBreak("Attempting to double - register a delegate");
 			return false;
 		}
 	}
