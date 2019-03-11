@@ -1,14 +1,18 @@
 #pragma once
 
-//Other std implementations to do: unordered_map, string, unique_ptr, std::function, map/multimap
+//Other std implementations TODO: string, unique_ptr, unordered_map, map/multimap, initializer_list
+
+#include <initializer_list>
 #include "Utils.h"
+//NOTE: For std::move
+#include <utility>
 
 template <typename T>
 class Vector
 {
-	/* NOTE: Undefinied behavour if you deference or do other things if Its are invalidated due to a shrink or expand call
+	/* NOTE: Undefinied behavour if you dereference or do other things if Its are invalidated due to a shrink or expand call
 	*  This is also a "safe" iterator (it does bounds checking on current size)
-	*  I do not know if the std iterator is smaller because they pass it by value every time...
+	* NOTE: Maybe add a reference count to vector and fix itData pointers through storing a pp? (Performance further down?)
 	*/
 	class Iterator
 	{
@@ -123,22 +127,133 @@ class Vector
 		}
 		//NOTE: If you need other compares, make them!
 	};
+
+	class ConstIterator
+	{
+		friend class Vector;
+
+		size_t itIndex;
+		size_t itSize;
+		T* itData;
+
+		ConstIterator(size_t indexIn, size_t sizeIn, T* dataIn) : itIndex(indexIn), itSize(sizeIn), itData(dataIn) {}
+	public:
+		ConstIterator& operator++()
+		{
+			++itIndex;
+			assert(itIndex <= itSize);
+			return *this;
+		}
+		ConstIterator operator++(int)
+		{
+			Iterator temp(*this);
+			operator++();
+			return temp;
+		}
+		ConstIterator& operator--()
+		{
+			--itIndex;
+			assert(itIndex >= 0);
+			return *this;
+		}
+		ConstIterator operator--(int)
+		{
+			Iterator temp(*this);
+			operator--();
+			return temp;
+		}
+		ConstIterator& operator+=(const ConstIterator& rhs)
+		{
+			itIndex += rhs.itIndex;
+			assert((itData == rhs.itData) && (itIndex <= itSize));
+			return *this;
+		}
+		ConstIterator& operator+=(size_t rhs)
+		{
+			itIndex += rhs;
+			assert(itIndex <= itSize);
+			return *this;
+		}
+		ConstIterator& operator-=(const ConstIterator& rhs)
+		{
+			itIndex -= rhs.itIndex;
+			assert((itIndex >= 0) && (itData == rhs.itData));
+			return *this;
+		}
+		ConstIterator& operator-=(size_t rhs)
+		{
+			itIndex -= rhs;
+			assert(itIndex >= 0);
+			return *this;
+		}
+		friend ConstIterator operator+(ConstIterator lhs, const ConstIterator& rhs)
+		{
+			lhs += rhs;
+			return lhs;
+		}
+		friend ConstIterator operator+(ConstIterator lhs, int rhs)
+		{
+			lhs += rhs;
+			return lhs;
+		}
+		friend ConstIterator operator+(int lhs, ConstIterator rhs)
+		{
+			rhs += lhs;
+			return rhs;
+		}
+		friend ConstIterator operator-(ConstIterator lhs, const ConstIterator& rhs)
+		{
+			lhs -= rhs;
+			return lhs;
+		}
+		friend ConstIterator operator-(ConstIterator lhs, int rhs)
+		{
+			lhs -= rhs;
+			return lhs;
+		}
+		friend ConstIterator operator-(int lhs, ConstIterator rhs)
+		{
+			rhs -= lhs;
+			return rhs;
+		}
+		const T operator*()
+		{
+			assert((itIndex < itSize) && (itData != nullptr));
+			return itData[itIndex];
+		}
+		const T* operator->()
+		{
+			assert((itIndex < itSize) && (itData != nullptr));
+			return &itData[itIndex];
+		}
+		const T operator[](size_t indexIn)
+		{
+			return *(this->operator+(indexIn));
+		}
+		friend bool operator==(const ConstIterator& lhs, const ConstIterator& rhs)
+		{
+			assert(lhs.itData == rhs.itData);
+			return (lhs.itIndex == rhs.itIndex);
+		}
+		friend bool operator!=(const ConstIterator& lhs, const ConstIterator& rhs)
+		{
+			return !(lhs == rhs);
+		}
+		//NOTE: If you need other compares, make them!
+	};
 private:
 	size_t vectorSize = 0;
 	size_t vectorCapacity = 2;
 	T* vectorData = nullptr;
 private:
-	//TOOD: Think about SSE copy
-	void shrink();
-	void expand();
+	void expandOrShrink();
 
 	void checkAndShrink(size_t newSize);
 	void checkAndExpand(size_t minNewSize);
 public:
 	Vector();
 	Vector(size_t count, const T& value = T());
-	Vector(size_t count);
-	//NOTE: Maybe I have to create a initializer-list constructor!
+	Vector(std::initializer_list<T> initList);
 	Vector(const Vector& other);
 	Vector& operator=(const Vector& rhs);
 	Vector(Vector&& other);
@@ -160,13 +275,15 @@ public:
 	Iterator begin();
 	Iterator end();
 
+	ConstIterator begin() const;
+	ConstIterator end() const;
+
 	bool empty() const;
 	size_t size() const;
 
 	void reserve(size_t size);
 	size_t capacity() const;
-	
-	//NOTE: The standard states that the memory should not be deallocated, but maybe we should do kind of that?
+
 	void clear();
 	Iterator insert(size_t pos, const T& value);
 	Iterator insert(const Iterator& pos, const T& value);
@@ -179,7 +296,6 @@ public:
 	Iterator insertPush_back(const Iterator& pos, const T& value);
 	Iterator insertPush_back(size_t pos, T&& value);
 	Iterator insertPush_back(const Iterator& pos, T&& value);
-	//NOTE: I make a pop_back_swap_erase here!
 	Iterator erase(size_t pos);
 	Iterator erase(const Iterator& pos);
 	Iterator erase(size_t first, size_t last);
@@ -190,9 +306,8 @@ public:
 	void push_back(T&& value);
 	void pop_back();
 	void resize(size_t count);
-	//NOTE: Deleted version with rvalue because I am to dumb at this point in implementing it!
 	void resize(size_t count, const T& value);
-	void swap(Vector& other) noexcept;
+	void swap(Vector& other);
 
 	bool operator==(Vector<T>& rhs);
 	bool operator!=(Vector<T>& rhs);
@@ -200,36 +315,29 @@ public:
 };
 
 template<typename T>
-inline void Vector<T>::shrink()
+inline void Vector<T>::expandOrShrink()
 {
-	vectorCapacity /= 2;
-
-	T* newData = new T[vectorCapacity];
-	for (size_t i = 0; i < vectorCapacity; ++i)
-	{
-		newData[i] = std::move(vectorData[i]);
-	}
-	delete[] vectorData;
-	vectorData = newData;
-}
-
-template<typename T>
-inline void Vector<T>::expand()
-{
-	T* newData = new T[vectorCapacity];
+	T* newData = (T*) malloc(sizeof(T) * vectorCapacity);
 	for (size_t i = 0; i < vectorSize; ++i)
 	{
-		newData[i] = std::move(vectorData[i]);
+		new (&newData[i]) T(std::move(vectorData[i]));
 	}
-	delete[] vectorData;
+	free(vectorData);
 	vectorData = newData;
 }
 
 template<typename T>
 inline void Vector<T>::checkAndShrink(size_t newSize)
 {
-	while ((vectorCapacity / 2) >= (newSize + 2))
-		shrink();
+	if ((vectorCapacity / 2) >= (newSize + 2))
+	{
+		do
+		{
+			vectorCapacity /= 2;
+		} while ((vectorCapacity / 2) >= (newSize + 2));
+
+		expandOrShrink();
+	}
 }
 
 template<typename T>
@@ -237,45 +345,47 @@ inline void Vector<T>::checkAndExpand(size_t minNewSize)
 {
 	if (vectorCapacity < minNewSize)
 	{
-		//TODO: Check this if you have large numbers!!
 		do
 		{
 			vectorCapacity *= 2.0f;
 		} while (vectorCapacity < minNewSize);
 
-		expand();
+		expandOrShrink();
 	}
 }
 
 template<typename T>
-inline Vector<T>::Vector() : vectorData(new T[vectorCapacity])
+inline Vector<T>::Vector() : vectorData((T*) malloc(sizeof(T) * vectorCapacity))
 {
 }
 
 template<typename T>
-inline Vector<T>::Vector(size_t count, const T & value) : vectorSize(count), vectorCapacity(count + 4), vectorData(new T[vectorCapacity])
+inline Vector<T>::Vector(size_t count, const T & value) : vectorSize(count), vectorCapacity(count + 4),
+vectorData((T*) malloc(sizeof(T) * vectorCapacity))
 {
 	for (size_t i = 0; i < vectorSize; ++i)
 	{
-		vectorData[i] = value;
+		new (&vectorData[i]) T(value);
 	}
 }
 
 template<typename T>
-inline Vector<T>::Vector(size_t count) : vectorSize(count), vectorCapacity(count + 4), vectorData(new T[vectorCapacity])
+inline Vector<T>::Vector(std::initializer_list<T> initList) : vectorSize(initList.size()), vectorCapacity(initList.size() + 4),
+vectorData((T*) malloc(sizeof(T) * vectorCapacity))
 {
-	T t = T();
-	for (size_t i = 0; i < vectorSize; ++i)
+	size_t i = 0;
+	for (auto it = initList.begin(); it != initList.end(); ++it)
 	{
-		vectorData[i] = t;
+		new (&vectorData[i++]) T(*it);
 	}
 }
 
 template<typename T>
-inline Vector<T>::Vector(const Vector& other) : vectorSize(other.vectorSize), vectorCapacity(other.vectorCapacity), vectorData(new T[vectorCapacity])
+inline Vector<T>::Vector(const Vector& other) : vectorSize(other.vectorSize), vectorCapacity(other.vectorCapacity),
+vectorData((T*) malloc(sizeof(T) * vectorCapacity))
 {
 	for (size_t i = 0; i < vectorSize; ++i)
-		vectorData[i] = other.vectorData[i];
+		new (&vectorData[i]) T(other.vectorData[i]);
 }
 
 template<typename T>
@@ -285,11 +395,11 @@ inline Vector<T>& Vector<T>::operator=(const Vector& rhs)
 
 	vectorCapacity = rhs.vectorCapacity;
 	vectorSize = rhs.vectorSize;
-	vectorData = new T[vectorCapacity];
+	vectorData = (T*) malloc(sizeof(T) * vectorCapacity);
 
 	for (size_t i = 0; i < vectorSize; ++i)
 	{
-		vectorData[i] = rhs.vectorData[i];
+		new (&vectorData[i]) T(rhs.vectorData[i]);
 	}
 
 	return *this;
@@ -297,7 +407,7 @@ inline Vector<T>& Vector<T>::operator=(const Vector& rhs)
 
 template<typename T>
 inline Vector<T>::Vector(Vector && other) : vectorSize(std::exchange(other.vectorSize, 0)), vectorCapacity(std::exchange(other.vectorCapacity, 0)),
-											vectorData(std::exchange(other.vectorData, nullptr))
+vectorData(std::exchange(other.vectorData, nullptr))
 {
 }
 
@@ -306,9 +416,9 @@ inline Vector<T>& Vector<T>::operator=(Vector && rhs)
 {
 	this->~Vector();
 
-	vectorSize = std::exchange(rhs.vectorSize);
-	vectorCapacity= std::exchange(rhs.vectorCapacity, 0);
-	vectorData = std::exchange(rhs.data, nullptr);
+	vectorSize = std::exchange(rhs.vectorSize, 0);
+	vectorCapacity = std::exchange(rhs.vectorCapacity, 0);
+	vectorData = std::exchange(rhs.vectorData, nullptr);
 
 	return *this;
 }
@@ -317,13 +427,13 @@ template<typename T>
 inline Vector<T>::~Vector()
 {
 	vectorCapacity = 0;
-	vectorSize = 0;
 	for (size_t i = 0; i < vectorSize; ++i)
 	{
 		vectorData[i].~T();
 	}
-	delete[] vectorData;
+	free(vectorData);
 	vectorData = nullptr;
+	vectorSize = 0;
 }
 
 template<typename T>
@@ -355,28 +465,28 @@ inline const T & Vector<T>::operator[](size_t pos) const
 template<typename T>
 inline T & Vector<T>::front()
 {
-	assert(vectorSize != 0);
+	assert(vectorSize >= 1);
 	return vectorData[0];
 }
 
 template<typename T>
 inline const T & Vector<T>::front() const
 {
-	assert(vectorSize != 0);
+	assert(vectorSize >= 1);
 	return vectorData[0];
 }
 
 template<typename T>
 inline T & Vector<T>::back()
 {
-	assert(vectorSize != 0);
+	assert(vectorSize >= 1);
 	return vectorData[vectorSize - 1];
 }
 
 template<typename T>
 inline const T & Vector<T>::back() const
 {
-	assert(vectorSize != 0);
+	assert(vectorSize >= 1);
 	return vectorData[vectorSize - 1];
 }
 
@@ -395,13 +505,25 @@ inline const T * Vector<T>::data() const
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::begin()
 {
-	return Iterator{ 0, vectorSize, vectorData};
+	return Iterator{ 0, vectorSize, vectorData };
 }
 
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::end()
 {
-	return Iterator{vectorSize, vectorSize, vectorData};
+	return Iterator{ vectorSize, vectorSize, vectorData };
+}
+
+template<typename T>
+inline typename Vector<T>::ConstIterator Vector<T>::begin() const
+{
+	return ConstIterator{ 0, vectorSize, vectorData };
+}
+
+template<typename T>
+inline typename Vector<T>::ConstIterator Vector<T>::end() const
+{
+	return ConstIterator{ vectorSize, vectorSize, vectorData };
 }
 
 template<typename T>
@@ -423,8 +545,6 @@ inline void Vector<T>::reserve(size_t newSize) noexcept
 	assert(newSize >= 0);
 
 	checkAndExpand(newSize);
-
-	vectorSize = newSize;
 }
 
 template<typename T>
@@ -450,13 +570,14 @@ inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, const T & valu
 	checkAndExpand(vectorSize + 1);
 
 	++vectorSize;
-	for (size_t i = (vectorSize - 1); i > pos; --i)
+	new (&vectorData[vectorSize - 1]) T(std::move(vectorData[vectorSize - 2]));
+	for (size_t i = (vectorSize - 2); i > pos; --i)
 	{
 		vectorData[i] = std::move(vectorData[i - 1]);
 	}
 	vectorData[pos] = value;
 
-	return Iterator{pos, vectorSize, vectorData};
+	return Iterator{ pos, vectorSize, vectorData };
 }
 
 template<typename T>
@@ -473,7 +594,8 @@ inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, T && value)
 	checkAndExpand(vectorSize + 1);
 
 	++vectorSize;
-	for (size_t i = (vectorSize - 1); i > pos; --i)
+	new (&vectorData[vectorSize - 1]) T(std::move(vectorData[vectorSize - 2]));
+	for (size_t i = (vectorSize - 2); i > pos; --i)
 	{
 		vectorData[i] = std::move(vectorData[i - 1]);
 	}
@@ -492,13 +614,13 @@ template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, size_t count, const T & value)
 {
 	assert((pos <= vectorSize) && (pos >= 0));
-
 	checkAndExpand(vectorSize + count);
 
 	//TODO: Isn`t is better if you shift the buckets up by there amount, so that I do not get O(n²)?
 	for (size_t j = 0; j < count; ++j, ++pos, ++vectorSize)
 	{
-		for (size_t i = vectorSize; i > pos; --i)
+		new (&vectorData[vectorSize]) T(std::move(vectorData[vectorSize - 1]));
+		for (size_t i = (vectorSize - 1); i > pos; --i)
 		{
 			vectorData[i] = std::move(vectorData[i - 1]);
 		}
@@ -524,7 +646,7 @@ inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, const
 
 	checkAndExpand(vectorSize + 1);
 
-	vectorData[vectorSize] = std::move(vectorData[pos]);
+	new (&vectorData[vectorSize]) T(std::move(vectorData[pos]));
 	vectorData[pos] = value;
 	++vectorSize;
 
@@ -544,7 +666,7 @@ inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, T && 
 
 	checkAndExpand(vectorSize + 1);
 
-	vectorData[vectorSize] = std::move(vectorData[pos]);
+	new (&vectorData[vectorSize]) T(std::move(vectorData[pos]));
 	vectorData[pos] = std::move(value);
 	++vectorSize;
 
@@ -567,9 +689,9 @@ inline typename Vector<T>::Iterator Vector<T>::erase(size_t pos)
 	{
 		vectorData[i - 1] = std::move(vectorData[i]);
 	}
-	--vectorSize;
 
-	checkAndShrink(vectorSize);
+	checkAndShrink(vectorSize - 1);
+	--vectorSize;
 
 	return Iterator{ pos, vectorSize, vectorData };
 }
@@ -589,16 +711,17 @@ inline typename Vector<T>::Iterator Vector<T>::erase(size_t first, size_t last)
 	{
 		vectorData[i].~T();
 	}
+	size_t newVectorSize = vectorSize;
 	//TODO: Isn`t is better if you shift the buckets down by there amount, so that I do not get O(n²)?
-	for (size_t j = last; j > first; --j)
+	for (size_t j = last; j > first; --j, --newVectorSize)
 	{
-		for (size_t i = j; i < vectorSize; ++i)
+		for (size_t i = j; i < newVectorSize; ++i)
 		{
 			vectorData[i - 1] = vectorData[i];
 		}
-		--vectorSize;
 	}
-	checkAndShrink(vectorSize);
+	checkAndShrink(newVectorSize);
+	vectorSize = newVectorSize;
 
 	return Iterator{ first, vectorSize, vectorData };
 }
@@ -616,9 +739,9 @@ inline typename Vector<T>::Iterator Vector<T>::erasePop_back(size_t pos)
 
 	vectorData[pos].~T();
 	vectorData[pos] = std::move(vectorData[vectorSize - 1]);
-	--vectorSize;
 
-	checkAndShrink(vectorSize);
+	checkAndShrink(vectorSize - 1);
+	--vectorSize;
 
 	return Iterator{ pos, vectorSize, vectorData };
 }
@@ -634,7 +757,7 @@ inline void Vector<T>::push_back(const T & value)
 {
 	checkAndExpand(vectorSize + 1);
 
-	vectorData[vectorSize++] = value;
+	new (&vectorData[vectorSize++]) T(value);
 }
 
 template<typename T>
@@ -642,15 +765,16 @@ inline void Vector<T>::push_back(T && value)
 {
 	checkAndExpand(vectorSize + 1);
 
-	vectorData[vectorSize++] = std::move(value);
+	new (&vectorData[vectorSize++]) T(std::move(value));
 }
 
 template<typename T>
 inline void Vector<T>::pop_back()
 {
-	vectorData[--vectorSize].~T();
+	vectorData[vectorSize - 1].~T();
 
-	checkAndShrink(vectorSize);
+	checkAndShrink(vectorSize - 1);
+	--vectorSize;
 }
 
 template<typename T>
@@ -672,9 +796,9 @@ inline void Vector<T>::resize(size_t count)
 	{
 		checkAndExpand(count);
 
-		for (int i = vectorSize; i < (vectorSize + count); ++i)
+		for (int i = vectorSize; i < count; ++i)
 		{
-			vectorData[i] = T();
+			new (&vectorData[i]) T();
 		}
 	}
 
@@ -700,9 +824,9 @@ inline void Vector<T>::resize(size_t count, const T & value)
 	{
 		checkAndExpand(count);
 
-		for (int i = vectorSize; i < (vectorSize + count); ++i)
+		for (int i = vectorSize; i < count; ++i)
 		{
-			vectorData[i] = value;
+			new (&vectorData[i]) T(value);
 		}
 	}
 
@@ -710,9 +834,9 @@ inline void Vector<T>::resize(size_t count, const T & value)
 }
 
 template<typename T>
-inline void Vector<T>::swap(Vector & other) noexcept
+inline void Vector<T>::swap(Vector & other)
 {
-	Vector<T> temp = std::move(other);
+	Vector<T> temp(std::move(other));
 	other = std::move(*this);
 	*this = std::move(temp);
 }
@@ -738,75 +862,7 @@ inline bool Vector<T>::operator!=(Vector<T>& rhs)
 	return (!(this->operator==(rhs)));
 }
 
-#include "UnitTester.h"
-
 namespace VectorTestSuit
 {
-	static void runVectorUnitTest()
-	{
-		UnitTester::test([]()
-		{
-			Vector<int> vec;
-			unitAssert(vec.capacity() == 2);
-			unitAssert(vec.empty());
-			unitAssert(vec.size() == 0);
-			unitAssert(vec.begin() == vec.end());
-			Vector<int> otherVec(4, 3);
-			unitAssert(otherVec.capacity() == 8);
-			unitAssert(otherVec.size() == 4);
-			unitAssert((*(otherVec.begin())) == 3);
-			unitAssert(otherVec.begin() != otherVec.end());
-			vec = otherVec;
-			for (auto it = vec.begin(); it != vec.end(); ++it)
-			{
-				unitAssert((*it) == 3);
-			}
-			unitAssert(vec.size() == 4);
-			unitAssert(vec.at(2) == 3);
-			unitAssert(vec[3] == 3);
-			vec.push_back(4);
-			vec.push_back(7);
-			vec.push_back(2);
-			vec.push_back(9);
-			vec.push_back(5);
-			unitAssert(vec.size() == 9);
-			unitAssert(vec.capacity() == 16);
-			unitAssert((*(--vec.end())) == 5);
-			vec.pop_back();
-			unitAssert(vec.back() == 9);
-			unitAssert(vec.erase(0, 4).operator*() == 4);
-			unitAssert(vec.capacity() == 8);
-			unitAssert(vec.size() == 4);
-			unitAssert(vec.erase(0).operator*() == 7);
-			vec.resize(1, 4);
-			vec.resize(5);
-			unitAssert(vec.back() == 0);
-			Vector<int> oOtherVec = std::move(vec);
-			unitAssert(vec.size() == 0);
-			oOtherVec.insert(3, 3, 1);
-			unitAssert(oOtherVec.size() == 8);
-
-			unitAssert(oOtherVec != vec);
-			Vector<int> thisVector(1, 7);
-			thisVector.insert(thisVector.size() - 1, 2, 0);
-			thisVector.erase(0, 2);
-			thisVector.insert(thisVector.size(), 2, 0);
-			thisVector.push_back(1);
-			thisVector.insert(thisVector.size(), 2, 1);
-			thisVector.insert(thisVector.size(), 2, 0);
-			unitAssert(oOtherVec == thisVector);
-			thisVector.reserve(5);
-			thisVector.reserve(20);
-			thisVector.clear();
-			unitAssert(thisVector.capacity() == 20);
-
-			int sum = 0;
-			for (int e : thisVector)
-			{
-				sum += e;
-			}
-
-			return true;
-		});
-	}
+	void runVectorUnitTest();
 }

@@ -5,13 +5,13 @@
 #include <unordered_map>
 #include "Mat4x4.h"
 #include "android_native_app_glue.h"
-#include <vector>
+#include "Vector.h"
 
 class Shader
 {
 public:
 	Shader() = default;
-	Shader(const std::string& filename, const std::vector<std::string>& attribLocs);
+	Shader(const std::string& filename, const Vector<std::string>& attribLocs);
 	Shader(const Shader& other) = delete;
 	Shader(Shader&& other);
 	Shader& operator=(const Shader& rhs) = delete;

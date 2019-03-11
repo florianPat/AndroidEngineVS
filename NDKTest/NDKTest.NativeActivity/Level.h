@@ -3,7 +3,6 @@
 #include "RenderWindow.h"
 #include "TiledMap.h"
 #include "Physics.h"
-#include <iostream>
 #include "GameObjectManager.h"
 #include "EventManager.h"
 #include "Utils.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Vector.h"
 
 class VertexLayouts
 {
@@ -12,7 +12,7 @@ class VertexLayouts
 	};
 	GLsizei stride = 0;
 
-	std::vector<VertexLayout> vertexLayouts;
+	Vector<VertexLayout> vertexLayouts;
 private:
 	int sizeofType(GLenum type) const;
 public:

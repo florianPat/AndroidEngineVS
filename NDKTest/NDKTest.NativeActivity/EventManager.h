@@ -5,7 +5,7 @@
 #include <functional>
 #include <memory>
 #include <list>
-#include <vector>
+#include "Vector.h"
 
 typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunction;
 
@@ -14,7 +14,7 @@ class EventManager
 	friend class Level;
 	//TODO: Why list???
 	std::unordered_map<unsigned int, std::list<DelegateFunction>> eventListenerMap;
-	std::vector<std::pair<unsigned int, DelegateFunction>> eventDeleterMap;
+	Vector<std::pair<unsigned int, DelegateFunction>> eventDeleterMap;
 public:
 	EventManager();
 	bool addListener(unsigned int eventType, DelegateFunction& delegateFunction);
@@ -23,3 +23,8 @@ public:
 private:
 	void removeListeners();
 };
+
+namespace utils
+{
+	DelegateFunction getDelegateFromFunction(std::function<void(EventData*)>& function);
+}

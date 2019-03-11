@@ -1,9 +1,12 @@
 #pragma once
-
+#if 0
 #include <GLES3/gl3.h>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include <vector>
+#include "Vector.h"
+
+//NOTE: Does not work with OpenGL ES 2, but I left it in the folder, but discarded it from the project.
+//Now I will just if it out
 
 class VertexArray
 {
@@ -18,7 +21,7 @@ class VertexArray
 	GLuint rendererId;
 	const VertexBuffer* vb = nullptr;
 	const IndexBuffer* ib = nullptr;
-	std::vector<VertexLayout> vertexLayouts;
+	Vector<VertexLayout> vertexLayouts;
 private:
 	int sizeofType(GLenum type) const;
 public:
@@ -31,3 +34,4 @@ public:
 	void unbind() const;
 	int getIboCount() const;
 };
+#endif

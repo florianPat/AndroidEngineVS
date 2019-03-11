@@ -43,8 +43,10 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Benchmark.h" />
-    <ClInclude Include="Vector.h" />
     <ClInclude Include="UnitTester.h" />
+    <ClInclude Include="Vector.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -80,5 +82,7 @@
     <ClCompile Include="TouchInput.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Benchmark.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
 </Project>

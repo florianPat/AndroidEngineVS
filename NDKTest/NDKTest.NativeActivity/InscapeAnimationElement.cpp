@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "Ifstream.h"
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const std::vector<std::string>& regionNames)
+InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const Vector<std::string>& regionNames)
 	: elementMap()
 {
 	Ifstream file;
@@ -221,7 +221,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 }
 
 InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName) 
-	: InkscapeAnimationElement(inkscapeFileName, { "Process all groups" })
+	: InkscapeAnimationElement(inkscapeFileName, Vector<std::string>(1, "Process all groups"))
 {
 }
 

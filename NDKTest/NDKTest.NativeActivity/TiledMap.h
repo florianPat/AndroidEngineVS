@@ -21,12 +21,12 @@ class TiledMap
 	{
 		std::string name;
 		int width, height;
-		std::vector<Tile> tiles;
+		Vector<Tile> tiles;
 	};
 	struct ObjectGroup
 	{
 		std::string name;
-		std::vector<Physics::Collider> objects;
+		Vector<Physics::Collider> objects;
 	};
 	std::unordered_map<int, Tile> tiles;
 	std::unordered_map<std::string, Layer> layers;
@@ -37,9 +37,9 @@ class TiledMap
 	Sprite textureSprite;
 	AssetManager* assetManager = nullptr;
 public:
-	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects = std::vector<std::string>{});
-	std::vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);
-	std::vector<ObjectGroup> getObjectGroups();
+	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<std::string>&& toGameObjects = Vector<std::string>{});
+	Vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);
+	Vector<ObjectGroup> getObjectGroups();
 	void draw(RenderWindow& renderWindow);
 private:
 	size_t getEndOfWord(const std::string& word, const std::string& lineContent, bool* result);
@@ -48,5 +48,5 @@ private:
 	std::string ParseTiles(Ifstream& file);
 	void ParseLayer(Ifstream& file, std::string& lineContent);
 	void ParseObjectGroups(Ifstream& file, std::string& lineContent);
-	void MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
+	void MakeRenderTexture(Vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
 };

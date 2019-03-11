@@ -134,9 +134,9 @@ std::unique_ptr<TextureRegion> TextureAtlas::findRegion(const std::string& name)
 	}
 }
 
-std::vector<TextureRegion> TextureAtlas::getRegions()
+Vector<TextureRegion> TextureAtlas::getRegions()
 {
-	auto result = std::vector<TextureRegion>();
+	auto result = Vector<TextureRegion>();
 	int i = 0;
 	for (auto it = textureAtlas.begin(); it != textureAtlas.end(); ++it, ++i)
 	{

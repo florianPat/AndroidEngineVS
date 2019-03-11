@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vector2.h"
-#include <vector>
+#include "Vector.h"
 #include <unordered_map>
 #include <memory>
 #include "Rect.h"
@@ -91,8 +91,8 @@ private:
 	struct PhysicElement
 	{
 		bool collisionIdInPointer;
-		std::vector<std::string> collisionIdValue;
-		std::vector<std::string>* collisionIdPointer;
+		Vector<std::string> collisionIdValue;
+		Vector<std::string>* collisionIdPointer;
 
 		bool collidersInPointer;
 		union
@@ -102,7 +102,7 @@ private:
 		} colliders;
 	public:
 		Collider* getCollider() const;
-		std::vector<std::string>* getCollisionIds() const;
+		Vector<std::string>* getCollisionIds() const;
 	};
 public:
 	class Body
@@ -130,17 +130,17 @@ public:
 		TriggerInformation triggerInformation = {};
 		Vector2f pos;
 		std::string id;
-		std::vector<PhysicElement> physicsElements;
+		Vector<PhysicElement> physicsElements;
 	public:
 		Vector2f vel = { 0.0f, 0.0f };
 	public:
 		//Should be called, if the object is moving
-		Body(Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger = false, bool isStatic = false);
-		Body(Vector2f& pos, std::string name, Collider* collider, bool isTrigger = false, bool isStatic = false, std::vector<std::string> collisionId = {});
+		Body(Vector2f& pos, std::string name, Collider* collider, Vector<std::string>* collisionId, bool isTrigger = false, bool isStatic = false);
+		Body(Vector2f& pos, std::string name, Collider* collider, bool isTrigger = false, bool isStatic = false, Vector<std::string> collisionId = {});
 		//Should be called if the object, is a static one
-		Body(std::string name, Collider collider, bool isTrigger = false, bool isStatic = true, std::vector<std::string> collisionId = {});
+		Body(std::string name, Collider collider, bool isTrigger = false, bool isStatic = true, Vector<std::string> collisionId = {});
 		//To have one name for a lot of Colliders. The body you have to pass by value, because pos and that does not make sense to manipulate here!
-		Body(std::string name, std::vector<Collider> colliders, bool isTrigger = false);
+		Body(std::string name, Vector<Collider> colliders, bool isTrigger = false);
 	public:
 		bool getIsTriggerd();
 		Vector2f& getPos();
@@ -164,5 +164,5 @@ public:
 	void addElementValue(Body body);
 	bool removeElementById(std::string& id);
 	static void applySpriteToBoundingBox(const Sprite& sprite, Collider& boundingBox);
-	std::vector<std::string> getAllCollisionIdsWhichContain(const std::string& string);
+	Vector<std::string> getAllCollisionIdsWhichContain(const std::string& string);
 };

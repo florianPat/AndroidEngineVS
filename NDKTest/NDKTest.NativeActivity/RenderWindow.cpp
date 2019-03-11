@@ -347,8 +347,19 @@ void RenderWindow::processAppEvent(int32_t command)
 			//NOTE: New viewport? and the RenderTexture also needs to query the new window size.
 			break;
 		}
-		case APP_CMD_CONFIG_CHANGED:
+		case APP_CMD_CONTENT_RECT_CHANGED:
 		{
+			//NOTE: New viewport? and the RenderTexture also needs to query the new window size.
+			//"Real" client area is in content rect
+			break;
+		}
+		case APP_CMD_INPUT_CHANGED:
+		{
+			utils::log("Input changed!!");
+		}
+		case APP_CMD_LOW_MEMORY:
+		{
+			utils::log("Low memory!");
 			break;
 		}
 		case APP_CMD_INIT_WINDOW:
@@ -777,8 +788,8 @@ void RenderWindow::setupGfxGpu()
 {
 	CallGL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	shaderSprite = std::make_unique<Shader>("ShaderSprite", std::vector<std::string>{ "position", "texCoord" });
-	shaderRectShape = std::make_unique<Shader>("ShaderRectShape", std::vector<std::string>{ "position" });
+	shaderSprite = std::make_unique<Shader>("ShaderSprite", Vector<std::string>{ "position", "texCoord" });
+	shaderRectShape = std::make_unique<Shader>("ShaderRectShape", Vector<std::string>{ "position" });
 
 	assetManager.reloadAllRes();
 }

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include "EventManager.h"
 #include <android/log.h>
 
 #undef assert
@@ -14,9 +12,10 @@
 // is a bad idea)
 #define assert(exp) if(!((exp) && true)) utils::log("assert would have fired now!");
 #endif
-#define arrayCount(x) sizeof(x) / sizeof(x[0])
 
 #define InvalidCodePath assert(!"InvalidCodePath")
+
+#define arrayCount(x) sizeof(x) / sizeof(x[0])
 
 #define Kilobyte(x) x * 1024ll
 #define Megabyte(x) Kilobyte(x) * 1024ll
@@ -31,7 +30,6 @@ namespace utils
 {
 	unsigned int getGUID();
 	bool isWordInLine(const std::string & word, const std::string & lineContent);
-	DelegateFunction getDelegateFromFunction(std::function<void(EventData*)>& function);
 	std::string getWordBetweenChars(const std::string& lineContent, char first, char last);
 	float lerp(float v0, float v1, float t);
 	float degreesToRadians(float degree);

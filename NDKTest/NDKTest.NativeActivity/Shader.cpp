@@ -76,7 +76,7 @@ GLuint createShader(const std::string& text, GLenum shaderType)
 	return shader;
 }
 
-Shader::Shader(const std::string & filename, const std::vector<std::string>& attribLocs) : uniformCache()
+Shader::Shader(const std::string & filename, const Vector<std::string>& attribLocs) : uniformCache()
 {
 	GLuint shaders[NUM_SHADERS];
 

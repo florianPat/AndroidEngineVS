@@ -9,10 +9,7 @@ static void registerAssetLoaders(AssetManager* assetManager)
 
 void android_main(android_app* app)
 {
-	// -- begin unit test
-	for(int i = 0; i < 10; ++i)
-		VectorTestSuit::runVectorUnitTest();
-	// -- end unit test
+	VectorTestSuit::runVectorUnitTest();
 
 	RenderWindow window(app, 900, 600, RenderWindow::ViewportType::EXTEND);
 	registerAssetLoaders(window.getAssetManager());
@@ -28,6 +25,4 @@ void android_main(android_app* app)
 				return;
 		}
 	}
-
-	//Game game(window, std::make_unique<MainLevel>(window, "testLevel.tmx"));
 }

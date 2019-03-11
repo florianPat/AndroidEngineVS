@@ -16,7 +16,7 @@ class AssetManager
 	static constexpr long long maxSize = Gigabyte(1);
 	long long currentSize = 0;
 	std::unordered_map<std::string, std::unique_ptr<char[]>> ressourceCache;
-	std::vector<std::string> timeOfInsertCache;
+	Vector<std::string> timeOfInsertCache;
 	static AAssetManager* aassetManager;
 	std::unordered_map<std::string, AssetLoader> assetLoaderCache;
 private:

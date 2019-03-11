@@ -1,3 +1,4 @@
+#if 0
 #include "VertexArray.h"
 
 #include "Utils.h"
@@ -85,3 +86,5 @@ int VertexArray::getIboCount() const
 {
 	return ib->getCount();
 }
+
+#endif

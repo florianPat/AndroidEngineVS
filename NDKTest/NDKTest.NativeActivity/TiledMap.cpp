@@ -3,7 +3,7 @@
 #include "Utils.h"
 #include "TiledMapRenderComponent.h"
 
-TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, std::vector<std::string>&& toGameObjects)
+TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<std::string>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
 	Ifstream file;
@@ -55,22 +55,22 @@ TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventMa
 	}
 }
 
-std::vector<Physics::Collider> TiledMap::getObjectGroup(const std::string& objectGroupName)
+Vector<Physics::Collider> TiledMap::getObjectGroup(const std::string& objectGroupName)
 {
 	auto result = objectGroups.find(objectGroupName);
 	if (result != objectGroups.end())
 		return result->second.objects;
 	else
 	{
-		std::vector<Physics::Collider> result;
+		Vector<Physics::Collider> result;
 		InvalidCodePath;
 		return result;
 	}
 }
 
-std::vector<TiledMap::ObjectGroup> TiledMap::getObjectGroups()
+Vector<TiledMap::ObjectGroup> TiledMap::getObjectGroups()
 {
-	std::vector<ObjectGroup> result;
+	Vector<ObjectGroup> result;
 
 	for (auto it = objectGroups.begin(); it != objectGroups.end(); ++it)
 	{
@@ -143,7 +143,7 @@ void TiledMap::ParseLayer(Ifstream & file, std::string& lineContent)
 		int layerWidth = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 		int layerHeight = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 
-		layers.emplace(layerName, Layer{ layerName, layerWidth, layerHeight, std::vector<Tile>() });
+		layers.emplace(layerName, Layer{ layerName, layerWidth, layerHeight, Vector<Tile>() });
 
 		auto currentLayer = layers.find(layerName);
 
@@ -185,7 +185,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 		std::string objectGroupName = getLineContentBetween(lineContent, "name", '"');
 		file.getline(lineContent);
 
-		std::vector<Physics::Collider> objectVector;
+		Vector<Physics::Collider> objectVector;
 		while (!utils::isWordInLine("</objectgroup>", lineContent))
 		{
 			assert(utils::isWordInLine("<object", lineContent));
@@ -205,7 +205,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 	}
 }
 
-void TiledMap::MakeRenderTexture(std::vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
+void TiledMap::MakeRenderTexture(Vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
 	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader()))
 	{

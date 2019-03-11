@@ -76,3 +76,8 @@ void EventManager::removeListeners()
 		eventDeleterMap.clear();
 	}
 }
+
+DelegateFunction utils::getDelegateFromFunction(std::function<void(EventData*)>& function)
+{
+	return DelegateFunction(std::pair<unsigned int, std::function<void(EventData*)>>(getGUID(), function));
+}

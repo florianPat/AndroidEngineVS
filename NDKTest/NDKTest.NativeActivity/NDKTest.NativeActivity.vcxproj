@@ -291,6 +291,7 @@
     <ClInclude Include="MainLevel.h" />
     <ClInclude Include="Mat4x4.h" />
     <ClInclude Include="android_native_app_glue.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="RectangleShape.h" />
@@ -310,6 +311,7 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexLayout.h" />
     <ClInclude Include="View.h" />
@@ -345,6 +347,8 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="TouchInput.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexLayout.cpp" />
     <ClCompile Include="View.cpp" />

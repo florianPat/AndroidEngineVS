@@ -58,7 +58,7 @@ private:
 	SLObjectItf playerObj = 0;
 	SLPlayItf player = 0;
 	SLAndroidSimpleBufferQueueItf playerBuffer = 0;
-	std::vector<Sound*> activeSnds;
+	Vector<Sound*> activeSnds;
 public:
 	RenderWindow(android_app* app, int width, int height, ViewportType viewportType);
 	RenderWindow(const RenderWindow& other) = delete;

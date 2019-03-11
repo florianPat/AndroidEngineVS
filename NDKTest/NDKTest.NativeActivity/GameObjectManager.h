@@ -8,7 +8,7 @@ class GameObjectManager
 {
 	std::unordered_map<unsigned int, std::unique_ptr<Actor>> actors;
 	std::multimap<gomSort::SortKey, unsigned long long, gomSort::SortCompare> sortedActors;
-	std::vector<int> destroyActorQueue;
+	Vector<int> destroyActorQueue;
 public:
 	GameObjectManager();
 	Actor* addActor();

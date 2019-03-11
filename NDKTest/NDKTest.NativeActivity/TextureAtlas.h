@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Vector.h"
 #include <string>
 #include "Texture.h"
 #include <memory>
@@ -47,7 +47,7 @@ public:
 	TextureAtlas(const std::string& filepath, AssetManager* assetManger);
 
 	std::unique_ptr<TextureRegion> findRegion(const std::string& name) const;
-	std::vector<TextureRegion> getRegions();
+	Vector<TextureRegion> getRegions();
 	void addRegion(const TextureRegion& adder);
 private:
 	std::string getLineContentBetweeen(std::string& lineContent, char first, char secound);

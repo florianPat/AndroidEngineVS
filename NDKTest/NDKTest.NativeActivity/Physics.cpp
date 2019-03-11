@@ -304,9 +304,9 @@ void Physics::applySpriteToBoundingBox(const Sprite & sprite, Collider & boundin
 	boundingBox.collider.rect.height = (float)sprite.getGlobalBounds().height;
 }
 
-std::vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::string & string)
+Vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::string & string)
 {
-	std::vector<std::string> result;
+	Vector<std::string> result;
 
 	for (auto it = bodies.begin(); it != bodies.end(); ++it)
 	{
@@ -336,7 +336,7 @@ std::vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::stri
 	return result;
 }
 
-Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, std::vector<std::string>* collisionId, bool isTrigger, bool isStatic)
+Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, Vector<std::string>* collisionId, bool isTrigger, bool isStatic)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -348,7 +348,7 @@ Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, std::ve
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool isTrigger, bool isStatic, std::vector<std::string> collisionId)
+Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool isTrigger, bool isStatic, Vector<std::string> collisionId)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -360,7 +360,7 @@ Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool 
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool isStatic, std::vector<std::string> collisionId)
+Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool isStatic, Vector<std::string> collisionId)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(0.0f, 0.0f), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -373,7 +373,7 @@ Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool is
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(std::string name, std::vector<Collider> colliders, bool isTrigger) : isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), 
+Physics::Body::Body(std::string name, Vector<Collider> colliders, bool isTrigger) : isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), 
 																						 id(name), physicsElements{}
 {
 	for (auto it = colliders.begin(); it != colliders.end(); ++it)
@@ -381,7 +381,7 @@ Physics::Body::Body(std::string name, std::vector<Collider> colliders, bool isTr
 		PhysicElement physicsElement = {};
 
 		physicsElement.collisionIdInPointer = false;
-		physicsElement.collisionIdValue = std::vector<std::string>();
+		physicsElement.collisionIdValue = Vector<std::string>();
 		physicsElement.collidersInPointer = false;
 		physicsElement.colliders.collidersValue = *it;
 
@@ -437,12 +437,12 @@ Physics::Collider * Physics::PhysicElement::getCollider() const
 		return (Collider *) &colliders.collidersValue;
 }
 
-std::vector<std::string>* Physics::PhysicElement::getCollisionIds() const
+Vector<std::string>* Physics::PhysicElement::getCollisionIds() const
 {
 	if (collisionIdInPointer)
 		return collisionIdPointer;
 	else
-		return (std::vector<std::string>*) &collisionIdValue;
+		return (Vector<std::string>*) &collisionIdValue;
 }
 
 Physics::Collider::Collider() : type(Type::rect), collider{ {} }
@@ -535,10 +535,10 @@ bool Physics::Collider::collide(const Collider & other, Vector2f *minTransVec) c
 			FloatRect otherRect = other.collider.rect;
 			
 			*minTransVec = { -(rect.left - (otherRect.left + otherRect.width)), -0 };
-			std::vector<Vector2f> corners;
-			corners.emplace_back(Vector2f{ (rect.left + rect.width) - otherRect.left, 0 });
-			corners.emplace_back(Vector2f{ 0, rect.top - (otherRect.top + otherRect.height) });
-			corners.emplace_back(Vector2f{ 0, (rect.top + rect.height) - otherRect.top });
+			Vector<Vector2f> corners;
+			corners.push_back(Vector2f{ (rect.left + rect.width) - otherRect.left, 0 });
+			corners.push_back(Vector2f{ 0, rect.top - (otherRect.top + otherRect.height) });
+			corners.push_back(Vector2f{ 0, (rect.top + rect.height) - otherRect.top });
 
 			for (auto it = corners.begin(); it != corners.end(); ++it)
 			{

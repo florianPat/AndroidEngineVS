@@ -57,7 +57,7 @@ bool Sound::loadFromFile(const std::string & filename)
 
 	if (nChannels == 1)
 	{
-		samples.push_back(std::vector<short>(nSamples));
+		samples.push_back(Vector<short>((size_t)nSamples));
 
 		for (int i = 0; i < nSamples; ++i)
 		{
@@ -66,8 +66,8 @@ bool Sound::loadFromFile(const std::string & filename)
 	}
 	else if (nChannels == 2)
 	{
-		samples.push_back(std::vector<short>(nSamples / 2));
-		samples.push_back(std::vector<short>(nSamples / 2));
+		samples.push_back(Vector<short>(nSamples / 2));
+		samples.push_back(Vector<short>(nSamples / 2));
 
 		for (int i = 0; i < nSamples;)
 		{
@@ -92,7 +92,7 @@ Sound::Sound()
 {
 }
 
-const std::vector<std::vector<short>>& Sound::getSamples() const
+const Vector<Vector<short>>& Sound::getSamples() const
 {
 	return samples;
 }

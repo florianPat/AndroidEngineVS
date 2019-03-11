@@ -1,7 +1,7 @@
 #include "Animation.h"
 #include "Utils.h"
 
-Animation::Animation(std::vector<TextureRegion>& keyFrames, int64_t frameDuration, PlayMode type)
+Animation::Animation(Vector<TextureRegion>& keyFrames, int64_t frameDuration, PlayMode type)
 	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()
 {
 	for (auto it = keyFrames.begin(); it != keyFrames.end(); ++it)
@@ -13,10 +13,10 @@ Animation::Animation(std::vector<TextureRegion>& keyFrames, int64_t frameDuratio
 	keyFrameItReverse = this->keyFrames.size() - 1;
 }
 
-Animation::Animation(const std::vector<std::string>& regionNames, const TextureAtlas & atlas, int64_t frameDuration, PlayMode type)
+Animation::Animation(const Vector<std::string>& regionNames, const TextureAtlas & atlas, int64_t frameDuration, PlayMode type)
 	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()
 {
-	std::vector<TextureRegion> keyFrames;
+	Vector<TextureRegion> keyFrames;
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{
 		auto region = atlas.findRegion(*it);
@@ -55,7 +55,7 @@ void Animation::setFrameDuration(int64_t newFrameDuration)
 	}
 }
 
-void Animation::setKeyFrames(std::vector<TextureRegion>& newKeyFrames)
+void Animation::setKeyFrames(Vector<TextureRegion>& newKeyFrames)
 {
 	keyFrames.clear();
 	for (auto it = newKeyFrames.begin(); it != newKeyFrames.end(); ++it)

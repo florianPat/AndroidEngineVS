@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Vector.h"
 #include <string>
 
 class Sound
@@ -57,7 +57,7 @@ class Sound
 		uint getChunkDataSize() const;
 	};
 private:
-	std::vector<std::vector<short>> samples;
+	Vector<Vector<short>> samples;
 	int nChannels = 0;
 	int nSamples = 0;
 public:
@@ -65,7 +65,7 @@ public:
 	bool reloadFromFile(const std::string& filename);
 public:
 	Sound();
-	const std::vector<std::vector<short>>& getSamples() const;
+	const Vector<Vector<short>>& getSamples() const;
 	const int getNSamples() const;
 	long long getSize() const;
 	const short* getBuffer() const;
