@@ -271,6 +271,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Array.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Benchmark.h" />
@@ -283,6 +284,7 @@
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="GLUtils.h" />
     <ClInclude Include="gomSort.h" />
+    <ClInclude Include="HeapArray.h" />
     <ClInclude Include="Ifstream.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InkscapeAnimation.h" />
@@ -320,6 +322,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="android_native_app_glue.c" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Array.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Benchmark.cpp" />
     <ClCompile Include="CircleShape.cpp" />

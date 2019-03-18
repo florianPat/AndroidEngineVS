@@ -1,6 +1,6 @@
 #pragma once
 
-//Other std implementations TODO: string, unique_ptr, unordered_map, map/multimap, initializer_list
+//Other std implementations TODO: string, unordered_map, unique_ptr, map/multimap
 
 #include <initializer_list>
 #include "Utils.h"
@@ -146,7 +146,7 @@ class Vector
 		}
 		ConstIterator operator++(int)
 		{
-			Iterator temp(*this);
+			ConstIterator temp(*this);
 			operator++();
 			return temp;
 		}
@@ -158,7 +158,7 @@ class Vector
 		}
 		ConstIterator operator--(int)
 		{
-			Iterator temp(*this);
+			ConstIterator temp(*this);
 			operator--();
 			return temp;
 		}
@@ -291,7 +291,7 @@ public:
 	Iterator insert(const Iterator& pos, T&& value);
 	Iterator insert(size_t pos, size_t count, const T& value);
 	Iterator insert(const Iterator& pos, size_t count, const T& value);
-	//NOTE: Does theses functions even make sense??
+	//NOTE: Do theses functions even make sense??
 	Iterator insertPush_back(size_t pos, const T& value);
 	Iterator insertPush_back(const Iterator& pos, const T& value);
 	Iterator insertPush_back(size_t pos, T&& value);
@@ -309,8 +309,8 @@ public:
 	void resize(size_t count, const T& value);
 	void swap(Vector& other);
 
-	bool operator==(Vector<T>& rhs);
-	bool operator!=(Vector<T>& rhs);
+	bool operator==(Vector& rhs);
+	bool operator!=(Vector& rhs);
 	//NOTE: If you need other compares, make them!
 };
 
@@ -539,7 +539,7 @@ inline size_t Vector<T>::size() const
 }
 
 template<typename T>
-inline void Vector<T>::reserve(size_t newSize) noexcept
+inline void Vector<T>::reserve(size_t newSize)
 {
 	//NOTE: Include an upper bound?
 	assert(newSize >= 0);
@@ -583,7 +583,7 @@ inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, const T & valu
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, const T & value)
 {
-	return insert(pos.itIndex, std::forward(value));
+	return insert(pos.itIndex, value);
 }
 
 template<typename T>
@@ -607,7 +607,7 @@ inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, T && value)
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, T && value)
 {
-	return insert(pos.itIndex, std::forward(value));
+	return insert(pos.itIndex, std::move(value));
 }
 
 template<typename T>
@@ -636,7 +636,7 @@ inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, size_t count, 
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, size_t count, const T & value)
 {
-	return insert(pos.itIndex, count, std::forward(value));
+	return insert(pos.itIndex, count, value);
 }
 
 template<typename T>
@@ -656,7 +656,7 @@ inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, const
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insertPush_back(const Iterator & pos, const T & value)
 {
-	return insertPush_back(pos.itIndex, std::forward(value));
+	return insertPush_back(pos.itIndex, value);
 }
 
 template<typename T>
@@ -676,7 +676,7 @@ inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, T && 
 template<typename T>
 inline typename Vector<T>::Iterator Vector<T>::insertPush_back(const Iterator & pos, T && value)
 {
-	return insertPush_back(pos.itIndex, std::forward(value));
+	return insertPush_back(pos.itIndex, std::move(value));
 }
 
 template<typename T>
@@ -842,7 +842,7 @@ inline void Vector<T>::swap(Vector & other)
 }
 
 template<typename T>
-inline bool Vector<T>::operator==(Vector<T>& rhs)
+inline bool Vector<T>::operator==(Vector& rhs)
 {
 	if (this->vectorSize != rhs.vectorSize)
 		return false;
@@ -857,7 +857,7 @@ inline bool Vector<T>::operator==(Vector<T>& rhs)
 }
 
 template<typename T>
-inline bool Vector<T>::operator!=(Vector<T>& rhs)
+inline bool Vector<T>::operator!=(Vector& rhs)
 {
 	return (!(this->operator==(rhs)));
 }
