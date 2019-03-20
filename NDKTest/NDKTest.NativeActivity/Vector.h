@@ -2,251 +2,14 @@
 
 //Other std implementations TODO: string, unordered_map, unique_ptr, map/multimap
 
-#include <initializer_list>
-#include "Utils.h"
-//NOTE: For std::move
-#include <utility>
+#include "HeapArray.h"
 
 template <typename T>
 class Vector
 {
-	/* NOTE: Undefinied behavour if you dereference or do other things if Its are invalidated due to a shrink or expand call
-	*  This is also a "safe" iterator (it does bounds checking on current size)
-	* NOTE: Maybe add a reference count to vector and fix itData pointers through storing a pp? (Performance further down?)
-	*/
-	class Iterator
-	{
-		friend class Vector;
-
-		size_t itIndex;
-		size_t itSize;
-		T* itData;
-
-		Iterator(size_t indexIn, size_t sizeIn, T* dataIn) : itIndex(indexIn), itSize(sizeIn), itData(dataIn) {}
-	public:
-		Iterator& operator++()
-		{
-			++itIndex;
-			assert(itIndex <= itSize);
-			return *this;
-		}
-		Iterator operator++(int)
-		{
-			Iterator temp(*this);
-			operator++();
-			return temp;
-		}
-		Iterator& operator--()
-		{
-			--itIndex;
-			assert(itIndex >= 0);
-			return *this;
-		}
-		Iterator operator--(int)
-		{
-			Iterator temp(*this);
-			operator--();
-			return temp;
-		}
-		Iterator& operator+=(const Iterator& rhs)
-		{
-			itIndex += rhs.itIndex;
-			assert((itData == rhs.itData) && (itIndex <= itSize));
-			return *this;
-		}
-		Iterator& operator+=(size_t rhs)
-		{
-			itIndex += rhs;
-			assert(itIndex <= itSize);
-			return *this;
-		}
-		Iterator& operator-=(const Iterator& rhs)
-		{
-			itIndex -= rhs.itIndex;
-			assert((itIndex >= 0) && (itData == rhs.itData));
-			return *this;
-		}
-		Iterator& operator-=(size_t rhs)
-		{
-			itIndex -= rhs;
-			assert(itIndex >= 0);
-			return *this;
-		}
-		friend Iterator operator+(Iterator lhs, const Iterator& rhs)
-		{
-			lhs += rhs;
-			return lhs;
-		}
-		friend Iterator operator+(Iterator lhs, int rhs)
-		{
-			lhs += rhs;
-			return lhs;
-		}
-		friend Iterator operator+(int lhs, Iterator rhs)
-		{
-			rhs += lhs;
-			return rhs;
-		}
-		friend Iterator operator-(Iterator lhs, const Iterator& rhs)
-		{
-			lhs -= rhs;
-			return lhs;
-		}
-		friend Iterator operator-(Iterator lhs, int rhs)
-		{
-			lhs -= rhs;
-			return lhs;
-		}
-		friend Iterator operator-(int lhs, Iterator rhs)
-		{
-			rhs -= lhs;
-			return rhs;
-		}
-		T operator*()
-		{
-			assert((itIndex < itSize) && (itData != nullptr));
-			return itData[itIndex];
-		}
-		T* operator->()
-		{
-			assert((itIndex < itSize) && (itData != nullptr));
-			return &itData[itIndex];
-		}
-		T operator[](size_t indexIn)
-		{
-			return *(this->operator+(indexIn));
-		}
-		friend bool operator==(const Iterator& lhs, const Iterator& rhs)
-		{
-			assert(lhs.itData == rhs.itData);
-			return (lhs.itIndex == rhs.itIndex);
-		}
-		friend bool operator!=(const Iterator& lhs, const Iterator& rhs)
-		{
-			return !(lhs == rhs);
-		}
-		//NOTE: If you need other compares, make them!
-	};
-
-	class ConstIterator
-	{
-		friend class Vector;
-
-		size_t itIndex;
-		size_t itSize;
-		T* itData;
-
-		ConstIterator(size_t indexIn, size_t sizeIn, T* dataIn) : itIndex(indexIn), itSize(sizeIn), itData(dataIn) {}
-	public:
-		ConstIterator& operator++()
-		{
-			++itIndex;
-			assert(itIndex <= itSize);
-			return *this;
-		}
-		ConstIterator operator++(int)
-		{
-			ConstIterator temp(*this);
-			operator++();
-			return temp;
-		}
-		ConstIterator& operator--()
-		{
-			--itIndex;
-			assert(itIndex >= 0);
-			return *this;
-		}
-		ConstIterator operator--(int)
-		{
-			ConstIterator temp(*this);
-			operator--();
-			return temp;
-		}
-		ConstIterator& operator+=(const ConstIterator& rhs)
-		{
-			itIndex += rhs.itIndex;
-			assert((itData == rhs.itData) && (itIndex <= itSize));
-			return *this;
-		}
-		ConstIterator& operator+=(size_t rhs)
-		{
-			itIndex += rhs;
-			assert(itIndex <= itSize);
-			return *this;
-		}
-		ConstIterator& operator-=(const ConstIterator& rhs)
-		{
-			itIndex -= rhs.itIndex;
-			assert((itIndex >= 0) && (itData == rhs.itData));
-			return *this;
-		}
-		ConstIterator& operator-=(size_t rhs)
-		{
-			itIndex -= rhs;
-			assert(itIndex >= 0);
-			return *this;
-		}
-		friend ConstIterator operator+(ConstIterator lhs, const ConstIterator& rhs)
-		{
-			lhs += rhs;
-			return lhs;
-		}
-		friend ConstIterator operator+(ConstIterator lhs, int rhs)
-		{
-			lhs += rhs;
-			return lhs;
-		}
-		friend ConstIterator operator+(int lhs, ConstIterator rhs)
-		{
-			rhs += lhs;
-			return rhs;
-		}
-		friend ConstIterator operator-(ConstIterator lhs, const ConstIterator& rhs)
-		{
-			lhs -= rhs;
-			return lhs;
-		}
-		friend ConstIterator operator-(ConstIterator lhs, int rhs)
-		{
-			lhs -= rhs;
-			return lhs;
-		}
-		friend ConstIterator operator-(int lhs, ConstIterator rhs)
-		{
-			rhs -= lhs;
-			return rhs;
-		}
-		const T operator*()
-		{
-			assert((itIndex < itSize) && (itData != nullptr));
-			return itData[itIndex];
-		}
-		const T* operator->()
-		{
-			assert((itIndex < itSize) && (itData != nullptr));
-			return &itData[itIndex];
-		}
-		const T operator[](size_t indexIn)
-		{
-			return *(this->operator+(indexIn));
-		}
-		friend bool operator==(const ConstIterator& lhs, const ConstIterator& rhs)
-		{
-			assert(lhs.itData == rhs.itData);
-			return (lhs.itIndex == rhs.itIndex);
-		}
-		friend bool operator!=(const ConstIterator& lhs, const ConstIterator& rhs)
-		{
-			return !(lhs == rhs);
-		}
-		//NOTE: If you need other compares, make them!
-	};
+	HeapArray<T> vectorArray;
 private:
-	size_t vectorSize = 0;
-	size_t vectorCapacity = 2;
-	T* vectorData = nullptr;
-private:
-	void expandOrShrink();
+	void expandOrShrink(size_t newCapacity);
 
 	void checkAndShrink(size_t newSize);
 	void checkAndExpand(size_t minNewSize);
@@ -258,50 +21,49 @@ public:
 	Vector& operator=(const Vector& rhs);
 	Vector(Vector&& other);
 	Vector& operator=(Vector&& rhs);
-	~Vector();
 
-	T& at(size_t pos);
-	const T& at(size_t pos) const;
-	T& operator[](size_t pos);
-	const T& operator[](size_t pos) const;
+	inline T& at(size_t pos);
+	inline const T& at(size_t pos) const;
+	inline T& operator[](size_t pos);
+	inline const T& operator[](size_t pos) const;
 
-	T& front();
-	const T& front() const;
-	T& back();
-	const T& back() const;
-	T* data();
-	const T* data() const;
+	inline T& front();
+	inline const T& front() const;
+	inline T& back();
+	inline const T& back() const;
+	inline T* data();
+	inline const T* data() const;
 
-	Iterator begin();
-	Iterator end();
+	inline Iterator<T> begin();
+	inline Iterator<T> end();
 
-	ConstIterator begin() const;
-	ConstIterator end() const;
+	inline ConstIterator<T> begin() const;
+	inline ConstIterator<T> end() const;
 
-	bool empty() const;
-	size_t size() const;
+	inline bool empty() const;
+	inline size_t size() const;
 
 	void reserve(size_t size);
-	size_t capacity() const;
+	inline size_t capacity() const;
 
 	void clear();
-	Iterator insert(size_t pos, const T& value);
-	Iterator insert(const Iterator& pos, const T& value);
-	Iterator insert(size_t pos, T&& value);
-	Iterator insert(const Iterator& pos, T&& value);
-	Iterator insert(size_t pos, size_t count, const T& value);
-	Iterator insert(const Iterator& pos, size_t count, const T& value);
+	Iterator<T> insert(size_t pos, const T& value);
+	Iterator<T> insert(const Iterator<T>& pos, const T& value);
+	Iterator<T> insert(size_t pos, T&& value);
+	Iterator<T> insert(const Iterator<T>& pos, T&& value);
+	Iterator<T> insert(size_t pos, size_t count, const T& value);
+	Iterator<T> insert(const Iterator<T>& pos, size_t count, const T& value);
 	//NOTE: Do theses functions even make sense??
-	Iterator insertPush_back(size_t pos, const T& value);
-	Iterator insertPush_back(const Iterator& pos, const T& value);
-	Iterator insertPush_back(size_t pos, T&& value);
-	Iterator insertPush_back(const Iterator& pos, T&& value);
-	Iterator erase(size_t pos);
-	Iterator erase(const Iterator& pos);
-	Iterator erase(size_t first, size_t last);
-	Iterator erase(const Iterator& first, const Iterator& last);
-	Iterator erasePop_back(size_t pos);
-	Iterator erasePop_back(const Iterator& pos);
+	Iterator<T> insertPush_back(size_t pos, const T& value);
+	Iterator<T> insertPush_back(const Iterator<T>& pos, const T& value);
+	Iterator<T> insertPush_back(size_t pos, T&& value);
+	Iterator<T> insertPush_back(const Iterator<T>& pos, T&& value);
+	Iterator<T> erase(size_t pos);
+	Iterator<T> erase(const Iterator<T>& pos);
+	Iterator<T> erase(size_t first, size_t last);
+	Iterator<T> erase(const Iterator<T>& first, const Iterator<T>& last);
+	Iterator<T> erasePop_back(size_t pos);
+	Iterator<T> erasePop_back(const Iterator<T>& pos);
 	void push_back(const T& value);
 	void push_back(T&& value);
 	void pop_back();
@@ -315,20 +77,25 @@ public:
 };
 
 template<typename T>
-inline void Vector<T>::expandOrShrink()
+inline void Vector<T>::expandOrShrink(size_t newCapacity)
 {
-	T* newData = (T*) malloc(sizeof(T) * vectorCapacity);
+	HeapArray<T> newVectorArray(std::move(vectorArray), newCapacity);
+	vectorArray = std::move(newVectorArray);
+
+	/*T* newData = (T*) malloc(sizeof(T) * vectorCapacity);
 	for (size_t i = 0; i < vectorSize; ++i)
 	{
 		new (&newData[i]) T(std::move(vectorData[i]));
 	}
 	free(vectorData);
-	vectorData = newData;
+	vectorData = newData;*/
 }
 
 template<typename T>
 inline void Vector<T>::checkAndShrink(size_t newSize)
 {
+	size_t vectorCapacity = capacity();
+
 	if ((vectorCapacity / 2) >= (newSize + 2))
 	{
 		do
@@ -336,13 +103,15 @@ inline void Vector<T>::checkAndShrink(size_t newSize)
 			vectorCapacity /= 2;
 		} while ((vectorCapacity / 2) >= (newSize + 2));
 
-		expandOrShrink();
+		expandOrShrink(vectorCapacity);
 	}
 }
 
 template<typename T>
 inline void Vector<T>::checkAndExpand(size_t minNewSize)
 {
+	size_t vectorCapacity = capacity();
+
 	if (vectorCapacity < minNewSize)
 	{
 		do
@@ -350,104 +119,65 @@ inline void Vector<T>::checkAndExpand(size_t minNewSize)
 			vectorCapacity *= 2.0f;
 		} while (vectorCapacity < minNewSize);
 
-		expandOrShrink();
+		expandOrShrink(vectorCapacity);
 	}
 }
 
 template<typename T>
-inline Vector<T>::Vector() : vectorData((T*) malloc(sizeof(T) * vectorCapacity))
+inline Vector<T>::Vector() : vectorArray(2)
 {
 }
 
 template<typename T>
-inline Vector<T>::Vector(size_t count, const T & value) : vectorSize(count), vectorCapacity(count + 4),
-vectorData((T*) malloc(sizeof(T) * vectorCapacity))
+inline Vector<T>::Vector(size_t count, const T & value) : vectorArray(count, 4, value)
 {
-	for (size_t i = 0; i < vectorSize; ++i)
-	{
-		new (&vectorData[i]) T(value);
-	}
 }
 
 template<typename T>
-inline Vector<T>::Vector(std::initializer_list<T> initList) : vectorSize(initList.size()), vectorCapacity(initList.size() + 4),
-vectorData((T*) malloc(sizeof(T) * vectorCapacity))
+inline Vector<T>::Vector(std::initializer_list<T> initList) : vectorArray(initList.size() + 4)
 {
-	size_t i = 0;
 	for (auto it = initList.begin(); it != initList.end(); ++it)
 	{
-		new (&vectorData[i++]) T(*it);
+		vectorArray.push_back(*it);
 	}
 }
 
 template<typename T>
-inline Vector<T>::Vector(const Vector& other) : vectorSize(other.vectorSize), vectorCapacity(other.vectorCapacity),
-vectorData((T*) malloc(sizeof(T) * vectorCapacity))
+inline Vector<T>::Vector(const Vector& other) : vectorArray(other.vectorArray)
 {
-	for (size_t i = 0; i < vectorSize; ++i)
-		new (&vectorData[i]) T(other.vectorData[i]);
 }
 
 template<typename T>
 inline Vector<T>& Vector<T>::operator=(const Vector& rhs)
 {
-	this->~Vector();
-
-	vectorCapacity = rhs.vectorCapacity;
-	vectorSize = rhs.vectorSize;
-	vectorData = (T*) malloc(sizeof(T) * vectorCapacity);
-
-	for (size_t i = 0; i < vectorSize; ++i)
-	{
-		new (&vectorData[i]) T(rhs.vectorData[i]);
-	}
+	vectorArray = rhs.vectorArray;
 
 	return *this;
 }
 
 template<typename T>
-inline Vector<T>::Vector(Vector && other) : vectorSize(std::exchange(other.vectorSize, 0)), vectorCapacity(std::exchange(other.vectorCapacity, 0)),
-vectorData(std::exchange(other.vectorData, nullptr))
+inline Vector<T>::Vector(Vector && other) : vectorArray(std::move(other.vectorArray))
 {
 }
 
 template<typename T>
 inline Vector<T>& Vector<T>::operator=(Vector && rhs)
 {
-	this->~Vector();
-
-	vectorSize = std::exchange(rhs.vectorSize, 0);
-	vectorCapacity = std::exchange(rhs.vectorCapacity, 0);
-	vectorData = std::exchange(rhs.vectorData, nullptr);
+	vectorArray = std::move(rhs.vectorArray);
 
 	return *this;
 }
 
 template<typename T>
-inline Vector<T>::~Vector()
-{
-	vectorCapacity = 0;
-	for (size_t i = 0; i < vectorSize; ++i)
-	{
-		vectorData[i].~T();
-	}
-	free(vectorData);
-	vectorData = nullptr;
-	vectorSize = 0;
-}
-
-template<typename T>
 inline T & Vector<T>::at(size_t pos)
 {
-	assert((pos < vectorSize) && (pos >= 0));
-	return vectorData[pos];
+	return vectorArray[pos];
 }
 
 template<typename T>
 inline const T & Vector<T>::at(size_t pos) const
 {
-	assert((pos < vectorSize) && (pos >= 0));
-	return vectorData[pos];
+	return vectorArray[pos];
 }
 
 template<typename T>
@@ -465,77 +195,73 @@ inline const T & Vector<T>::operator[](size_t pos) const
 template<typename T>
 inline T & Vector<T>::front()
 {
-	assert(vectorSize >= 1);
-	return vectorData[0];
+	return vectorArray.front();
 }
 
 template<typename T>
 inline const T & Vector<T>::front() const
 {
-	assert(vectorSize >= 1);
-	return vectorData[0];
+	return vectorArray.front();
 }
 
 template<typename T>
 inline T & Vector<T>::back()
 {
-	assert(vectorSize >= 1);
-	return vectorData[vectorSize - 1];
+	return vectorArray.back();
 }
 
 template<typename T>
 inline const T & Vector<T>::back() const
 {
-	assert(vectorSize >= 1);
-	return vectorData[vectorSize - 1];
+	return vectorArray.back();
 }
 
 template<typename T>
 inline T * Vector<T>::data()
 {
-	return vectorData;
+	return vectorArray.data();
 }
 
 template<typename T>
 inline const T * Vector<T>::data() const
 {
-	return vectorData;
+	return vectorArray.data();
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::begin()
+inline Iterator<T> Vector<T>::begin()
 {
-	return Iterator{ 0, vectorSize, vectorData };
+	return vectorArray.begin();
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::end()
+inline Iterator<T> Vector<T>::end()
 {
-	return Iterator{ vectorSize, vectorSize, vectorData };
+	return vectorArray.end();
 }
 
 template<typename T>
-inline typename Vector<T>::ConstIterator Vector<T>::begin() const
+inline ConstIterator<T> Vector<T>::begin() const
 {
-	return ConstIterator{ 0, vectorSize, vectorData };
+	return vectorArray.begin();
 }
 
 template<typename T>
-inline typename Vector<T>::ConstIterator Vector<T>::end() const
+inline ConstIterator<T> Vector<T>::end() const
 {
-	return ConstIterator{ vectorSize, vectorSize, vectorData };
+	return vectorArray.end();
 }
 
 template<typename T>
 inline bool Vector<T>::empty() const
 {
-	return (vectorSize == 0);
+	return vectorArray.empty();
 }
 
 template<typename T>
 inline size_t Vector<T>::size() const
 {
-	return vectorSize;
+	return vectorArray.size();
 }
 
 template<typename T>
@@ -550,231 +276,155 @@ inline void Vector<T>::reserve(size_t newSize)
 template<typename T>
 inline size_t Vector<T>::capacity() const
 {
-	return vectorCapacity;
+	return vectorArray.capacity();
 }
 
 template<typename T>
 inline void Vector<T>::clear()
 {
-	for (size_t i = 0; i < vectorSize; ++i)
-	{
-		vectorData[i].~T();
-	}
+	vectorArray.clear();
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, const T & value)
+inline Iterator<T> Vector<T>::insert(size_t pos, const T & value)
 {
-	assert((pos <= vectorSize) && (pos >= 0));
+	checkAndExpand(size() + 1);
 
-	checkAndExpand(vectorSize + 1);
-
-	++vectorSize;
-	new (&vectorData[vectorSize - 1]) T(std::move(vectorData[vectorSize - 2]));
-	for (size_t i = (vectorSize - 2); i > pos; --i)
-	{
-		vectorData[i] = std::move(vectorData[i - 1]);
-	}
-	vectorData[pos] = value;
-
-	return Iterator{ pos, vectorSize, vectorData };
+	return vectorArray.insert(pos, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, const T & value)
+inline Iterator<T> Vector<T>::insert(const Iterator<T> & pos, const T & value)
 {
-	return insert(pos.itIndex, value);
+	return vectorArray.insert(pos, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, T && value)
+inline Iterator<T> Vector<T>::insert(size_t pos, T && value)
 {
-	assert((pos <= vectorSize) && (pos >= 0));
+	checkAndExpand(size() + 1);
 
-	checkAndExpand(vectorSize + 1);
-
-	++vectorSize;
-	new (&vectorData[vectorSize - 1]) T(std::move(vectorData[vectorSize - 2]));
-	for (size_t i = (vectorSize - 2); i > pos; --i)
-	{
-		vectorData[i] = std::move(vectorData[i - 1]);
-	}
-	vectorData[pos] = std::move(value);
-
-	return Iterator{ pos, vectorSize, vectorData };
+	return vectorArray.insert(pos, std::move(value));
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, T && value)
+inline Iterator<T> Vector<T>::insert(const Iterator<T> & pos, T && value)
 {
-	return insert(pos.itIndex, std::move(value));
+	return vectorArray.insert(pos, std::move(value));
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(size_t pos, size_t count, const T & value)
+inline Iterator<T> Vector<T>::insert(size_t pos, size_t count, const T & value)
 {
-	assert((pos <= vectorSize) && (pos >= 0));
-	checkAndExpand(vectorSize + count);
+	checkAndExpand(size() + count);
 
-	//TODO: Isn`t is better if you shift the buckets up by there amount, so that I do not get O(n²)?
-	for (size_t j = 0; j < count; ++j, ++pos, ++vectorSize)
-	{
-		new (&vectorData[vectorSize]) T(std::move(vectorData[vectorSize - 1]));
-		for (size_t i = (vectorSize - 1); i > pos; --i)
-		{
-			vectorData[i] = std::move(vectorData[i - 1]);
-		}
-	}
-	for (size_t i = (pos - count); i < pos; ++i)
-	{
-		vectorData[i] = value;
-	}
-
-	return Iterator{ pos - count, vectorSize, vectorData };
+	return vectorArray.insert(pos, count, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insert(const Iterator & pos, size_t count, const T & value)
+inline Iterator<T> Vector<T>::insert(const Iterator<T> & pos, size_t count, const T & value)
 {
-	return insert(pos.itIndex, count, value);
+	return vectorArray.insert(pos, count, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, const T & value)
+inline Iterator<T> Vector<T>::insertPush_back(size_t pos, const T & value)
 {
-	assert((pos <= vectorSize) && (pos >= 0));
+	checkAndExpand(size() + 1);
 
-	checkAndExpand(vectorSize + 1);
-
-	new (&vectorData[vectorSize]) T(std::move(vectorData[pos]));
-	vectorData[pos] = value;
-	++vectorSize;
-
-	return Iterator(pos, vectorSize, vectorData);
+	return vectorArray.insertPush_back(pos, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insertPush_back(const Iterator & pos, const T & value)
+inline Iterator<T> Vector<T>::insertPush_back(const Iterator<T> & pos, const T & value)
 {
-	return insertPush_back(pos.itIndex, value);
+	return vectorArray.insertPush_back(pos, value);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insertPush_back(size_t pos, T && value)
+inline Iterator<T> Vector<T>::insertPush_back(size_t pos, T && value)
 {
-	assert((pos <= vectorSize) && (pos >= 0));
+	checkAndExpand(size() + 1);
 
-	checkAndExpand(vectorSize + 1);
-
-	new (&vectorData[vectorSize]) T(std::move(vectorData[pos]));
-	vectorData[pos] = std::move(value);
-	++vectorSize;
-
-	return Iterator(pos, vectorSize, vectorData);
+	return vectorArray.insertPush_back(pos, std::move(value));
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::insertPush_back(const Iterator & pos, T && value)
+inline Iterator<T> Vector<T>::insertPush_back(const Iterator<T> & pos, T && value)
 {
-	return insertPush_back(pos.itIndex, std::move(value));
+	return vectorArray.insertPush_back(pos, std::move(value));
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erase(size_t pos)
+inline Iterator<T> Vector<T>::erase(size_t pos)
 {
-	assert((pos < vectorSize) && (pos >= 0));
+	auto result = vectorArray.erase(pos);
 
-	vectorData[pos].~T();
-	for (size_t i = (pos + 1); i < vectorSize; ++i)
-	{
-		vectorData[i - 1] = std::move(vectorData[i]);
-	}
+	checkAndShrink(size());
 
-	checkAndShrink(vectorSize - 1);
-	--vectorSize;
-
-	return Iterator{ pos, vectorSize, vectorData };
+	return result;
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erase(const Iterator & pos)
+inline Iterator<T> Vector<T>::erase(const Iterator<T> & pos)
 {
-	return erase(pos.itIndex);
+	return vectorArray.erase(pos);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erase(size_t first, size_t last)
+inline Iterator<T> Vector<T>::erase(size_t first, size_t last)
 {
-	assert((first < vectorSize) && (last <= vectorSize) && (first >= 0) && (last >= 0) && (first < last));
+	auto result = vectorArray.erase(first, last);
 
-	for (size_t i = first; i < last; ++i)
-	{
-		vectorData[i].~T();
-	}
-	size_t newVectorSize = vectorSize;
-	//TODO: Isn`t is better if you shift the buckets down by there amount, so that I do not get O(n²)?
-	for (size_t j = last; j > first; --j, --newVectorSize)
-	{
-		for (size_t i = j; i < newVectorSize; ++i)
-		{
-			vectorData[i - 1] = vectorData[i];
-		}
-	}
-	checkAndShrink(newVectorSize);
-	vectorSize = newVectorSize;
+	checkAndShrink(size());
 
-	return Iterator{ first, vectorSize, vectorData };
+	return result;
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erase(const Iterator & first, const Iterator & last)
+inline Iterator<T> Vector<T>::erase(const Iterator<T> & first, const Iterator<T> & last)
 {
-	return erase(first.itIndex, last.itIndex);
+	return vectorArray.erase(first, last);
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erasePop_back(size_t pos)
+inline Iterator<T> Vector<T>::erasePop_back(size_t pos)
 {
-	assert((pos < vectorSize) && (pos >= 0));
+	auto result = vectorArray.erasePop_back(pos);
 
-	vectorData[pos].~T();
-	vectorData[pos] = std::move(vectorData[vectorSize - 1]);
+	checkAndShrink(size());
 
-	checkAndShrink(vectorSize - 1);
-	--vectorSize;
-
-	return Iterator{ pos, vectorSize, vectorData };
+	return result;
 }
 
 template<typename T>
-inline typename Vector<T>::Iterator Vector<T>::erasePop_back(const Iterator & pos)
+inline Iterator<T> Vector<T>::erasePop_back(const Iterator<T> & pos)
 {
-	return erasePop_back(pos.itIndex);
+	return vectorArray.erasePop_back(pos);
 }
 
 template<typename T>
 inline void Vector<T>::push_back(const T & value)
 {
-	checkAndExpand(vectorSize + 1);
+	checkAndExpand(size() + 1);
 
-	new (&vectorData[vectorSize++]) T(value);
+	vectorArray.push_back(value);
 }
 
 template<typename T>
 inline void Vector<T>::push_back(T && value)
 {
-	checkAndExpand(vectorSize + 1);
+	checkAndExpand(size() + 1);
 
-	new (&vectorData[vectorSize++]) T(std::move(value));
+	vectorArray.push_back(std::move(value));
 }
 
 template<typename T>
 inline void Vector<T>::pop_back()
 {
-	vectorData[vectorSize - 1].~T();
+	vectorArray.pop_back();
 
-	checkAndShrink(vectorSize - 1);
-	--vectorSize;
+	checkAndShrink(size());
 }
 
 template<typename T>
@@ -783,12 +433,11 @@ inline void Vector<T>::resize(size_t count)
 	//NOTE: Include an upper bound?
 	assert(count >= 0);
 
+	size_t vectorSize = size();
+
 	if (count < vectorSize)
 	{
-		for (size_t i = count; i < vectorSize; ++i)
-		{
-			vectorData[i].~T();
-		}
+		vectorArray.erase(count, vectorSize);
 
 		checkAndShrink(count);
 	}
@@ -796,13 +445,8 @@ inline void Vector<T>::resize(size_t count)
 	{
 		checkAndExpand(count);
 
-		for (int i = vectorSize; i < count; ++i)
-		{
-			new (&vectorData[i]) T();
-		}
+		vectorArray.insert(vectorSize, (count - vectorSize), T());
 	}
-
-	vectorSize = count;
 }
 
 template<typename T>
@@ -811,12 +455,11 @@ inline void Vector<T>::resize(size_t count, const T & value)
 	//NOTE: Include an upper bound?
 	assert(count >= 0);
 
+	size_t vectorSize = size();
+
 	if (count < vectorSize)
 	{
-		for (size_t i = count; i < vectorSize; ++i)
-		{
-			vectorData[i].~T();
-		}
+		vectorArray.erase(count, vectorSize);
 
 		checkAndShrink(count);
 	}
@@ -824,13 +467,8 @@ inline void Vector<T>::resize(size_t count, const T & value)
 	{
 		checkAndExpand(count);
 
-		for (int i = vectorSize; i < count; ++i)
-		{
-			new (&vectorData[i]) T(value);
-		}
+		vectorArray.insert(vectorSize, count, value);
 	}
-
-	vectorSize = count;
 }
 
 template<typename T>
@@ -844,25 +482,17 @@ inline void Vector<T>::swap(Vector & other)
 template<typename T>
 inline bool Vector<T>::operator==(Vector& rhs)
 {
-	if (this->vectorSize != rhs.vectorSize)
-		return false;
-
-	for (int i = 0; i < vectorSize; ++i)
-	{
-		if (vectorData[i] != rhs.vectorData[i])
-			return false;
-	}
-
-	return true;
+	return (vectorArray == rhs.vectorArray);
 }
 
 template<typename T>
 inline bool Vector<T>::operator!=(Vector& rhs)
 {
-	return (!(this->operator==(rhs)));
+	return (vectorArray != rhs.vectorArray);
 }
 
 namespace VectorTestSuit
 {
 	void runVectorUnitTest();
+	void runStdVectorTest();
 }

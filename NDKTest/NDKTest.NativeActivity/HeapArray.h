@@ -7,6 +7,7 @@ struct HeapArray : public Array<T, 0>
 {
 	HeapArray(size_t size);
 	HeapArray(size_t count, const T& value);
+	HeapArray(size_t count, size_t plusCount, const T& value);
 	HeapArray(const HeapArray& other);
 	HeapArray(HeapArray&& other);
 	HeapArray(const HeapArray& other, size_t sizeIn);
@@ -27,25 +28,41 @@ template <typename T>
 inline HeapArray<T>::HeapArray(size_t count, const T & value) : HeapArray(count)
 {
 	for (size_t i = 0; i < count; ++i)
-	{
-		this->arrayUnion.heapArray.p[i] = value;
-	}
+		new (&this->arrayUnion.heapArray.p[i]) T(value);
+
+	this->arraySize = count;
+}
+
+template<typename T>
+inline HeapArray<T>::HeapArray(size_t count, size_t plusCount, const T & value) : HeapArray(count + plusCount)
+{
+	for (size_t i = 0; i < count; ++i)
+		new (&this->arrayUnion.heapArray.p[i]) T(value);
+
 	this->arraySize = count;
 }
 
 template <typename T>
-inline HeapArray<T>::HeapArray(const HeapArray & other) : HeapArray(other, other.arrayUnion.heapArray.capacity)
+inline HeapArray<T>::HeapArray(const HeapArray & other) : HeapArray(other.arrayUnion.heapArray.capacity)
 {
+	for (size_t i = 0; i < other.arraySize; ++i)
+		new (&this->arrayUnion.heapArray.p[i]) T(other.arrayUnion.heapArray.p[i]);
+
+	this->arraySize = other.arraySize;
 }
 
 template <typename T>
-inline HeapArray<T>::HeapArray(HeapArray && other) : HeapArray(std::move(other), other.arrayUnion.heapArray.capacity)
+inline HeapArray<T>::HeapArray(HeapArray && other) : Array<T, 0>{ { .heapArray.p = std::exchange(other.arrayUnion.heapArray.p, nullptr), 
+													 .heapArray.capacity = std::exchange(other.arrayUnion.heapArray.capacity, 0) }, std::exchange(other.arraySize, 0) }
 {
 }
 
 template <typename T>
 inline HeapArray<T>::HeapArray(const HeapArray & other, size_t capacityIn) : HeapArray(capacityIn)
 {
+	//NOTE: Why would you call this then?
+	assert(other.arrayUnion.heapArray.capacity != capacityIn);
+
 	size_t size;
 	if (other.arraySize < capacityIn)
 		size = other.arraySize;
@@ -54,7 +71,7 @@ inline HeapArray<T>::HeapArray(const HeapArray & other, size_t capacityIn) : Hea
 
 	for (size_t i = 0; i < size; ++i)
 	{
-		this->arrayUnion.heapArray.p[i] = other.arrayUnion.heapArray.p[i];
+		new (&this->arrayUnion.heapArray.p[i]) T(other.arrayUnion.heapArray.p[i]);
 	}
 	this->arraySize = size;
 }
@@ -62,26 +79,31 @@ inline HeapArray<T>::HeapArray(const HeapArray & other, size_t capacityIn) : Hea
 template <typename T>
 inline HeapArray<T>::HeapArray(HeapArray && other, size_t capacityIn) : HeapArray(capacityIn)
 {
-	if (other.arrayUnion.heapArray.capacity == capacityIn)
-		this->arrayUnion.heapArray.p = std::exchange(other.arrayUnion.heapArray.p, nullptr);
-	else
+	//NOTE: Why would you call this then?
+	assert(other.arrayUnion.heapArray.capacity != capacityIn);
+
+	size_t size = 0;
+	if (other.arraySize <= capacityIn)
+		size = other.arraySize;
+	else if (other.arraySize > capacityIn)
 	{
-		if (capacityIn < other.arraySize)
-		{
-			for (size_t i = capacityIn; i < other.arraySize; ++i)
-				other.arrayUnion.heapArray.p[i].~T();
-		}
+		for (size_t i = capacityIn; i < other.arraySize; ++i)
+			other.arrayUnion.heapArray.p[i].~T();
 
-		for (size_t i = 0; i < capacityIn; ++i)
-			new (&this->arrayUnion.heapArray.p[i]) T(std::move(other.arrayUnion.heapArray.p[i]));
-
-		free(other.arrayUnion.heapArray.p);
-		other.arrayUnion.heapArray.p = nullptr;
+		size = capacityIn;
 	}
+	else
+		InvalidCodePath;
 
-	this->arraySize = other.arraySize;
+	for (size_t i = 0; i < size; ++i)
+		new (&this->arrayUnion.heapArray.p[i]) T(std::move(other.arrayUnion.heapArray.p[i]));
+
+	free(other.arrayUnion.heapArray.p);
+	other.arrayUnion.heapArray.p = nullptr;
 	other.arrayUnion.heapArray.capacity = 0;
 	other.arraySize = 0;
+
+	this->arraySize = size;
 }
 
 template <typename T>
@@ -107,7 +129,7 @@ inline HeapArray<T> & HeapArray<T>::operator=(HeapArray<T> && other)
 template<typename T>
 inline bool HeapArray<T>::operator==(const HeapArray & rhs) const
 {
-	if (this->arrayUnion.arraySize != rhs.arraySize)
+	if (this->arraySize != rhs.arraySize)
 		return false;
 
 	for (size_t i = 0; i < this->arraySize; ++i)

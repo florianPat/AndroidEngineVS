@@ -4,10 +4,12 @@
 #include <utility>
 #include "Utils.h"
 
-#ifndef NDEBUG
 template <typename T>
 class Iterator
 {
+	//TODO: Maybe just return the pointer in Release?
+	//TODO: Maybe add a pp to classes who use this Iterator so that they can change up the data so that no iterator gets invalidated if a resize happens?
+
 	size_t itIndex;
 	size_t itSize;
 	T* itData;
@@ -96,14 +98,23 @@ public:
 		rhs -= lhs;
 		return rhs;
 	}
-	T operator*()
+	T& operator*()
 	{
 		assert((itIndex < itSize) && (itData != nullptr));
 		return itData[itIndex];
 	}
-	T operator[](size_t indexIn)
+	T& operator[](size_t indexIn)
 	{
 		return *(this->operator+(indexIn));
+	}
+	T* operator->()
+	{
+		assert((itIndex < itSize) && (itData != nullptr));
+		return &itData[itIndex];
+	}
+	size_t getIndex() const
+	{
+		return itIndex;
 	}
 	friend bool operator==(const Iterator& lhs, const Iterator& rhs)
 	{
@@ -122,9 +133,9 @@ class ConstIterator
 {
 	size_t itIndex;
 	size_t itSize;
-	T* itData;
+	const T* itData;
 public:
-	ConstIterator(size_t indexIn, size_t sizeIn, T* dataIn) : itIndex(indexIn), itSize(sizeIn), itData(dataIn) {}
+	ConstIterator(size_t indexIn, size_t sizeIn, const T* dataIn) : itIndex(indexIn), itSize(sizeIn), itData(dataIn) {}
 
 	ConstIterator& operator++()
 	{
@@ -208,14 +219,23 @@ public:
 		rhs -= lhs;
 		return rhs;
 	}
-	const T operator*()
+	const T& operator*()
 	{
 		assert((itIndex < itSize) && (itData != nullptr));
 		return itData[itIndex];
 	}
-	const T operator[](size_t indexIn)
+	const T& operator[](size_t indexIn)
 	{
 		return *(this->operator+(indexIn));
+	}
+	const T* operator->()
+	{
+		assert((itIndex < itSize) && (itData != nullptr));
+		return &itData[itIndex];
+	}
+	size_t getIndex() const
+	{
+		return itIndex;
 	}
 	friend bool operator==(const ConstIterator& lhs, const ConstIterator& rhs)
 	{
@@ -228,16 +248,13 @@ public:
 	}
 	//NOTE: If you need other compares, make them!
 };
-#else
-//TODO: Just return the pointer in release, or?!
-#endif
 
 #define DEFINE_ARRAY_DATA auto arrayData = getRightPointer(); assert(arrayData != nullptr)
 
 template <typename T, size_t N>
 struct Array
 {
-	union
+	union ArrayUnion
 	{
 		T arrayValue[N] = { 0 };
 		struct
@@ -245,35 +262,38 @@ struct Array
 			T* p = nullptr;
 			size_t capacity = 0;
 		} heapArray;
+
+		~ArrayUnion();
 	} arrayUnion;
 
 	size_t arraySize = 0;
 private:
 	constexpr T* getRightPointer();
+	constexpr const T* getRightPointer() const;
 public:
 	~Array();
 
-	T& at(size_t pos);
-	const T& at(size_t pos) const;
-	T& operator[](size_t pos);
-	const T& operator[](size_t pos) const;
+	inline T& at(size_t pos);
+	inline const T& at(size_t pos) const;
+	inline T& operator[](size_t pos);
+	inline const T& operator[](size_t pos) const;
 
-	T& front();
-	const T& front() const;
-	T& back();
-	const T& back() const;
-	T* data();
-	const T* data() const;
+	inline T& front();
+	inline const T& front() const;
+	inline T& back();
+	inline const T& back() const;
+	inline T* data();
+	inline const T* data() const;
 
-	Iterator<T> begin();
-	Iterator<T> end();
-
-	ConstIterator<T> begin() const;
-	ConstIterator<T> end() const;
-
-	size_t capacity() const;
-	size_t size() const;
-	bool empty() const;
+	inline Iterator<T> begin();
+	inline Iterator<T> end();
+	
+	inline ConstIterator<T> begin() const;
+	inline ConstIterator<T> end() const;
+	
+	inline size_t capacity() const;
+	inline size_t size() const;
+	inline bool empty() const;
 
 	void clear();
 	Iterator<T> insert(size_t pos, const T& value);
@@ -429,7 +449,8 @@ inline size_t Array<T, N>::size() const
 template <typename T, size_t N>
 inline size_t Array<T, N>::capacity() const
 {
-	if constexpr (N == 0)
+	//TODO: Use constexpr if in C++17
+	if (N == 0)
 		return arrayUnion.heapArray.capacity;
 	else
 		return N;
@@ -444,6 +465,7 @@ inline void Array<T, N>::clear()
 	{
 		arrayData[i].~T();
 	}
+	arraySize = 0;
 }
 
 template <typename T, size_t N>
@@ -451,7 +473,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, const T & value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (pos < capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
 
 	++arraySize;
 	if (pos != (arraySize - 1))
@@ -470,7 +492,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, const T & value)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::insert(const Iterator<T> & pos, const T & value)
 {
-	return insert(pos.itIndex, value);
+	return insert(pos.getIndex(), value);
 }
 
 template <typename T, size_t N>
@@ -478,7 +500,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, T && value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (pos < capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
 
 	++arraySize;
 	if (pos != (arraySize - 1))
@@ -497,7 +519,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, T && value)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::insert(const Iterator<T> & pos, T && value)
 {
-	return insert(pos.itIndex, std::move(value));
+	return insert(pos.getIndex(), std::move(value));
 }
 
 template <typename T, size_t N>
@@ -505,7 +527,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, size_t count, const T & value
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (count > 0) && ((pos + (count - 1)) < capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && (count > 0) && ((arraySize + count) <= capacity()) && (pos >= 0));
 
 	if (pos != arraySize)
 	{
@@ -536,7 +558,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, size_t count, const T & value
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::insert(const Iterator<T> & pos, size_t count, const T & value)
 {
-	return insert(pos.itIndex, count, value);
+	return insert(pos.getIndex(), count, value);
 }
 
 template <typename T, size_t N>
@@ -544,7 +566,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, const T & value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (pos < capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
 
 	new (&arrayData[arraySize]) T(std::move(arrayData[pos]));
 	arrayData[pos] = value;
@@ -556,7 +578,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, const T & value)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::insertPush_back(const Iterator<T> & pos, const T & value)
 {
-	return insertPush_back(pos.itIndex, value);
+	return insertPush_back(pos.getIndex(), value);
 }
 
 template <typename T, size_t N>
@@ -564,7 +586,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, T && value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (pos < capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
 
 	new (&arrayData[arraySize]) T(std::move(arrayData[pos]));
 	arrayData[pos] = std::move(value);
@@ -576,7 +598,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, T && value)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::insertPush_back(const Iterator<T> & pos, T && value)
 {
-	return insertPush_back(pos.itIndex, std::move(value));
+	return insertPush_back(pos.getIndex(), std::move(value));
 }
 
 template <typename T, size_t N>
@@ -584,7 +606,7 @@ inline Iterator<T> Array<T, N>::erase(size_t pos)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos < arraySize) && (pos < capacity()) && (pos >= 0));
+	assert((pos < arraySize) && (pos >= 0));
 
 	arrayData[pos].~T();
 	for (size_t i = (pos + 1); i < arraySize; ++i)
@@ -600,7 +622,7 @@ inline Iterator<T> Array<T, N>::erase(size_t pos)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::erase(const Iterator<T> & pos)
 {
-	return erase(pos.itIndex);
+	return erase(pos.getIndex());
 }
 
 template <typename T, size_t N>
@@ -614,17 +636,23 @@ inline Iterator<T> Array<T, N>::erase(size_t first, size_t last)
 	{
 		arrayData[i].~T();
 	}
-	size_t newarraySize = arraySize;
-	//TODO: Isn`t is better if you shift the buckets down by there amount, so that I do not get O(n²)?
-	for (size_t j = last; j > first; --j, --newarraySize)
-	{
-		for (size_t i = j; i < newarraySize; ++i)
-		{
-			arrayData[i - 1] = arrayData[i];
-		}
-	}
 
-	arraySize = newarraySize;
+	if (last != arraySize)
+	{
+		size_t newarraySize = arraySize;
+		//TODO: Isn`t is better if you shift the buckets down by there amount, so that I do not get O(n²)?
+		for (size_t j = last; j > first; --j, --newarraySize)
+		{
+			for (size_t i = j; i < newarraySize; ++i)
+			{
+				arrayData[i - 1] = arrayData[i];
+			}
+		}
+
+		arraySize = newarraySize;
+	}
+	else
+		arraySize -= (last - first);
 
 	return Iterator<T>{ first, arraySize, arrayData };
 }
@@ -632,7 +660,7 @@ inline Iterator<T> Array<T, N>::erase(size_t first, size_t last)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::erase(const Iterator<T> & first, const Iterator<T> & last)
 {
-	return erase(first.itIndex, last.itIndex);
+	return erase(first.getIndex(), last.getIndex());
 }
 
 template <typename T, size_t N>
@@ -653,7 +681,7 @@ inline Iterator<T> Array<T, N>::erasePop_back(size_t pos)
 template <typename T, size_t N>
 inline Iterator<T> Array<T, N>::erasePop_back(const Iterator<T> & pos)
 {
-	return erasePop_back(pos.itIndex);
+	return erasePop_back(pos.getIndex());
 }
 
 template <typename T, size_t N>
@@ -661,7 +689,7 @@ inline void Array<T, N>::push_back(const T & value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((arraySize + 1) < capacity());
+	assert((arraySize + 1) <= capacity());
 
 	new (&arrayData[arraySize++]) T(value);
 }
@@ -671,7 +699,7 @@ inline void Array<T, N>::push_back(T && value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((arraySize + 1) < capacity());
+	assert((arraySize + 1) <= capacity());
 
 	new (&arrayData[arraySize++]) T(std::move(value));
 }
@@ -687,31 +715,50 @@ inline void Array<T, N>::pop_back()
 }
 
 template<typename T, size_t N>
+inline constexpr T * Array<T, N>::getRightPointer()
+{
+	//TODO: Use constexpr if in C++17
+	if (N == 0)
+		return arrayUnion.heapArray.p;
+	else
+		return arrayUnion.arrayValue;
+}
+
+template<typename T, size_t N>
+inline constexpr const T * Array<T, N>::getRightPointer() const
+{
+	//TODO: Use constexpr if in C++17
+	if (N == 0)
+		return arrayUnion.heapArray.p;
+	else
+		return arrayUnion.arrayValue;
+}
+
+template<typename T, size_t N>
 inline Array<T, N>::~Array()
 {
-	if constexpr (N == 0)
+	//TODO: Use constexpr if in C++17
+	if (N == 0)
 	{
 		if (arrayUnion.heapArray.p != nullptr)
 		{
-			for (size_t i = 0; i < this->arraySize; ++i)
+			for (size_t i = 0; i < arraySize; ++i)
 				arrayUnion.heapArray.p[i].~T();
 
 			free(arrayUnion.heapArray.p);
 			arrayUnion.heapArray.p = nullptr;
 		}
 	}
-}
-
-template<typename T, size_t N>
-inline constexpr T * Array<T, N>::getRightPointer()
-{
-	if constexpr (N == 0)
-		return arrayUnion.heapArray.p;
-	else
-		return arrayUnion.arrayValue;
+	arraySize = 0;
 }
 
 namespace ArrayTestSuit
 {
 	void runTestSuit();
+}
+
+template<typename T, size_t N>
+inline Array<T, N>::ArrayUnion::~ArrayUnion()
+{
+	//NOTE: Oh man... The union needs a destructor so that the destructor of Array is not implicitly deleted!
 }
