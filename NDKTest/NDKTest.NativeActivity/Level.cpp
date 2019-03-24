@@ -54,7 +54,7 @@ r()
 	//window.play(sound);
 	// -- end test code
 
-	Benchmark& benchmark = Benchmark::getBenchmark();
+	Benchmark benchmark = Benchmark::getBenchmark();
 	AssetManager* assetManager = window.getAssetManager();
 	std::srand(5);
 

@@ -88,7 +88,7 @@ public:
 	String substr(size_t pos = 0, size_t count = npos) const;
 
 	size_t find(char c, size_t pos = 0) const;
-	//TODO: Implement!
+	//TODO: Implement! (Used in Physics::getAllCollisionIdsWhichContain and InkscapeAnimation
 	size_t find(const char* str, size_t pos = 0) const;
 	size_t find(const String& str, size_t pos = 0) const;
 	//NOTE: isn't it unnecessary?
@@ -106,7 +106,6 @@ public:
 	friend String operator+(char lhs, const String& rhs);
 	friend String operator+(String&& lhs, const String& rhs);
 
-	//TODO: This can go wrong!
 	bool operator==(const String& rhs) const;
 	bool operator==(const char* rhs) const;
 	friend bool operator==(const char* lhs, const String& rhs);

@@ -1,15 +1,13 @@
 #pragma once
 
 #include "String.h"
-#include <functional>
-#include "Texture.h"
 
 struct AssetLoader
 {
-	std::function<bool(char* thiz, const String& filename)> loadFromFile;
-	std::function<bool(char* thiz, const String& filename)> reloadFromFile;
-	std::function<long long(char* thiz)> getSize;
-	std::function<void(char* thiz)> destruct;
+	bool(*loadFromFile)(char* thiz, const String& filename);
+	bool(*reloadFromFile)(char* thiz, const String& filename);
+	long long(*getSize)(char* thiz);
+	void(*destruct)(char* thiz);
 	bool isGpu;
 	AssetLoader() = delete;
 public:

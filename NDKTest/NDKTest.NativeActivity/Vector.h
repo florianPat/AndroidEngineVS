@@ -1,6 +1,6 @@
 #pragma once
 
-//Other std implementations TODO: unordered_map, unique_ptr, map/multimap
+//Other std implementations TODO: unordered_map, unique_ptr
 
 #include "HeapArray.h"
 

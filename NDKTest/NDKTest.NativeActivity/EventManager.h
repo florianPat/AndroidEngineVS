@@ -4,7 +4,6 @@
 #include "EventData.h"
 #include <functional>
 #include <memory>
-#include <list>
 #include "Vector.h"
 
 typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunction;
@@ -12,8 +11,8 @@ typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunctio
 class EventManager
 {
 	friend class Level;
-	//TODO: Why list???
-	std::unordered_map<unsigned int, std::list<DelegateFunction>> eventListenerMap;
+
+	std::unordered_map<unsigned int, Vector<DelegateFunction>> eventListenerMap;
 	Vector<std::pair<unsigned int, DelegateFunction>> eventDeleterMap;
 public:
 	EventManager();

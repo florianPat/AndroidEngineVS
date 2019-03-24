@@ -462,10 +462,7 @@ String String::operator+(char c) const
 
 bool String::operator==(const String & rhs) const
 {
-	if (shortRep)
-		return stringUnion.stringArrayShort.operator==(rhs.stringUnion.stringArrayShort);
-	else
-		return stringUnion.stringArrayLong.operator==(rhs.stringUnion.stringArrayLong);
+	return operator==(rhs.c_str());
 }
 
 bool String::operator==(const char * rhs) const

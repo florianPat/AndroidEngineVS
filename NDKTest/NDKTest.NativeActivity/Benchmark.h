@@ -9,11 +9,10 @@ class Benchmark
 	Clock clock;
 	String benchmarkName;
 
-	static Benchmark singleton;
 	Benchmark() = default;
 public:
 	void start(const String& benchmarkNameIn);
 	void stop();
-	//NOTE: Not thread safe!
-	static Benchmark& getBenchmark();
+
+	static Benchmark getBenchmark();
 };

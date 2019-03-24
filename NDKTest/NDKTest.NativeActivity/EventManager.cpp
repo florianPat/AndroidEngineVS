@@ -11,7 +11,7 @@ bool EventManager::addListener(unsigned int eventType, DelegateFunction & delega
 
 	if (eventListenerList == eventListenerMap.end())
 	{
-		eventListenerMap.emplace(eventType, std::list<DelegateFunction>());
+		eventListenerMap.emplace(eventType, Vector<DelegateFunction>());
 		eventListenerList = eventListenerMap.find(eventType);
 	}
 
@@ -65,7 +65,7 @@ void EventManager::removeListeners()
 				{
 					if (delegateFunction.first == it->first)
 					{
-						findIt->second.erase(it);
+						findIt->second.erasePop_back(it);
 						break;
 					}
 				}

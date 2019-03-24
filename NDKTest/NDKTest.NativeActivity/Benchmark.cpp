@@ -1,8 +1,6 @@
 #include "Benchmark.h"
 #include "Utils.h"
 
-Benchmark Benchmark::singleton;
-
 void Benchmark::start(const String & benchmarkNameIn)
 {
 	assert(running == false);
@@ -19,7 +17,7 @@ void Benchmark::stop()
 	utils::logF("%s: has taken: %f", benchmarkName.c_str(), time);
 }
 
-Benchmark& Benchmark::getBenchmark()
+Benchmark Benchmark::getBenchmark()
 {
-	return singleton;
+	return Benchmark();
 }
