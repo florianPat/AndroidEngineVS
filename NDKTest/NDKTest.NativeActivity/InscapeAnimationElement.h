@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include "Vector2.h"
 #include "Rect.h"
 #include "AssetManager.h"
@@ -10,14 +10,15 @@
 //NOTE: Class to get out rects with specific ids in specifig groups from Inkscape-files
 class InkscapeAnimationElement
 {
-	std::map<std::string, std::map<std::string, IntRect>> elementMap;
+	//TODO: Changed map to unordered_map. Does it matter?
+	std::unordered_map<String, std::unordered_map<String, IntRect>> elementMap;
 private:
-	bool FindGroupLayer(std::string& lineContent) const;
+	bool FindGroupLayer(String& lineContent) const;
 public:
 	InkscapeAnimationElement() = default;
-	InkscapeAnimationElement(const std::string& inkscapeFileName, const Vector<std::string>& regionNames);
-	InkscapeAnimationElement(const std::string& inkscapeFileName);
-	IntRect getElementRect(std::string& keyFrameId, std::string& elementId) const;
-	std::map<std::string, IntRect> getElementMap(const std::string& keyFrameId) const;
-	bool isElementInMap(const std::string& keyFrameId) const;
+	InkscapeAnimationElement(const String& inkscapeFileName, const Vector<String>& regionNames);
+	InkscapeAnimationElement(const String& inkscapeFileName);
+	IntRect getElementRect(String& keyFrameId, String& elementId) const;
+	std::unordered_map<String, IntRect> getElementMap(const String& keyFrameId) const;
+	bool isElementInMap(const String& keyFrameId) const;
 };

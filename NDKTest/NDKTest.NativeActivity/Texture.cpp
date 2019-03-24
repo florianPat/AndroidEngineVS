@@ -9,7 +9,7 @@ void callback_readPng(png_structp pStruct, png_bytep pData, png_size_t pSize) {
 	asset->read(pData, pSize);
 }
 
-bool Texture::loadFromFile(const std::string & filename)
+bool Texture::loadFromFile(const String & filename)
 {
 	Ifstream asset;
 	asset.open(filename);
@@ -130,7 +130,7 @@ bool Texture::loadFromFile(const std::string & filename)
 	return true;
 }
 
-bool Texture::reloadFromFile(const std::string& filename)
+bool Texture::reloadFromFile(const String& filename)
 {
 	if (texture != 0)
 	{

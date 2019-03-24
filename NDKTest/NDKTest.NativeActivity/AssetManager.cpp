@@ -8,7 +8,7 @@ AssetManager::AssetManager(AAssetManager * aassetManager) : ressourceCache(), ti
 	this->aassetManager = aassetManager;
 }
 
-bool AssetManager::unloadNotUsedRes(const std::string & filename)
+bool AssetManager::unloadNotUsedRes(const String & filename)
 {
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
@@ -34,7 +34,7 @@ void AssetManager::clear()
 	ressourceCache.clear();
 }
 
-bool AssetManager::isLoaded(const std::string & filename)
+bool AssetManager::isLoaded(const String & filename)
 {
 	auto i = ressourceCache.find(filename);
 	return i != ressourceCache.end();
@@ -58,7 +58,7 @@ void AssetManager::read(AAsset * asset, void * buffer, size_t size)
 	assert(AAsset_read(asset, buffer, size) == size);
 }
 
-void AssetManager::registerAssetLoader(const std::string & fileExt, const AssetLoader & assetLoader)
+void AssetManager::registerAssetLoader(const String & fileExt, const AssetLoader & assetLoader)
 {
 	assert(assetLoaderCache.find(fileExt) == assetLoaderCache.end());
 

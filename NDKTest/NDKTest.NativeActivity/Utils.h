@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <android/log.h>
 
 #undef assert
@@ -29,8 +28,6 @@ static constexpr float _180OverPi = 180 / PIf;
 namespace utils
 {
 	unsigned int getGUID();
-	bool isWordInLine(const std::string & word, const std::string & lineContent);
-	std::string getWordBetweenChars(const std::string& lineContent, char first, char last);
 	float lerp(float v0, float v1, float t);
 	float degreesToRadians(float degree);
 	float radiansToDegrees(float radians);

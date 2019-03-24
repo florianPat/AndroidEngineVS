@@ -2,8 +2,9 @@
 #include "Ifstream.h"
 #include "Utils.h"
 #include "Rect.h"
+#include <cstdlib>
 
-TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
+TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) : textureAtlas(), fileHeader{}, assetManager(assetManager)
 {
 	Ifstream file;
 	file.open(filepath);
@@ -13,7 +14,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManag
 		utils::logBreak("Cant open file!");
 	}
 
-	std::string tempString;
+	String tempString;
 
 	file.getline(tempString);
 
@@ -21,7 +22,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManag
 	{
 		for (int i = 0; i < FILE_HEADER_LINE_SIZE; ++i)
 		{
-			std::string lineContent;
+			String lineContent;
 			file.getline(lineContent);
 
 			switch (i)
@@ -33,7 +34,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManag
 				case 1:
 				{
 					int width, height;
-					std::string widthChar, heightChar;
+					String widthChar, heightChar;
 					
 					
 					widthChar = getLineContentBetweeen(lineContent, ' ', ',');
@@ -85,7 +86,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManag
 				break;
 			}
 
-			std::string lineContent;
+			String lineContent;
 			file.getline(lineContent);
 
 			switch (i)
@@ -121,7 +122,7 @@ TextureAtlas::TextureAtlas(const std::string& filepath, AssetManager* assetManag
 	}
 }
 
-std::unique_ptr<TextureRegion> TextureAtlas::findRegion(const std::string& name) const
+std::unique_ptr<TextureRegion> TextureAtlas::findRegion(const String& name) const
 {
 	auto result = textureAtlas.find(name);
 	if (result != textureAtlas.end())
@@ -151,9 +152,9 @@ void TextureAtlas::addRegion(const TextureRegion & adder)
 	textureAtlas.insert({ adder.filename, adder });
 }
 
-std::string TextureAtlas::getLineContentBetweeen(std::string & lineContent, char first, char secound)
+String TextureAtlas::getLineContentBetweeen(String & lineContent, char first, char secound)
 {
-	std::string result;
+	String result;
 
 	size_t spacePos = lineContent.find(first);
 	lineContent.erase(0, ++spacePos);
@@ -168,7 +169,7 @@ std::string TextureAtlas::getLineContentBetweeen(std::string & lineContent, char
 	return result;
 }
 
-Vector2i TextureAtlas::getLineContentRegionValues(std::string & lineContent, char firstRealChar)
+Vector2i TextureAtlas::getLineContentRegionValues(String & lineContent, char firstRealChar)
 {
 	Vector2i result;
 
@@ -182,7 +183,7 @@ Vector2i TextureAtlas::getLineContentRegionValues(std::string & lineContent, cha
 
 void TextureRegion::initSprite(AssetManager* assetManager)
 {
-	assert(textureAtlasFileName != "" || filename != "");
+	assert((!textureAtlasFileName.empty()) || (!filename.empty()));
 
 	atlasTexture = assetManager->getOrAddRes<Texture>(textureAtlasFileName);
 	regionSprite = Sprite(atlasTexture, IntRect(xy.x, xy.y, size.x, size.y));

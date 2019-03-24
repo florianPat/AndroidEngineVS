@@ -3,7 +3,7 @@
 
 Benchmark Benchmark::singleton;
 
-void Benchmark::start(const std::string & benchmarkNameIn)
+void Benchmark::start(const String & benchmarkNameIn)
 {
 	assert(running == false);
 	running = true;

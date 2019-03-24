@@ -3,6 +3,7 @@
 #include "TouchInput.h"
 #include "AssetLoader.h"
 #include "Benchmark.h"
+#include <cstdlib>
 
 /*void Level::eventLevelReloadHandler(EventData* eventData)
 {
@@ -39,7 +40,7 @@ void Level::composeFrame()
 	// -- end test code
 }
 
-Level::Level(RenderWindow & window, std::string tiledMapName) : window(window), physics(),
+Level::Level(RenderWindow & window, String tiledMapName) : window(window), physics(),
 gom(), clock(window.getClock()), eventManager(), map(tiledMapName, gom, eventManager, window), levelName(tiledMapName),
 r()
 {

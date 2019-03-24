@@ -2,7 +2,7 @@
 
 #include <GLES2/gl2.h>
 #include "android_native_app_glue.h"
-#include <string>
+#include "String.h"
 #include "Vector2.h"
 #include "AssetLoader.h"
 
@@ -15,8 +15,8 @@ private:
 	int width = 0;
 	int height = 0;
 public:
-	bool loadFromFile(const std::string& filename);
-	bool reloadFromFile(const std::string& filename);
+	bool loadFromFile(const String& filename);
+	bool reloadFromFile(const String& filename);
 public:
 	Texture() = default;
 	Texture(GLuint texture, int width, int height);

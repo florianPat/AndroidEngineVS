@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Types.h"
-#include <time.h>
 
 struct Time
 {

@@ -3,16 +3,16 @@
 #include "Utils.h"
 #include "GLUtils.h"
 
-std::string loadShader(const std::string& filename)
+String loadShader(const String& filename)
 {
 	Ifstream file;
 	file.open(filename);
 	assert(file);
 
-	std::string result = "";
+	String result;
 	while (!file.eof())
 	{
-		std::string line = "";
+		String line;
 		file.getline(line);
 
 		result += line + '\n';
@@ -21,7 +21,7 @@ std::string loadShader(const std::string& filename)
 	return result;
 }
 
-void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const std::string& errorMessage)
+void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const String& errorMessage)
 {
 	GLint success = 0;
 	GLchar error[1024] = {};
@@ -52,7 +52,7 @@ void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const std::str
 	}
 }
 
-GLuint createShader(const std::string& text, GLenum shaderType)
+GLuint createShader(const String& text, GLenum shaderType)
 {
 	GLuint shader = 0;
 	CallGL(shader = glCreateShader(shaderType));
@@ -76,7 +76,7 @@ GLuint createShader(const std::string& text, GLenum shaderType)
 	return shader;
 }
 
-Shader::Shader(const std::string & filename, const Vector<std::string>& attribLocs) : uniformCache()
+Shader::Shader(const String & filename, const Vector<String>& attribLocs) : uniformCache()
 {
 	GLuint shaders[NUM_SHADERS];
 
@@ -144,21 +144,21 @@ void Shader::unbind() const
 	CallGL(glUseProgram(0));
 }
 
-void Shader::setUniform4f(const std::string & var, float v0, float v1, float v2, float v3)
+void Shader::setUniform4f(const String & var, float v0, float v1, float v2, float v3)
 {
 	int loc = getUniformLoc(var);
 
 	CallGL(glUniform4f(loc, v0, v1, v2, v3));
 }
 
-void Shader::setUniformMat4f(const std::string & var, const Mat4x4 & mat)
+void Shader::setUniformMat4f(const String & var, const Mat4x4 & mat)
 {
 	int loc = getUniformLoc(var);
 
 	CallGL(glUniformMatrix4fv(loc, 1, GL_FALSE, mat.matrix));
 }
 
-int Shader::getUniformLoc(const std::string & var)
+int Shader::getUniformLoc(const String & var)
 {
 	auto it = uniformCache.find(var);
 	if (it != uniformCache.end())

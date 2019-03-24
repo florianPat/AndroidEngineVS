@@ -49,6 +49,7 @@
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="HeapArray.h" />
+    <ClInclude Include="String.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="android_native_app_glue.c" />
@@ -87,5 +88,6 @@
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Array.cpp" />
+    <ClCompile Include="String.cpp" />
   </ItemGroup>
 </Project>

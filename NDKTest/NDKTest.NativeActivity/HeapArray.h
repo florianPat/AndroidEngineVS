@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Array.h"
+#include <new>
 
 template <typename T>
 struct HeapArray : public Array<T, 0>
@@ -14,9 +15,6 @@ struct HeapArray : public Array<T, 0>
 	HeapArray(HeapArray&& other, size_t sizeIn);
 	HeapArray& operator=(const HeapArray& other);
 	HeapArray& operator=(HeapArray&& other);
-
-	bool operator==(const HeapArray& rhs) const;
-	bool operator!=(const HeapArray& rhs) const;
 };
 
 template <typename T>
@@ -126,23 +124,3 @@ inline HeapArray<T> & HeapArray<T>::operator=(HeapArray<T> && other)
 	return *this;
 }
 
-template<typename T>
-inline bool HeapArray<T>::operator==(const HeapArray & rhs) const
-{
-	if (this->arraySize != rhs.arraySize)
-		return false;
-
-	for (size_t i = 0; i < this->arraySize; ++i)
-	{
-		if (this->arrayUnion.heapArray.p[i] != rhs.arrayUnion.heapArray.p[i])
-			return false;
-	}
-
-	return true;
-}
-
-template<typename T>
-inline bool HeapArray<T>::operator!=(const HeapArray & rhs) const
-{
-	return (!(this->operator==(rhs)));
-}

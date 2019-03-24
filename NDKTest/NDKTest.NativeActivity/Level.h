@@ -23,7 +23,7 @@ protected:
 	EventManager eventManager;
 	TiledMap map;
 
-	std::string levelName;
+	String levelName;
 
 	std::unique_ptr<Level> newLevel = nullptr;
 	bool endLevel = false;
@@ -31,7 +31,7 @@ protected:
 	CircleShape c;
 	RectangleShape r;
 	static constexpr int NUM_TEXTURES = 75;
-	const char* textureNames[7] = {"Truhe.png", "ship.png", "assetsRaw/64x64/Brick1.png", "assetsRaw/64x64/Brick2.png",
+	String textureNames[7] = {"Truhe.png", "ship.png", "assetsRaw/64x64/Brick1.png", "assetsRaw/64x64/Brick2.png",
 		"assetsRaw/64x64/Brick3.png", "assetsRaw/64x64/Key.png", "assetsRaw/64x64/Schalter.png"};
 	Texture* texture[NUM_TEXTURES];
 	//Sprite sprite;
@@ -46,7 +46,7 @@ protected:
 	virtual void updateModel();
 	virtual void composeFrame();
 public:
-	Level(RenderWindow& window, std::string tiledMapName);
+	Level(RenderWindow& window, String tiledMapName);
 	bool Go();
 	std::unique_ptr<Level> getNewLevel();
 };

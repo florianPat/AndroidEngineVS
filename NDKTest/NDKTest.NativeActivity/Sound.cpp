@@ -1,8 +1,9 @@
 #include "Sound.h"
 #include "Ifstream.h"
 #include "Utils.h"
+#include <memory>
 
-bool Sound::loadFromFile(const std::string & filename)
+bool Sound::loadFromFile(const String & filename)
 {
 	Ifstream file;
 	file.open(filename);
@@ -83,7 +84,7 @@ bool Sound::loadFromFile(const std::string & filename)
 	return true;
 }
 
-bool Sound::reloadFromFile(const std::string & filename)
+bool Sound::reloadFromFile(const String & filename)
 {
 	return loadFromFile(filename);
 }

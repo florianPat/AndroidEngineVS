@@ -13,7 +13,7 @@ Animation::Animation(Vector<TextureRegion>& keyFrames, int64_t frameDuration, Pl
 	keyFrameItReverse = this->keyFrames.size() - 1;
 }
 
-Animation::Animation(const Vector<std::string>& regionNames, const TextureAtlas & atlas, int64_t frameDuration, PlayMode type)
+Animation::Animation(const Vector<String>& regionNames, const TextureAtlas & atlas, int64_t frameDuration, PlayMode type)
 	: keyFrames(), keyFrameIt(), keyFrameItReverse(), frameDuration(frameDuration), playMode(type), clock()
 {
 	Vector<TextureRegion> keyFrames;

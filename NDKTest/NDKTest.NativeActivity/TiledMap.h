@@ -19,34 +19,34 @@ class TiledMap
 	};
 	struct Layer
 	{
-		std::string name;
+		String name;
 		int width, height;
 		Vector<Tile> tiles;
 	};
 	struct ObjectGroup
 	{
-		std::string name;
+		String name;
 		Vector<Physics::Collider> objects;
 	};
 	std::unordered_map<int, Tile> tiles;
-	std::unordered_map<std::string, Layer> layers;
-	std::unordered_map<std::string, ObjectGroup> objectGroups;
+	std::unordered_map<String, Layer> layers;
+	std::unordered_map<String, ObjectGroup> objectGroups;
 	int mapWidth = 0, mapHeight = 0, tileWidth = 0, tileHeight = 0;
 
 	RenderTexture texture;
 	Sprite textureSprite;
 	AssetManager* assetManager = nullptr;
 public:
-	TiledMap(const std::string& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<std::string>&& toGameObjects = Vector<std::string>{});
-	Vector<Physics::Collider> getObjectGroup(const std::string& objectGroupName);
+	TiledMap(const String& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<String>&& toGameObjects = Vector<String>{});
+	Vector<Physics::Collider> getObjectGroup(const String& objectGroupName);
 	Vector<ObjectGroup> getObjectGroups();
 	void draw(RenderWindow& renderWindow);
 private:
-	size_t getEndOfWord(const std::string& word, const std::string& lineContent, bool* result);
-	std::string getLineContentBetween(std::string& lineContent, const std::string& endOfFirst, char secound);
+	size_t getEndOfWord(const String& word, const String& lineContent, bool* result);
+	String getLineContentBetween(String& lineContent, const String& endOfFirst, char secound);
 
-	std::string ParseTiles(Ifstream& file);
-	void ParseLayer(Ifstream& file, std::string& lineContent);
-	void ParseObjectGroups(Ifstream& file, std::string& lineContent);
-	void MakeRenderTexture(Vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
+	String ParseTiles(Ifstream& file);
+	void ParseLayer(Ifstream& file, String& lineContent);
+	void ParseObjectGroups(Ifstream& file, String& lineContent);
+	void MakeRenderTexture(Vector<String>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
 };

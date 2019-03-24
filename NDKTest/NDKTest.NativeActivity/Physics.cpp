@@ -106,7 +106,7 @@ void Physics::Collider::getPointsAxis(Vector2f * points, Vector2f * axis) const
 		}
 		default:
 		{
-			assert(!"InvalidCodePath!");
+			InvalidCodePath;
 		}
 	}
 }
@@ -162,7 +162,7 @@ void Physics::update(float dt)
 		if ((!it->second->isStatic || it->second->isTrigger))
 		{
 			it->second->triggered = false;
-			it->second->triggerInformation.triggerElementCollision = "";
+			it->second->triggerInformation.triggerElementCollision.clear();
 			it->second->triggerInformation.triggerBodyPart = Body::TriggerBodyPart::NONE;
 
 			for (auto collisionIdIt = it->second->physicsElements[0].getCollisionIds()->begin(); collisionIdIt != it->second->physicsElements[0].getCollisionIds()->end(); ++collisionIdIt)
@@ -287,7 +287,7 @@ void Physics::addElementValue(Body body)
 	bodies.emplace(body.id, std::make_unique<Body>(body));
 }
 
-bool Physics::removeElementById(std::string & id)
+bool Physics::removeElementById(String & id)
 {
 	auto it = bodies.find(id);
 	assert(it != bodies.end());
@@ -304,17 +304,17 @@ void Physics::applySpriteToBoundingBox(const Sprite & sprite, Collider & boundin
 	boundingBox.collider.rect.height = (float)sprite.getGlobalBounds().height;
 }
 
-Vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::string & string)
+Vector<String> Physics::getAllCollisionIdsWhichContain(const String & string)
 {
-	Vector<std::string> result;
+	Vector<String> result;
 
 	for (auto it = bodies.begin(); it != bodies.end(); ++it)
 	{
 		size_t match = it->first.find(string, 0);
-		if (match != std::string::npos)
+		if (match != String::npos)
 		{
 			bool onlyNumbers = true;
-			std::string substr = it->first;
+			String substr = it->first;
 			substr.erase(match, string.length());
 			for (auto it = substr.begin(); it != substr.end(); ++it)
 			{
@@ -336,7 +336,7 @@ Vector<std::string> Physics::getAllCollisionIdsWhichContain(const std::string & 
 	return result;
 }
 
-Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, Vector<std::string>* collisionId, bool isTrigger, bool isStatic)
+Physics::Body::Body(Vector2f& pos, String name, Collider* collider, Vector<String>* collisionId, bool isTrigger, bool isStatic)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -348,7 +348,7 @@ Physics::Body::Body(Vector2f& pos, std::string name, Collider* collider, Vector<
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool isTrigger, bool isStatic, Vector<std::string> collisionId)
+Physics::Body::Body(Vector2f & pos, String name, Collider * collider, bool isTrigger, bool isStatic, Vector<String> collisionId)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(pos), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -360,7 +360,7 @@ Physics::Body::Body(Vector2f & pos, std::string name, Collider * collider, bool 
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool isStatic, Vector<std::string> collisionId)
+Physics::Body::Body(String name, Collider collider, bool isTrigger, bool isStatic, Vector<String> collisionId)
 	: isStatic(isStatic), isTrigger(isTrigger), pos(0.0f, 0.0f), id(name), physicsElements{}
 {
 	PhysicElement physicsElement = {};
@@ -373,7 +373,7 @@ Physics::Body::Body(std::string name, Collider collider, bool isTrigger, bool is
 	this->physicsElements.push_back(physicsElement);
 }
 
-Physics::Body::Body(std::string name, Vector<Collider> colliders, bool isTrigger) : isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), 
+Physics::Body::Body(String name, Vector<Collider> colliders, bool isTrigger) : isStatic(true), isTrigger(isTrigger), pos(0.0f, 0.0f), 
 																						 id(name), physicsElements{}
 {
 	for (auto it = colliders.begin(); it != colliders.end(); ++it)
@@ -381,7 +381,7 @@ Physics::Body::Body(std::string name, Vector<Collider> colliders, bool isTrigger
 		PhysicElement physicsElement = {};
 
 		physicsElement.collisionIdInPointer = false;
-		physicsElement.collisionIdValue = Vector<std::string>();
+		physicsElement.collisionIdValue = Vector<String>();
 		physicsElement.collidersInPointer = false;
 		physicsElement.colliders.collidersValue = *it;
 
@@ -424,7 +424,7 @@ Physics::Body::TriggerInformation & Physics::Body::getTriggerInformation()
 	return triggerInformation;
 }
 
-std::string & Physics::Body::getId()
+String & Physics::Body::getId()
 {
 	return id;
 }
@@ -437,12 +437,12 @@ Physics::Collider * Physics::PhysicElement::getCollider() const
 		return (Collider *) &colliders.collidersValue;
 }
 
-Vector<std::string>* Physics::PhysicElement::getCollisionIds() const
+Vector<String>* Physics::PhysicElement::getCollisionIds() const
 {
 	if (collisionIdInPointer)
 		return collisionIdPointer;
 	else
-		return (Vector<std::string>*) &collisionIdValue;
+		return (Vector<String>*) &collisionIdValue;
 }
 
 Physics::Collider::Collider() : type(Type::rect), collider{ {} }

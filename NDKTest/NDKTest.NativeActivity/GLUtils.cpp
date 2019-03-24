@@ -7,7 +7,7 @@ void clearErrors()
 	while (glGetError() != GL_NO_ERROR); //not 0
 }
 
-void checkErrors(const std::string& func, int line, const char* inFunc)
+void checkErrors(const String& func, int line, const char* inFunc)
 {
 	bool errorOccured = false;
 	while (GLenum errorCode = glGetError())

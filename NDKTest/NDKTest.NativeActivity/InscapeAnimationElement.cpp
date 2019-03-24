@@ -1,19 +1,20 @@
 #include "InscapeAnimationElement.h"
 #include "Utils.h"
 #include "Ifstream.h"
+#include <cstdlib>
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFileName, const Vector<std::string>& regionNames)
+InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileName, const Vector<String>& regionNames)
 	: elementMap()
 {
 	Ifstream file;
 	file.open(inkscapeFileName);
 	assert(file);
 
-	std::string lineContent;
+	String lineContent;
 
 	for(int iteration = 0; !file.eof(); ++iteration)
 	{
-		if (lineContent.find("</g>") != std::string::npos)
+		if (lineContent.find("</g>") != String::npos)
 		{
 			break;
 		}
@@ -29,17 +30,17 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 			file.getline(lineContent);
 		}
 
-		for (file.getline(lineContent); lineContent.find("<g") != std::string::npos; file.getline(lineContent))
+		for (file.getline(lineContent); lineContent.find("<g") != String::npos; file.getline(lineContent))
 		{
 			file.getline(lineContent); //<g
-			std::string groupId;
-			std::map<std::string, IntRect> rectMap;
+			String groupId;
+			std::unordered_map<String, IntRect> rectMap;
 			Vector2i translationVec = { 0, 0 };
 			Vector2i scalingVec = { 1, 1 };
 			bool shouldAdd = true;
-			for (; shouldAdd && lineContent.find("</g>") == std::string::npos; file.getline(lineContent))
+			for (; shouldAdd && lineContent.find("</g>") == String::npos; file.getline(lineContent))
 			{
-				if (lineContent.find("id") != std::string::npos)
+				if (lineContent.find("id") != String::npos)
 				{
 					groupId = utils::getWordBetweenChars(lineContent, '"', '"');
 					if (!regionNames.empty())
@@ -49,16 +50,16 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 					}
 					for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 					{
-						if (groupId.find(*it) == std::string::npos)
+						if (groupId.find(*it) == String::npos)
 						{
 							shouldAdd = false;
 							break;
 						}
 					}
 				}
-				else if (lineContent.find("<rect") != std::string::npos)
+				else if (lineContent.find("<rect") != String::npos)
 				{
-					std::string id;
+					String id;
 					IntRect rect;
 					bool shouldAdd = true;
 					bool addWidth = false;
@@ -68,42 +69,42 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 
 					for (file.getline(lineContent); shouldAdd; file.getline(lineContent))
 					{
-						if (lineContent.find("x") != std::string::npos)
+						if (lineContent.find("x") != String::npos)
 						{
 							rect.left = atoi(utils::getWordBetweenChars(lineContent, '"', '"').c_str());
 						}
-						else if (lineContent.find("y") != std::string::npos)
+						else if (lineContent.find("y") != String::npos)
 						{
-							if(lineContent.find("r") == std::string::npos)
+							if(lineContent.find("r") == String::npos)
 								rect.top = atoi(utils::getWordBetweenChars(lineContent, '"', '"').c_str());
 						}
-						else if (lineContent.find("width") != std::string::npos)
+						else if (lineContent.find("width") != String::npos)
 						{
 							rect.width = atoi(utils::getWordBetweenChars(lineContent, '"', '"').c_str());
 							if (addWidth)
 								translationVec.x += -rect.width;
 						}
-						else if (lineContent.find("height") != std::string::npos)
+						else if (lineContent.find("height") != String::npos)
 						{
 							rect.height = atoi(utils::getWordBetweenChars(lineContent, '"', '"').c_str());
 						}
-						else if (lineContent.find("id") != std::string::npos)
+						else if (lineContent.find("id") != String::npos)
 						{
 							id = utils::getWordBetweenChars(lineContent, '"', '"');
-							if (id.find("rect") != std::string::npos || id.find("-") != std::string::npos)
+							if (id.find("rect") != String::npos || id.find("-") != String::npos)
 							{
 								shouldAdd = false;
 								break;
 							}
 							size_t underlinePos = id.find_first_of('_');
-							if (underlinePos != std::string::npos)
+							if (underlinePos != String::npos)
 							{
 								id = id.substr(0, underlinePos);
 							}
 						}
-						else if (lineContent.find("transform") != std::string::npos)
+						else if (lineContent.find("transform") != String::npos)
 						{
-							if (lineContent.find("scale") != std::string::npos)
+							if (lineContent.find("scale") != String::npos)
 							{
 								auto firstOne = lineContent.find_first_of('1');
 								auto lasttOne = lineContent.find_last_of('1');
@@ -129,7 +130,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 									}
 								}
 							}
-							else if (lineContent.find("translate") != std::string::npos)
+							else if (lineContent.find("translate") != String::npos)
 							{
 								translationVec.x += atoi(utils::getWordBetweenChars(lineContent, '(', ',').c_str());
 								translationVec.y += atoi(utils::getWordBetweenChars(lineContent, ',', ')').c_str());
@@ -140,7 +141,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 							}
 						}
 
-						if (lineContent.find("/>") != std::string::npos)
+						if (lineContent.find("/>") != String::npos)
 						{
 							break;
 						}
@@ -161,16 +162,16 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 						scalingVec = beforeScalingVec;
 						translationVec = beforeTranslationVec;
 
-						for (; lineContent.find("/>") == std::string::npos; file.getline(lineContent));
+						for (; lineContent.find("/>") == String::npos; file.getline(lineContent));
 					}
 				}
-				else if (lineContent.find("<") != std::string::npos)
+				else if (lineContent.find("<") != String::npos)
 				{
-					for (file.getline(lineContent); lineContent.find("/>") == std::string::npos; file.getline(lineContent));
+					for (file.getline(lineContent); lineContent.find("/>") == String::npos; file.getline(lineContent));
 				}
-				else if (lineContent.find("transform") != std::string::npos)
+				else if (lineContent.find("transform") != String::npos)
 				{
-					if (lineContent.find("translate") != std::string::npos)
+					if (lineContent.find("translate") != String::npos)
 					{
 						translationVec.x += atoi(utils::getWordBetweenChars(lineContent, '(', ',').c_str());
 						translationVec.y += atoi(utils::getWordBetweenChars(lineContent, ',', ')').c_str());
@@ -182,7 +183,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 				}
 			}
 
-			for (; lineContent.find("</g>") == std::string::npos; file.getline(lineContent));
+			for (; lineContent.find("</g>") == String::npos; file.getline(lineContent));
 
 			if (!rectMap.empty())
 			{
@@ -220,20 +221,20 @@ InkscapeAnimationElement::InkscapeAnimationElement(const std::string& inkscapeFi
 	}
 }
 
-InkscapeAnimationElement::InkscapeAnimationElement(const std::string & inkscapeFileName) 
-	: InkscapeAnimationElement(inkscapeFileName, Vector<std::string>(1, "Process all groups"))
+InkscapeAnimationElement::InkscapeAnimationElement(const String & inkscapeFileName) 
+	: InkscapeAnimationElement(inkscapeFileName, Vector<String>(1, "Process all groups"))
 {
 }
 
-bool InkscapeAnimationElement::FindGroupLayer(std::string & lineContent) const
+bool InkscapeAnimationElement::FindGroupLayer(String & lineContent) const
 {
-	if (lineContent.find(std::string("id=\"layer")) == std::string::npos)
+	if (lineContent.find(String("id=\"layer")) == String::npos)
 		return true;
 	else
 		return false;
 }
 
-IntRect InkscapeAnimationElement::getElementRect(std::string& keyFrameId, std::string& elementId) const
+IntRect InkscapeAnimationElement::getElementRect(String& keyFrameId, String& elementId) const
 {
 	auto keyFrameResult = elementMap.find(keyFrameId);
 	if (keyFrameResult != elementMap.end())
@@ -254,7 +255,7 @@ IntRect InkscapeAnimationElement::getElementRect(std::string& keyFrameId, std::s
 	}
 }
 
-std::map<std::string, IntRect> InkscapeAnimationElement::getElementMap(const std::string & keyFrameId) const
+std::unordered_map<String, IntRect> InkscapeAnimationElement::getElementMap(const String & keyFrameId) const
 {
 	auto result = elementMap.find(keyFrameId);
 	if (result != elementMap.end())
@@ -262,11 +263,11 @@ std::map<std::string, IntRect> InkscapeAnimationElement::getElementMap(const std
 	else
 	{
 		InvalidCodePath;
-		return std::map<std::string, IntRect>();
+		return std::unordered_map<String, IntRect>();
 	}
 }
 
-bool InkscapeAnimationElement::isElementInMap(const std::string & keyFrameId) const
+bool InkscapeAnimationElement::isElementInMap(const String & keyFrameId) const
 {
 	auto result = elementMap.find(keyFrameId);
 	return result != elementMap.end();

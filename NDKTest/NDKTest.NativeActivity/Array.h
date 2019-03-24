@@ -4,11 +4,14 @@
 #include <utility>
 #include "Utils.h"
 
+/* NOTE: Undefinied behavour if you dereference or do other things if Its are invalidated due to a shrink or expand call
+*  This is also a "safe" iterator (it does bounds checking on current size)
+*/
 template <typename T>
 class Iterator
 {
 	//TODO: Maybe just return the pointer in Release?
-	//TODO: Maybe add a pp to classes who use this Iterator so that they can change up the data so that no iterator gets invalidated if a resize happens?
+	//NOTE: Maybe add a reference and fix itData pointers through storing a pp? (Performance further down?)
 
 	size_t itIndex;
 	size_t itSize;
@@ -30,8 +33,8 @@ public:
 	}
 	Iterator& operator--()
 	{
+		assert(itIndex > 0);
 		--itIndex;
-		assert(itIndex >= 0);
 		return *this;
 	}
 	Iterator operator--(int)
@@ -54,14 +57,14 @@ public:
 	}
 	Iterator& operator-=(const Iterator& rhs)
 	{
+		assert((itIndex > 0) && (itData == rhs.itData));
 		itIndex -= rhs.itIndex;
-		assert((itIndex >= 0) && (itData == rhs.itData));
 		return *this;
 	}
 	Iterator& operator-=(size_t rhs)
 	{
+		assert(itIndex >= rhs);
 		itIndex -= rhs;
-		assert(itIndex >= 0);
 		return *this;
 	}
 	Iterator operator+(const Iterator& rhs)
@@ -151,8 +154,8 @@ public:
 	}
 	ConstIterator& operator--()
 	{
+		assert(itIndex > 0);
 		--itIndex;
-		assert(itIndex >= 0);
 		return *this;
 	}
 	ConstIterator operator--(int)
@@ -175,14 +178,14 @@ public:
 	}
 	ConstIterator& operator-=(const ConstIterator& rhs)
 	{
+		assert((itIndex >= rhs.itIndex) && (itData == rhs.itData));
 		itIndex -= rhs.itIndex;
-		assert((itIndex >= 0) && (itData == rhs.itData));
 		return *this;
 	}
 	ConstIterator& operator-=(size_t rhs)
 	{
+		assert(itIndex >= rhs);
 		itIndex -= rhs;
-		assert(itIndex >= 0);
 		return *this;
 	}
 	ConstIterator operator+(const ConstIterator& rhs)
@@ -317,7 +320,8 @@ public:
 	void push_back(T&& value);
 	void pop_back();
 
-	//TODO: Think about how to implement compares!
+	bool operator==(const Array& rhs) const;
+	bool operator!=(const Array& rhs) const;
 };
 
 template<typename T, size_t N>
@@ -325,7 +329,7 @@ inline T & Array<T, N>::at(size_t pos)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos < arraySize) && (pos >= 0));
+	assert(pos < arraySize);
 	return arrayData[pos];
 }
 
@@ -334,20 +338,24 @@ inline const T & Array<T, N>::at(size_t pos) const
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos < arraySize) && (pos >= 0));
+	assert(pos < arraySize);
 	return arrayData[pos];
 }
 
 template<typename T, size_t N>
 inline T & Array<T, N>::operator[](size_t pos)
 {
-	return at(pos);
+	DEFINE_ARRAY_DATA;
+
+	return arrayData[pos];
 }
 
 template<typename T, size_t N>
 inline const T & Array<T, N>::operator[](size_t pos) const
 {
-	return at(pos);
+	DEFINE_ARRAY_DATA;
+
+	return arrayData[pos];
 }
 
 template<typename T, size_t N>
@@ -473,7 +481,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, const T & value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()));
 
 	++arraySize;
 	if (pos != (arraySize - 1))
@@ -500,7 +508,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, T && value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()));
 
 	++arraySize;
 	if (pos != (arraySize - 1))
@@ -527,7 +535,7 @@ inline Iterator<T> Array<T, N>::insert(size_t pos, size_t count, const T & value
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && (count > 0) && ((arraySize + count) <= capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && (count > 0) && ((arraySize + count) <= capacity()));
 
 	if (pos != arraySize)
 	{
@@ -566,7 +574,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, const T & value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()));
 
 	new (&arrayData[arraySize]) T(std::move(arrayData[pos]));
 	arrayData[pos] = value;
@@ -586,7 +594,7 @@ inline Iterator<T> Array<T, N>::insertPush_back(size_t pos, T && value)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()) && (pos >= 0));
+	assert((pos <= arraySize) && ((arraySize + 1) <= capacity()));
 
 	new (&arrayData[arraySize]) T(std::move(arrayData[pos]));
 	arrayData[pos] = std::move(value);
@@ -606,7 +614,7 @@ inline Iterator<T> Array<T, N>::erase(size_t pos)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos < arraySize) && (pos >= 0));
+	assert((pos < arraySize));
 
 	arrayData[pos].~T();
 	for (size_t i = (pos + 1); i < arraySize; ++i)
@@ -630,7 +638,7 @@ inline Iterator<T> Array<T, N>::erase(size_t first, size_t last)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((first < arraySize) && (last <= arraySize) && (first >= 0) && (last >= 0) && (first < last));
+	assert((first < arraySize) && (last <= arraySize));
 
 	for (size_t i = first; i < last; ++i)
 	{
@@ -668,7 +676,7 @@ inline Iterator<T> Array<T, N>::erasePop_back(size_t pos)
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((pos < arraySize) && (pos >= 0));
+	assert((pos < arraySize));
 
 	arrayData[pos].~T();
 	arrayData[pos] = std::move(arrayData[arraySize - 1]);
@@ -709,7 +717,7 @@ inline void Array<T, N>::pop_back()
 {
 	DEFINE_ARRAY_DATA;
 
-	assert((arraySize - 1) >= 0);
+	assert(arraySize > 0);
 
 	arrayData[--arraySize].~T();
 }
@@ -750,6 +758,31 @@ inline Array<T, N>::~Array()
 		}
 	}
 	arraySize = 0;
+}
+
+template<typename T, size_t N>
+inline bool  Array<T, N>::operator==(const Array & rhs) const
+{
+	if (this->arraySize != rhs.arraySize)
+		return false;
+
+	DEFINE_ARRAY_DATA;
+	auto otherArrayData = rhs.getRightPointer();
+	assert(otherArrayData != nullptr);
+
+	for (size_t i = 0; i < this->arraySize; ++i)
+	{
+		if (arrayData[i] != otherArrayData[i])
+			return false;
+	}
+
+	return true;
+}
+
+template<typename T, size_t N>
+inline bool  Array<T, N>::operator!=(const Array & rhs) const
+{
+	return (!(this->operator==(rhs)));
 }
 
 namespace ArrayTestSuit

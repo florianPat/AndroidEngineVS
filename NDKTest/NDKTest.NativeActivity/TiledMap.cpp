@@ -2,8 +2,9 @@
 #include "Ifstream.h"
 #include "Utils.h"
 #include "TiledMapRenderComponent.h"
+#include <cstdlib>
 
-TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<std::string>&& toGameObjects)
+TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<String>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
 	Ifstream file;
@@ -14,12 +15,12 @@ TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventMa
 		utils::logBreak("Cant open file!");
 	}
 
-	std::string temp;
+	String temp;
 	file.getline(temp);
 
 	if (!file.eof())
 	{
-		std::string lineContent;
+		String lineContent;
 		file.getline(lineContent);
 		assert(utils::isWordInLine("<map", lineContent));
 
@@ -55,7 +56,7 @@ TiledMap::TiledMap(const std::string & filepath, GameObjectManager& gom, EventMa
 	}
 }
 
-Vector<Physics::Collider> TiledMap::getObjectGroup(const std::string& objectGroupName)
+Vector<Physics::Collider> TiledMap::getObjectGroup(const String& objectGroupName)
 {
 	auto result = objectGroups.find(objectGroupName);
 	if (result != objectGroups.end())
@@ -85,13 +86,13 @@ void TiledMap::draw(RenderWindow& renderWindow)
 	renderWindow.draw(textureSprite);
 }
 
-size_t TiledMap::getEndOfWord(const std::string & word, const std::string & lineContent, bool* result)
+size_t TiledMap::getEndOfWord(const String & word, const String & lineContent, bool* result)
 {
 	size_t o = 0;
 	*result = false;
 	while (o < lineContent.size() && !(*result))
 	{
-		std::string searchWord(word);
+		String searchWord(word);
 		auto it = searchWord.begin();
 		o = lineContent.find(it[0], o);
 		++it;
@@ -115,9 +116,9 @@ size_t TiledMap::getEndOfWord(const std::string & word, const std::string & line
 	return ++o;
 }
 
-std::string TiledMap::getLineContentBetween(std::string & lineContent, const std::string & endOfFirst, char secound)
+String TiledMap::getLineContentBetween(String & lineContent, const String & endOfFirst, char secound)
 {
-		std::string result;
+		String result;
 
 		bool resultValue;
 		size_t widthEndPos = getEndOfWord(endOfFirst, lineContent, &resultValue);
@@ -135,11 +136,11 @@ std::string TiledMap::getLineContentBetween(std::string & lineContent, const std
 		return result;
 }
 
-void TiledMap::ParseLayer(Ifstream & file, std::string& lineContent)
+void TiledMap::ParseLayer(Ifstream & file, String& lineContent)
 {
 	while (utils::isWordInLine("<layer", lineContent))
 	{
-		std::string layerName = getLineContentBetween(lineContent, "name", '"');
+		String layerName = getLineContentBetween(lineContent, "name", '"');
 		int layerWidth = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 		int layerHeight = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 
@@ -177,12 +178,12 @@ void TiledMap::ParseLayer(Ifstream & file, std::string& lineContent)
 	}
 }
 
-void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
+void TiledMap::ParseObjectGroups(Ifstream & file, String & lineContent)
 {
 	//ObjectGroup
 	while (utils::isWordInLine("<objectgroup", lineContent))
 	{
-		std::string objectGroupName = getLineContentBetween(lineContent, "name", '"');
+		String objectGroupName = getLineContentBetween(lineContent, "name", '"');
 		file.getline(lineContent);
 
 		Vector<Physics::Collider> objectVector;
@@ -205,7 +206,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, std::string & lineContent)
 	}
 }
 
-void TiledMap::MakeRenderTexture(Vector<std::string>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
+void TiledMap::MakeRenderTexture(Vector<String>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
 	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader()))
 	{
@@ -256,13 +257,13 @@ void TiledMap::MakeRenderTexture(Vector<std::string>& toGameObjects, GameObjectM
 	}
 }
 
-std::string TiledMap::ParseTiles(Ifstream & file)
+String TiledMap::ParseTiles(Ifstream & file)
 {
-	std::string lineContent;
+	String lineContent;
 	file.getline(lineContent);
 
 	bool gridInFile = false;
-	std::string temp;
+	String temp;
 	file.getline(temp); // <grid...
 	if (utils::isWordInLine("<grid", temp))
 	{
@@ -292,7 +293,7 @@ std::string TiledMap::ParseTiles(Ifstream & file)
 			assert(utils::isWordInLine("<image", lineContent));
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
-			std::string source = getLineContentBetween(lineContent, "source", '"');
+			String source = getLineContentBetween(lineContent, "source", '"');
 			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes<Texture>(source) });
 
 			file.getline(lineContent); //</tile>

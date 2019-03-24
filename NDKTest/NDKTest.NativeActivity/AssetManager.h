@@ -15,26 +15,26 @@ class AssetManager
 
 	static constexpr long long maxSize = Gigabyte(1);
 	long long currentSize = 0;
-	std::unordered_map<std::string, std::unique_ptr<char[]>> ressourceCache;
-	Vector<std::string> timeOfInsertCache;
+	std::unordered_map<String, std::unique_ptr<char[]>> ressourceCache;
+	Vector<String> timeOfInsertCache;
 	static AAssetManager* aassetManager;
-	std::unordered_map<std::string, AssetLoader> assetLoaderCache;
+	std::unordered_map<String, AssetLoader> assetLoaderCache;
 private:
 	AssetManager(AAssetManager* aassetManager);
 public:
 	AssetManager() = delete;
 	template <typename T>
-	T* getOrAddRes(const std::string& filename);
-	bool unloadNotUsedRes(const std::string& filename);
+	T* getOrAddRes(const String& filename);
+	bool unloadNotUsedRes(const String& filename);
 	void clear();
-	bool isLoaded(const std::string& filename);
+	bool isLoaded(const String& filename);
 	void reloadAllRes();
 	void read(AAsset* asset, void * buffer, size_t size);
-	void registerAssetLoader(const std::string& fileExt, const AssetLoader& assetLoader);
+	void registerAssetLoader(const String& fileExt, const AssetLoader& assetLoader);
 };
 
 template<typename T>
-T * AssetManager::getOrAddRes(const std::string & filename)
+T * AssetManager::getOrAddRes(const String & filename)
 {
 	auto res = ressourceCache.find(filename);
 	if (res != ressourceCache.end())
@@ -47,7 +47,7 @@ T * AssetManager::getOrAddRes(const std::string & filename)
 		std::unique_ptr<char[]> asset = std::make_unique<char[]>(sizeof(T));
 		T* tP = (T*) asset.get();
 		*tP = T();
-		std::string ext = filename.substr(filename.length() - 3);
+		String ext = filename.substr(filename.length() - 3);
 		assert(assetLoaderCache.find(ext) != assetLoaderCache.end());
 		AssetLoader assetLoader = assetLoaderCache.at(ext);
 

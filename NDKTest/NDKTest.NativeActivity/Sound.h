@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vector.h"
-#include <string>
+#include "String.h"
 
 class Sound
 {
@@ -61,8 +61,8 @@ private:
 	int nChannels = 0;
 	int nSamples = 0;
 public:
-	bool loadFromFile(const std::string& filename);
-	bool reloadFromFile(const std::string& filename);
+	bool loadFromFile(const String& filename);
+	bool reloadFromFile(const String& filename);
 public:
 	Sound();
 	const Vector<Vector<short>>& getSamples() const;

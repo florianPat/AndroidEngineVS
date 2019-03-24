@@ -1,6 +1,6 @@
 #pragma once
 
-//Other std implementations TODO: string, unordered_map, unique_ptr, map/multimap
+//Other std implementations TODO: unordered_map, unique_ptr, map/multimap
 
 #include "HeapArray.h"
 
@@ -15,7 +15,8 @@ private:
 	void checkAndExpand(size_t minNewSize);
 public:
 	Vector();
-	Vector(size_t count, const T& value = T());
+	Vector(size_t count);
+	Vector(size_t count, const T& value);
 	Vector(std::initializer_list<T> initList);
 	Vector(const Vector& other);
 	Vector& operator=(const Vector& rhs);
@@ -71,8 +72,8 @@ public:
 	void resize(size_t count, const T& value);
 	void swap(Vector& other);
 
-	bool operator==(Vector& rhs);
-	bool operator!=(Vector& rhs);
+	bool operator==(const Vector& rhs) const;
+	bool operator!=(const Vector& rhs) const;
 	//NOTE: If you need other compares, make them!
 };
 
@@ -129,6 +130,11 @@ inline Vector<T>::Vector() : vectorArray(2)
 }
 
 template<typename T>
+inline Vector<T>::Vector(size_t count) : vectorArray(count)
+{
+}
+
+template<typename T>
 inline Vector<T>::Vector(size_t count, const T & value) : vectorArray(count, 4, value)
 {
 }
@@ -171,25 +177,25 @@ inline Vector<T>& Vector<T>::operator=(Vector && rhs)
 template<typename T>
 inline T & Vector<T>::at(size_t pos)
 {
-	return vectorArray[pos];
+	return vectorArray.at(pos);
 }
 
 template<typename T>
 inline const T & Vector<T>::at(size_t pos) const
 {
-	return vectorArray[pos];
+	return vectorArray.at(pos);
 }
 
 template<typename T>
 inline T & Vector<T>::operator[](size_t pos)
 {
-	return at(pos);
+	return vectorArray[pos];
 }
 
 template<typename T>
 inline const T & Vector<T>::operator[](size_t pos) const
 {
-	return at(pos);
+	return vectorArray[pos];
 }
 
 template<typename T>
@@ -480,13 +486,13 @@ inline void Vector<T>::swap(Vector & other)
 }
 
 template<typename T>
-inline bool Vector<T>::operator==(Vector& rhs)
+inline bool Vector<T>::operator==(const Vector& rhs) const
 {
 	return (vectorArray == rhs.vectorArray);
 }
 
 template<typename T>
-inline bool Vector<T>::operator!=(Vector& rhs)
+inline bool Vector<T>::operator!=(const Vector& rhs) const
 {
 	return (vectorArray != rhs.vectorArray);
 }

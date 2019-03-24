@@ -69,10 +69,11 @@ void VectorTestSuit::runVectorUnitTest()
 	});
 }
 
-#include <vector>
-
 void VectorTestSuit::runStdVectorTest()
 {
+#if 0
+#include <vector>
+
 	UnitTester::test([]()
 	{
 		std::vector<int> vec;
@@ -137,4 +138,5 @@ void VectorTestSuit::runStdVectorTest()
 
 		return true;
 	});
+#endif
 }

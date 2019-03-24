@@ -1,28 +1,28 @@
 #include "InkscapeAnimation.h"
 #include "Utils.h"
 
-void InkscapeAnimation::setupInkscapeKeyFrames(const Vector<std::string>& regionNames)
+void InkscapeAnimation::setupInkscapeKeyFrames(const Vector<String>& regionNames)
 {
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{
 		if (iae.isElementInMap(*it))
-			inkscapeKeyFrames.push_back(std::map<std::string, IntRect>{ iae.getElementMap(*it) });
+			inkscapeKeyFrames.push_back(std::unordered_map<String, IntRect>{ iae.getElementMap(*it) });
 	}
 }
 
-InkscapeAnimation::InkscapeAnimation(const Vector<std::string>& regionNames, const TextureAtlas & atlas, const std::string& inkscapeFileName, int64_t frameDuration, PlayMode type)
+InkscapeAnimation::InkscapeAnimation(const Vector<String>& regionNames, const TextureAtlas & atlas, const String& inkscapeFileName, int64_t frameDuration, PlayMode type)
 	: Animation(regionNames, atlas, frameDuration, type), iae(inkscapeFileName, regionNames), inkscapeKeyFrames()
 {
 	setupInkscapeKeyFrames(regionNames);
 }
 
-InkscapeAnimation::InkscapeAnimation(const Vector<std::string>& regionNames, const TextureAtlas & atlas, const InkscapeAnimationElement & iae, int64_t frameDuration, PlayMode type)
+InkscapeAnimation::InkscapeAnimation(const Vector<String>& regionNames, const TextureAtlas & atlas, const InkscapeAnimationElement & iae, int64_t frameDuration, PlayMode type)
 	: Animation(regionNames, atlas, frameDuration, type), iae(iae), inkscapeKeyFrames()
 {
 	setupInkscapeKeyFrames(regionNames);
 }
 
-void InkscapeAnimation::setInkscapeAnimationElement(const std::string& inkscapeFileName, const Vector<std::string>& regionNames)
+void InkscapeAnimation::setInkscapeAnimationElement(const String& inkscapeFileName, const Vector<String>& regionNames)
 {
 	inkscapeKeyFrames.clear();
 
@@ -30,11 +30,11 @@ void InkscapeAnimation::setInkscapeAnimationElement(const std::string& inkscapeF
 
 	for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
 	{
-		inkscapeKeyFrames.push_back(std::map<std::string, IntRect>{ iae.getElementMap(*it) });
+		inkscapeKeyFrames.push_back(std::unordered_map<String, IntRect>{ iae.getElementMap(*it) });
 	}
 }
 
-IntRect InkscapeAnimation::getInkscapeAnimationElementKeyFrame(const std::string & keyFrameId) const
+IntRect InkscapeAnimation::getInkscapeAnimationElementKeyFrame(const String & keyFrameId) const
 {
 	size_t i = (playMode == PlayMode::LOOPED || playMode == PlayMode::NORMAL) ? keyFrameIt : keyFrameItReverse;
 

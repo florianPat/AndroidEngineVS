@@ -788,8 +788,8 @@ void RenderWindow::setupGfxGpu()
 {
 	CallGL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	shaderSprite = std::make_unique<Shader>("ShaderSprite", Vector<std::string>{ "position", "texCoord" });
-	shaderRectShape = std::make_unique<Shader>("ShaderRectShape", Vector<std::string>{ "position" });
+	shaderSprite = std::make_unique<Shader>("ShaderSprite", Vector<String>{ "position", "texCoord" });
+	shaderRectShape = std::make_unique<Shader>("ShaderRectShape", Vector<String>{ "position" });
 
 	assetManager.reloadAllRes();
 }

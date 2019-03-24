@@ -4,7 +4,7 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include "Clock.h"
-#include <string>
+#include "String.h"
 #include "Sprite.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"

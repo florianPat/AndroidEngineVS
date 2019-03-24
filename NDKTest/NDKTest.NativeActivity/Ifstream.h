@@ -1,7 +1,7 @@
 #pragma once
 
 #include "android_native_app_glue.h"
-#include <string>
+#include "String.h"
 
 class Ifstream final
 {
@@ -12,7 +12,7 @@ private:
 	AAssetManager* aassetManager = nullptr;
 	bool good = true;
 public:
-	Ifstream(const std::string& filename);
+	Ifstream(const String& filename);
 	Ifstream();
 	Ifstream(const Ifstream& other) = delete;
 	Ifstream(Ifstream&& other);
@@ -22,14 +22,14 @@ public:
 	explicit operator bool() const;
 	bool operator!() const;
 	bool eof();
-	void getline(std::string& line);
+	void getline(String& line);
 	void read(void* s, uint n);
 	char get();
 	std::streampos tellg();
 	void seekg(uint pos);
 	void seekg(uint off, SeekDir way);
 	long long getSize();
-	void open(const std::string& filename);
+	void open(const String& filename);
 	void getFullData(void* s);
 	void close();
 };

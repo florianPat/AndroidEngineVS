@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "AssetManager.h"
 
-Ifstream::Ifstream(const std::string & filename) : aassetManager(AssetManager::aassetManager)
+Ifstream::Ifstream(const String & filename) : aassetManager(AssetManager::aassetManager)
 {
 	open(filename);
 }
@@ -47,9 +47,9 @@ bool Ifstream::eof()
 	return (AAsset_getRemainingLength64(asset) == 0);
 }
 
-void Ifstream::getline(std::string & line)
+void Ifstream::getline(String & line)
 {
-	line = "";
+	line.clear();
 	char c;
 	while (!eof())
 	{
@@ -67,7 +67,7 @@ long long Ifstream::getSize()
 	return AAsset_getLength64(asset);
 }
 
-void Ifstream::open(const std::string & filename)
+void Ifstream::open(const String & filename)
 {
 	asset = AAssetManager_open(aassetManager, filename.c_str(), AASSET_MODE_UNKNOWN);
 
@@ -95,7 +95,8 @@ void Ifstream::close()
 
 void Ifstream::read(void * s, uint n)
 {
-	assert(AAsset_read(asset, s, n) > 0);
+	int result = AAsset_read(asset, s, n);
+	assert(result > 0);
 }
 
 char Ifstream::get()
@@ -112,7 +113,8 @@ std::streampos Ifstream::tellg()
 
 void Ifstream::seekg(uint pos)
 {
-	assert(AAsset_seek64(asset, pos, SEEK_SET) != -1);
+	off64_t result = AAsset_seek64(asset, pos, SEEK_SET);
+	assert(result != -1);
 }
 
 void Ifstream::seekg(uint off, SeekDir way)
@@ -121,17 +123,20 @@ void Ifstream::seekg(uint off, SeekDir way)
 	{
 		case SeekDir::beg:
 		{
-			assert(AAsset_seek64(asset, off, SEEK_SET) != -1);
+			off64_t result = AAsset_seek64(asset, off, SEEK_SET);
+			assert(result != -1);
 			break;
 		}
 		case SeekDir::cur:
 		{
-			assert(AAsset_seek64(asset, off, SEEK_CUR) != -1);
+			off64_t result = AAsset_seek64(asset, off, SEEK_CUR);
+			assert(result != -1);
 			break;
 		}
 		case SeekDir::end:
 		{
-			assert(AAsset_seek64(asset, off, SEEK_END) != -1);
+			off64_t result = AAsset_seek64(asset, off, SEEK_END);
+			assert(result != -1);
 			break;
 		}
 		default:
