@@ -13,8 +13,8 @@ class TextureRegion
 {
 	friend class TextureAtlas;
 
-	String textureAtlasFileName;
-	String filename;
+	ShortString textureAtlasFileName;
+	LongString filename;
 	Vector2i xy;
 	Vector2i size;
 
@@ -37,11 +37,11 @@ class TextureAtlas
 {
 	struct FileHeader
 	{
-		String name;
+		ShortString name;
 		Vector2i size;
-		String format;
-		String filter[2];
-		String repeat;
+		ShortString format;
+		ShortString filter[2];
+		ShortString repeat;
 	};
 public:
 	TextureAtlas(const String& filepath, AssetManager* assetManger);

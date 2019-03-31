@@ -11,9 +11,10 @@ class String
 public:
 	static constexpr int SHORT_STRING_SIZE = 16;
 	static constexpr size_t npos = -1;
+//NOTE: Is protected for the copy/move-constructor of Short- / LongString!
 protected:
 	const bool shortRep;
-
+private:
 	union StringUnion
 	{
 		Array<char, SHORT_STRING_SIZE> stringArrayShort;
@@ -21,14 +22,16 @@ protected:
 
 		~StringUnion();
 	} stringUnion;
-public:
-	String();
-	String(size_t count, bool shouldBeALongString = false);
-	String(size_t count, char c, bool shouldBeALongString = false);
+protected:
+	String(size_t count, bool shortRepIn);
+	String(size_t count, char c, bool shortRepIn);
 	//String(const String& other, size_t pos, size_t count);
 	//String(const char* s, size_t count);
+public:
+	String(size_t count);
+	String(size_t count, char c);
 	template <size_t N>
-	String(const char (&s) [N], bool shouldBeALongString = false);
+	String(const char(&s)[N], bool shortRepIn = (N <= SHORT_STRING_SIZE));
 	String(const String& other);
 	String(String&& other);
 	String& operator=(const String& rhs);
@@ -115,10 +118,11 @@ public:
 };
 
 template<size_t N>
-inline String::String(const char(&s)[N], bool shouldBeALongString) : shortRep(N >= SHORT_STRING_SIZE || shouldBeALongString ? false : true), stringUnion{{ { {0} } }}
+inline String::String(const char(&s)[N], bool shortRepIn) : shortRep(shortRepIn), stringUnion{{ { {0} } }}
 {
 	if (shortRep)
 	{
+		assert(N <= SHORT_STRING_SIZE);
 		for (size_t i = 0; i < N; ++i)
 			stringUnion.stringArrayShort.push_back(s[i]);
 	}
@@ -141,6 +145,32 @@ inline String & String::operator=(const char(&s)[N])
 	return *this;
 }
 
+struct ShortString : public String
+{
+	ShortString();
+	ShortString(size_t count);
+	ShortString(size_t count, char c);
+	template <size_t N>
+	ShortString(const char(&s)[N]);
+	ShortString(const String& other);
+	ShortString(String&& other);
+	ShortString& operator=(const String& rhs);
+	ShortString& operator=(String&& rhs);
+};
+
+struct LongString : public String
+{
+	LongString();
+	LongString(size_t count);
+	LongString(size_t count, char c);
+	template <size_t N>
+	LongString(const char(&s)[N]);
+	LongString(const String& other);
+	LongString(String&& other);
+	LongString& operator=(const String& rhs);
+	LongString& operator=(String&& rhs);
+};
+
 #include <string>
 
 namespace std {
@@ -148,6 +178,26 @@ namespace std {
 	struct hash<String> {
 	public:
 		size_t operator()(const String &s) const
+		{
+			//TODO: Build own hasher!
+			return std::hash<std::string>()(s.c_str());
+		}
+	};
+
+	template<>
+	struct hash<ShortString> {
+	public:
+		size_t operator()(const ShortString &s) const
+		{
+			//TODO: Build own hasher!
+			return std::hash<std::string>()(s.c_str());
+		}
+	};
+
+	template<>
+	struct hash<LongString> {
+	public:
+		size_t operator()(const LongString &s) const
 		{
 			//TODO: Build own hasher!
 			return std::hash<std::string>()(s.c_str());
@@ -165,4 +215,14 @@ namespace StringUnitTest
 {
 	void runStringUnitTests();
 	void runStdStringUnitTests();
+}
+
+template<size_t N>
+inline ShortString::ShortString(const char(&s)[N]) : String(s, true)
+{
+}
+
+template<size_t N>
+inline LongString::LongString(const char(&s)[N]) : String(s, false)
+{
 }

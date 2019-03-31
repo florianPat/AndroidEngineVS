@@ -1,7 +1,7 @@
 #include "Benchmark.h"
 #include "Utils.h"
 
-void Benchmark::start(const String & benchmarkNameIn)
+void Benchmark::start(const ShortString & benchmarkNameIn)
 {
 	assert(running == false);
 	running = true;

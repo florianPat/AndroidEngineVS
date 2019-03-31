@@ -7,11 +7,11 @@ class Benchmark
 {
 	bool running = false;
 	Clock clock;
-	String benchmarkName;
+	ShortString benchmarkName;
 
 	Benchmark() = default;
 public:
-	void start(const String& benchmarkNameIn);
+	void start(const ShortString& benchmarkNameIn);
 	void stop();
 
 	static Benchmark getBenchmark();

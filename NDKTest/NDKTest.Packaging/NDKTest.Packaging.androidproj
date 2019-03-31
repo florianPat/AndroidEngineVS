@@ -133,10 +133,10 @@
     <Content Include="assets\assetsRaw\player\PlayerWalk1.png" />
     <Content Include="assets\assetsRaw\player\PlayerWalk2.png" />
     <Content Include="assets\nice.wav" />
-    <Content Include="assets\ShaderRectShape.fs" />
-    <Content Include="assets\ShaderRectShape.vs" />
-    <Content Include="assets\ShaderSprite.fs" />
-    <Content Include="assets\ShaderSprite.vs" />
+    <Content Include="assets\SRectShape.fs" />
+    <Content Include="assets\SRectShape.vs" />
+    <Content Include="assets\SSprite.fs" />
+    <Content Include="assets\SSprite.vs" />
     <Content Include="assets\ship.png" />
     <Content Include="assets\testLevel.tmx" />
     <Content Include="assets\Truhe.png" />

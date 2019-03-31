@@ -1,11 +1,7 @@
 #include "String.h"
 #include <utility>
 
-String::String() : String(1, true)
-{
-}
-
-String::String(size_t count, bool shouldBeALongString) : shortRep((count + 1) > SHORT_STRING_SIZE || shouldBeALongString ? false : true), stringUnion{ { { {0} } } }
+String::String(size_t count, bool shortRepIn) : shortRep(shortRepIn), stringUnion{ { { {0} } } }
 {
 	if (!shortRep)
 	{
@@ -14,11 +10,13 @@ String::String(size_t count, bool shouldBeALongString) : shortRep((count + 1) > 
 	}
 	else
 	{
+		//NOTE: I can just ignore count here
+		//assert(count < SHORT_STRING_SIZE);
 		stringUnion.stringArrayShort.push_back('\0');
 	}
 }
 
-String::String(size_t count, char c, bool shouldBeALongString) : shortRep((count + 1) > SHORT_STRING_SIZE || shouldBeALongString ? false : true), stringUnion{{ { {0} } }}
+String::String(size_t count, char c, bool shortRepIn) : shortRep(shortRepIn), stringUnion{{ { {0} } }}
 {
 	if (!shortRep)
 	{
@@ -27,9 +25,18 @@ String::String(size_t count, char c, bool shouldBeALongString) : shortRep((count
 	}
 	else
 	{
+		assert(count < SHORT_STRING_SIZE);
 		stringUnion.stringArrayShort.insert(0, count, c);
 		stringUnion.stringArrayShort.push_back('\0');
 	}
+}
+
+String::String(size_t count) : String(count, (count < SHORT_STRING_SIZE))
+{
+}
+
+String::String(size_t count, char c) : String(count, c, (count < SHORT_STRING_SIZE))
+{
 }
 
 String::String(const String & other) : shortRep(other.shortRep), stringUnion{{ { {0} } }}
@@ -50,6 +57,8 @@ String::String(String && other) : shortRep(other.shortRep), stringUnion{{ { {0} 
 
 String & String::operator=(const String & rhs)
 {
+	assert(rhs.shortRep == shortRep);
+
 	this->~String();
 
 	new (this) String(rhs);
@@ -59,6 +68,8 @@ String & String::operator=(const String & rhs)
 
 String & String::operator=(String && rhs)
 {
+	assert(rhs.shortRep == shortRep);
+
 	this->~String();
 
 	new (this) String(std::move(rhs));
@@ -648,4 +659,76 @@ void StringUnitTest::runStdStringUnitTests()
 		return true;
 	});
 #endif
+}
+
+ShortString::ShortString() : String(0, true)
+{
+}
+
+ShortString::ShortString(size_t count) : String(count, true)
+{
+}
+
+ShortString::ShortString(size_t count, char c) : String(count, c, true)
+{
+}
+
+ShortString::ShortString(const String & other) : String(other)
+{
+	assert(shortRep == true);
+}
+
+ShortString::ShortString(String && other) : String(other)
+{
+	assert(shortRep == true);
+}
+
+ShortString & ShortString::operator=(const String & rhs)
+{
+	((String*)(this))->operator=(rhs);
+
+	return *this;
+}
+
+ShortString & ShortString::operator=(String && rhs)
+{
+	((String*)(this))->operator=(std::move(rhs));
+
+	return *this;
+}
+
+LongString::LongString() : String(SHORT_STRING_SIZE, false)
+{
+}
+
+LongString::LongString(size_t count) : String(count, false)
+{
+}
+
+LongString::LongString(size_t count, char c) : String(count, c, false)
+{
+}
+
+LongString::LongString(const String & other) : String(other)
+{
+	assert(shortRep == false);
+}
+
+LongString::LongString(String && other) : String(other)
+{
+	assert(shortRep == false);
+}
+
+LongString & LongString::operator=(const String & rhs)
+{
+	((String*)(this))->operator=(rhs);
+
+	return *this;
+}
+
+LongString & LongString::operator=(String && rhs)
+{
+	((String*)(this))->operator=(std::move(rhs));
+
+	return *this;
 }

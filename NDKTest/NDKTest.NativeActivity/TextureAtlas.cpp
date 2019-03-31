@@ -14,15 +14,16 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 		utils::logBreak("Cant open file!");
 	}
 
-	String tempString;
+	LongString tempString;
 
 	file.getline(tempString);
 
 	if (!file.eof())
 	{
+		LongString lineContent;
+
 		for (int i = 0; i < FILE_HEADER_LINE_SIZE; ++i)
 		{
-			String lineContent;
 			file.getline(lineContent);
 
 			switch (i)
@@ -34,7 +35,7 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 				case 1:
 				{
 					int width, height;
-					String widthChar, heightChar;
+					ShortString widthChar, heightChar;
 					
 					
 					widthChar = getLineContentBetweeen(lineContent, ' ', ',');
@@ -86,7 +87,7 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 				break;
 			}
 
-			String lineContent;
+			LongString lineContent;
 			file.getline(lineContent);
 
 			switch (i)
@@ -154,7 +155,7 @@ void TextureAtlas::addRegion(const TextureRegion & adder)
 
 String TextureAtlas::getLineContentBetweeen(String & lineContent, char first, char secound)
 {
-	String result;
+	LongString result;
 
 	size_t spacePos = lineContent.find(first);
 	lineContent.erase(0, ++spacePos);

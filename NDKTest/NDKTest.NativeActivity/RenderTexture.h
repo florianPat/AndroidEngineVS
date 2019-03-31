@@ -6,7 +6,6 @@
 #include "Mat4x4.h"
 #include "Shader.h"
 #include "Vector.h"
-#include "String.h"
 #include <memory>
 
 class RenderTexture

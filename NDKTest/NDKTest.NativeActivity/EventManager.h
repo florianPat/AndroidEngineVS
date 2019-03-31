@@ -6,6 +6,7 @@
 #include <memory>
 #include "Vector.h"
 
+//TODO: Replace std::function
 typedef std::pair<unsigned int, std::function<void(EventData*)>> DelegateFunction;
 
 class EventManager

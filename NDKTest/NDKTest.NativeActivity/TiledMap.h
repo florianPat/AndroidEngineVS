@@ -19,25 +19,25 @@ class TiledMap
 	};
 	struct Layer
 	{
-		String name;
+		ShortString name;
 		int width, height;
 		Vector<Tile> tiles;
 	};
 	struct ObjectGroup
 	{
-		String name;
+		ShortString name;
 		Vector<Physics::Collider> objects;
 	};
 	std::unordered_map<int, Tile> tiles;
-	std::unordered_map<String, Layer> layers;
-	std::unordered_map<String, ObjectGroup> objectGroups;
+	std::unordered_map<ShortString, Layer> layers;
+	std::unordered_map<ShortString, ObjectGroup> objectGroups;
 	int mapWidth = 0, mapHeight = 0, tileWidth = 0, tileHeight = 0;
 
 	RenderTexture texture;
 	Sprite textureSprite;
 	AssetManager* assetManager = nullptr;
 public:
-	TiledMap(const String& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<String>&& toGameObjects = Vector<String>{});
+	TiledMap(const String& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<ShortString>&& toGameObjects = Vector<ShortString>{});
 	Vector<Physics::Collider> getObjectGroup(const String& objectGroupName);
 	Vector<ObjectGroup> getObjectGroups();
 	void draw(RenderWindow& renderWindow);
@@ -48,5 +48,5 @@ private:
 	String ParseTiles(Ifstream& file);
 	void ParseLayer(Ifstream& file, String& lineContent);
 	void ParseObjectGroups(Ifstream& file, String& lineContent);
-	void MakeRenderTexture(Vector<String>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
+	void MakeRenderTexture(Vector<ShortString>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window);
 };

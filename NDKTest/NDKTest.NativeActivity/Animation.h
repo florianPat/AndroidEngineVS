@@ -28,7 +28,7 @@ protected:
 	bool paused = false;
 public:
 	Animation(Vector<TextureRegion>& keyFrames, int64_t frameDuration, PlayMode type);
-	Animation(const Vector<String>& regionNames, const TextureAtlas& atlas, int64_t frameDuration = Time::seconds(0.2f).asMicroseconds(), PlayMode type = PlayMode::LOOPED);
+	Animation(const Vector<ShortString>& regionNames, const TextureAtlas& atlas, int64_t frameDuration = Time::seconds(0.2f).asMicroseconds(), PlayMode type = PlayMode::LOOPED);
 	PlayMode getPlayMode();
 	int64_t getFrameDuration();
 	void setFrameDuration(int64_t frameDuration);

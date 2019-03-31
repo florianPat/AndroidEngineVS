@@ -4,7 +4,7 @@
 #include "TiledMapRenderComponent.h"
 #include <cstdlib>
 
-TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<String>&& toGameObjects)
+TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<ShortString>&& toGameObjects)
 	: tiles(), layers(), objectGroups(), texture(), textureSprite(), assetManager(window.getAssetManager())
 {
 	Ifstream file;
@@ -15,12 +15,12 @@ TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager
 		utils::logBreak("Cant open file!");
 	}
 
-	String temp;
+	LongString temp;
 	file.getline(temp);
 
 	if (!file.eof())
 	{
-		String lineContent;
+		LongString lineContent;
 		file.getline(lineContent);
 		assert(utils::isWordInLine("<map", lineContent));
 
@@ -118,22 +118,24 @@ size_t TiledMap::getEndOfWord(const String & word, const String & lineContent, b
 
 String TiledMap::getLineContentBetween(String & lineContent, const String & endOfFirst, char secound)
 {
-		String result;
+	bool resultValue;
+	size_t widthEndPos = getEndOfWord(endOfFirst, lineContent, &resultValue);
+	if (resultValue)
+	{
+		lineContent.erase(0, widthEndPos += 2);
 
-		bool resultValue;
-		size_t widthEndPos = getEndOfWord(endOfFirst, lineContent, &resultValue);
-		if (resultValue)
-		{
-			lineContent.erase(0, widthEndPos += 2);
+		size_t kommaPos = lineContent.find(secound);
 
-			size_t kommaPos = lineContent.find(secound);
+		String result(kommaPos);
 
-			result = lineContent.substr(0, kommaPos);
+		result = lineContent.substr(0, kommaPos);
 
-			lineContent.erase(0, ++kommaPos);
-		}
+		lineContent.erase(0, ++kommaPos);
 
 		return result;
+	}
+	else
+		return ShortString();
 }
 
 void TiledMap::ParseLayer(Ifstream & file, String& lineContent)
@@ -206,7 +208,7 @@ void TiledMap::ParseObjectGroups(Ifstream & file, String & lineContent)
 	}
 }
 
-void TiledMap::MakeRenderTexture(Vector<String>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
+void TiledMap::MakeRenderTexture(Vector<ShortString>& toGameObjects, GameObjectManager& gom, EventManager& em, RenderWindow& window)
 {
 	if (texture.create(mapWidth*tileWidth, mapHeight*tileHeight, window.getSpriteShader()))
 	{
@@ -259,11 +261,11 @@ void TiledMap::MakeRenderTexture(Vector<String>& toGameObjects, GameObjectManage
 
 String TiledMap::ParseTiles(Ifstream & file)
 {
-	String lineContent;
+	LongString lineContent;
 	file.getline(lineContent);
 
 	bool gridInFile = false;
-	String temp;
+	LongString temp;
 	file.getline(temp); // <grid...
 	if (utils::isWordInLine("<grid", temp))
 	{

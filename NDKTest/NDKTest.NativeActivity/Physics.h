@@ -91,8 +91,8 @@ private:
 	struct PhysicElement
 	{
 		bool collisionIdInPointer;
-		Vector<String> collisionIdValue;
-		Vector<String>* collisionIdPointer;
+		Vector<ShortString> collisionIdValue;
+		Vector<ShortString>* collisionIdPointer;
 
 		bool collidersInPointer;
 		union
@@ -102,7 +102,7 @@ private:
 		} colliders;
 	public:
 		Collider* getCollider() const;
-		Vector<String>* getCollisionIds() const;
+		Vector<ShortString>* getCollisionIds() const;
 	};
 public:
 	class Body
@@ -120,7 +120,7 @@ public:
 
 		struct TriggerInformation
 		{
-			String triggerElementCollision = "";
+			ShortString triggerElementCollision = "";
 			TriggerBodyPart triggerBodyPart = TriggerBodyPart::NONE;
 		};
 
@@ -129,28 +129,28 @@ public:
 		bool triggered = false;
 		TriggerInformation triggerInformation = {};
 		Vector2f pos;
-		String id;
+		ShortString id;
 		Vector<PhysicElement> physicsElements;
 	public:
 		Vector2f vel = { 0.0f, 0.0f };
 	public:
 		//Should be called, if the object is moving
-		Body(Vector2f& pos, String name, Collider* collider, Vector<String>* collisionId, bool isTrigger = false, bool isStatic = false);
-		Body(Vector2f& pos, String name, Collider* collider, bool isTrigger = false, bool isStatic = false, Vector<String> collisionId = {});
+		Body(Vector2f& pos, ShortString name, Collider* collider, Vector<ShortString>* collisionId, bool isTrigger = false, bool isStatic = false);
+		Body(Vector2f& pos, ShortString name, Collider* collider, bool isTrigger = false, bool isStatic = false, Vector<ShortString> collisionId = {});
 		//Should be called if the object, is a static one
-		Body(String name, Collider collider, bool isTrigger = false, bool isStatic = true, Vector<String> collisionId = {});
+		Body(ShortString name, Collider collider, bool isTrigger = false, bool isStatic = true, Vector<ShortString> collisionId = {});
 		//To have one name for a lot of Colliders. The body you have to pass by value, because pos and that does not make sense to manipulate here!
-		Body(String name, Vector<Collider> colliders, bool isTrigger = false);
+		Body(ShortString name, Vector<Collider> colliders, bool isTrigger = false);
 	public:
 		bool getIsTriggerd();
 		Vector2f& getPos();
 		void setPos(Vector2f newPos);
 		TriggerInformation& getTriggerInformation();
-		String& getId();
+		ShortString& getId();
 	};
 private:
 	static constexpr float gravity = 9.81f;
-	std::unordered_map<String, std::unique_ptr<Body>> bodies;
+	std::unordered_map<ShortString, std::unique_ptr<Body>> bodies;
 private:
 	void handleCollision(Body* itBody, Body* collideElementBody, Collider & bodyCollider,
 						 const Collider& elementCollider);
@@ -162,7 +162,7 @@ public:
 	Body* addElementPointer(std::unique_ptr<Body> body);
 	//Use this otherwise
 	void addElementValue(Body body);
-	bool removeElementById(String& id);
+	bool removeElementById(ShortString& id);
 	static void applySpriteToBoundingBox(const Sprite& sprite, Collider& boundingBox);
-	Vector<String> getAllCollisionIdsWhichContain(const String& string);
+	Vector<ShortString> getAllCollisionIdsWhichContain(const ShortString& string);
 };

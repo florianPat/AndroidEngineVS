@@ -3,14 +3,14 @@
 #include "Ifstream.h"
 #include <cstdlib>
 
-InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileName, const Vector<String>& regionNames)
+InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileName, const Vector<ShortString>& regionNames)
 	: elementMap()
 {
 	Ifstream file;
 	file.open(inkscapeFileName);
 	assert(file);
 
-	String lineContent;
+	LongString lineContent;
 
 	for(int iteration = 0; !file.eof(); ++iteration)
 	{
@@ -33,8 +33,8 @@ InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileNam
 		for (file.getline(lineContent); lineContent.find("<g") != String::npos; file.getline(lineContent))
 		{
 			file.getline(lineContent); //<g
-			String groupId;
-			std::unordered_map<String, IntRect> rectMap;
+			ShortString groupId;
+			std::unordered_map<ShortString, IntRect> rectMap;
 			Vector2i translationVec = { 0, 0 };
 			Vector2i scalingVec = { 1, 1 };
 			bool shouldAdd = true;
@@ -45,7 +45,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileNam
 					groupId = utils::getWordBetweenChars(lineContent, '"', '"');
 					if (!regionNames.empty())
 					{
-						if (regionNames[0] == "Process all groups")
+						if (regionNames[0] == "Process all")
 							continue;
 					}
 					for (auto it = regionNames.begin(); it != regionNames.end(); ++it)
@@ -59,7 +59,7 @@ InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileNam
 				}
 				else if (lineContent.find("<rect") != String::npos)
 				{
-					String id;
+					ShortString id;
 					IntRect rect;
 					bool shouldAdd = true;
 					bool addWidth = false;
@@ -222,19 +222,19 @@ InkscapeAnimationElement::InkscapeAnimationElement(const String& inkscapeFileNam
 }
 
 InkscapeAnimationElement::InkscapeAnimationElement(const String & inkscapeFileName) 
-	: InkscapeAnimationElement(inkscapeFileName, Vector<String>(1, "Process all groups"))
+	: InkscapeAnimationElement(inkscapeFileName, Vector<ShortString>(1, ShortString("Process all")))
 {
 }
 
 bool InkscapeAnimationElement::FindGroupLayer(String & lineContent) const
 {
-	if (lineContent.find(String("id=\"layer")) == String::npos)
+	if (lineContent.find("id=\"layer") == String::npos)
 		return true;
 	else
 		return false;
 }
 
-IntRect InkscapeAnimationElement::getElementRect(String& keyFrameId, String& elementId) const
+IntRect InkscapeAnimationElement::getElementRect(ShortString& keyFrameId, ShortString& elementId) const
 {
 	auto keyFrameResult = elementMap.find(keyFrameId);
 	if (keyFrameResult != elementMap.end())
@@ -255,7 +255,7 @@ IntRect InkscapeAnimationElement::getElementRect(String& keyFrameId, String& ele
 	}
 }
 
-std::unordered_map<String, IntRect> InkscapeAnimationElement::getElementMap(const String & keyFrameId) const
+std::unordered_map<ShortString, IntRect> InkscapeAnimationElement::getElementMap(const ShortString & keyFrameId) const
 {
 	auto result = elementMap.find(keyFrameId);
 	if (result != elementMap.end())
@@ -263,11 +263,11 @@ std::unordered_map<String, IntRect> InkscapeAnimationElement::getElementMap(cons
 	else
 	{
 		InvalidCodePath;
-		return std::unordered_map<String, IntRect>();
+		return std::unordered_map<ShortString, IntRect>();
 	}
 }
 
-bool InkscapeAnimationElement::isElementInMap(const String & keyFrameId) const
+bool InkscapeAnimationElement::isElementInMap(const ShortString & keyFrameId) const
 {
 	auto result = elementMap.find(keyFrameId);
 	return result != elementMap.end();

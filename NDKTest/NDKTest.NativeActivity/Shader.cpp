@@ -9,10 +9,10 @@ String loadShader(const String& filename)
 	file.open(filename);
 	assert(file);
 
-	String result;
+	LongString result(file.getSize());
 	while (!file.eof())
 	{
-		String line;
+		LongString line;
 		file.getline(line);
 
 		result += line + '\n';
@@ -76,8 +76,11 @@ GLuint createShader(const String& text, GLenum shaderType)
 	return shader;
 }
 
-Shader::Shader(const String & filename, const Vector<String>& attribLocs) : uniformCache()
+Shader::Shader(const String & filename, const Vector<ShortString>& attribLocs) : uniformCache()
 {
+	//NOTE: Because I add an extension, I need to make sure that it fits in a ShortString if it is one
+	assert(filename.size() > 16 || filename.size() <= 12);
+
 	GLuint shaders[NUM_SHADERS];
 
 	CallGL(program = glCreateProgram());
@@ -144,21 +147,21 @@ void Shader::unbind() const
 	CallGL(glUseProgram(0));
 }
 
-void Shader::setUniform4f(const String & var, float v0, float v1, float v2, float v3)
+void Shader::setUniform4f(const ShortString & var, float v0, float v1, float v2, float v3)
 {
 	int loc = getUniformLoc(var);
 
 	CallGL(glUniform4f(loc, v0, v1, v2, v3));
 }
 
-void Shader::setUniformMat4f(const String & var, const Mat4x4 & mat)
+void Shader::setUniformMat4f(const ShortString & var, const Mat4x4 & mat)
 {
 	int loc = getUniformLoc(var);
 
 	CallGL(glUniformMatrix4fv(loc, 1, GL_FALSE, mat.matrix));
 }
 
-int Shader::getUniformLoc(const String & var)
+int Shader::getUniformLoc(const ShortString & var)
 {
 	auto it = uniformCache.find(var);
 	if (it != uniformCache.end())

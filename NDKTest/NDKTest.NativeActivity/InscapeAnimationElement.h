@@ -11,14 +11,14 @@
 class InkscapeAnimationElement
 {
 	//TODO: Changed map to unordered_map. Does it matter?
-	std::unordered_map<String, std::unordered_map<String, IntRect>> elementMap;
+	std::unordered_map<ShortString, std::unordered_map<ShortString, IntRect>> elementMap;
 private:
 	bool FindGroupLayer(String& lineContent) const;
 public:
 	InkscapeAnimationElement() = default;
-	InkscapeAnimationElement(const String& inkscapeFileName, const Vector<String>& regionNames);
+	InkscapeAnimationElement(const String& inkscapeFileName, const Vector<ShortString>& regionNames);
 	InkscapeAnimationElement(const String& inkscapeFileName);
-	IntRect getElementRect(String& keyFrameId, String& elementId) const;
-	std::unordered_map<String, IntRect> getElementMap(const String& keyFrameId) const;
-	bool isElementInMap(const String& keyFrameId) const;
+	IntRect getElementRect(ShortString& keyFrameId, ShortString& elementId) const;
+	std::unordered_map<ShortString, IntRect> getElementMap(const ShortString& keyFrameId) const;
+	bool isElementInMap(const ShortString& keyFrameId) const;
 };

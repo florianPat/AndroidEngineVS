@@ -11,7 +11,7 @@ class Shader
 {
 public:
 	Shader() = default;
-	Shader(const String& filename, const Vector<String>& attribLocs);
+	Shader(const String& filename, const Vector<ShortString>& attribLocs);
 	Shader(const Shader& other) = delete;
 	Shader(Shader&& other);
 	Shader& operator=(const Shader& rhs) = delete;
@@ -21,12 +21,12 @@ public:
 
 	void bind() const;
 	void unbind() const;
-	void setUniform4f(const String& var, float v0, float v1, float v2, float v3);
-	void setUniformMat4f(const String& var, const Mat4x4& mat);
+	void setUniform4f(const ShortString& var, float v0, float v1, float v2, float v3);
+	void setUniformMat4f(const ShortString& var, const Mat4x4& mat);
 private:
-	int getUniformLoc(const String& var);
+	int getUniformLoc(const ShortString& var);
 private:
 	static constexpr unsigned int NUM_SHADERS = 2;
 	GLuint program = 0;
-	std::unordered_map<String, GLint> uniformCache;
+	std::unordered_map<ShortString, GLint> uniformCache;
 };

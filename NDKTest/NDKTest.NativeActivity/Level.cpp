@@ -66,7 +66,7 @@ r()
 	sound[0] = assetManager->getOrAddRes<Sound>("nice.wav");
 	benchmark.stop();
 
-	benchmark.start("One asset loading");
+	benchmark.start("One asset load");
 	for (int i = 1; i < (100 - NUM_TEXTURES); ++i)
 	{
 		sound[i] = assetManager->getOrAddRes<Sound>("nice.wav");
@@ -84,7 +84,7 @@ r()
 	}
 	benchmark.stop();
 
-	benchmark.start("Reload all assets");
+	benchmark.start("Reload assets");
 	assetManager->reloadAllRes();
 	benchmark.stop();
 
