@@ -71,6 +71,8 @@ public:
 	void resize(size_t count);
 	void resize(size_t count, const T& value);
 	void swap(Vector& other);
+	void swap(size_t first, size_t second);
+	void swap(const Iterator<T>& first, const Iterator<T>& second);
 
 	bool operator==(const Vector& rhs) const;
 	bool operator!=(const Vector& rhs) const;
@@ -483,6 +485,22 @@ inline void Vector<T>::swap(Vector & other)
 	Vector<T> temp(std::move(other));
 	other = std::move(*this);
 	*this = std::move(temp);
+}
+
+template<typename T>
+inline void Vector<T>::swap(size_t first, size_t second)
+{
+	assert(first < vectorArray.size() && second < vectorArray.size());
+
+	T&& temp = std::move(vectorArray[second]);
+	vectorArray[second] = std::move(vectorArray[first]);
+	vectorArray[first] = std::move(temp);
+}
+
+template<typename T>
+inline void Vector<T>::swap(const Iterator<T>& first, const Iterator<T>& second)
+{
+	return swap(first.getIndex(), second.getIndex());
 }
 
 template<typename T>

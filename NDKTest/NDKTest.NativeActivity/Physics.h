@@ -2,7 +2,6 @@
 
 #include "Vector2.h"
 #include "Vector.h"
-#include <unordered_map>
 #include <memory>
 #include "Rect.h"
 #include "RenderWindow.h"
@@ -18,7 +17,7 @@ public:
 		float radius;
 		Vector2f center;
 	public:
-		FloatCircle(const Vector2f& center, float radius);
+		FloatCircle(Vector2f&& center, float radius);
 		FloatCircle(float centerX, float centerY, float radius);
 		FloatCircle() = default;
 	};
@@ -37,10 +36,10 @@ public:
 	public:
 		//angle has to be in degrees!
 		OBB(float left, float top, float width, float height, float angle);
-		OBB(Vector2f& topLeft, float width, float height, float angle);
+		OBB(Vector2f&& topLeft, float width, float height, float angle);
 		//Local origin
-		OBB(float left, float top, float width, float height, float angle, Vector2f origin);
-		OBB(Vector2f& topLeft, float width, float height, float angle, Vector2f origin);
+		OBB(float left, float top, float width, float height, float angle, Vector2f&& origin);
+		OBB(Vector2f&& topLeft, float width, float height, float angle, Vector2f&& origin);
 		//angle has to be in degrees!
 		void setAngle(float newAngle);
 		float getAngle() const;
@@ -90,11 +89,8 @@ private:
 	//NOTE: All is public, but really you should only use the two methods, could make a constructor for that and therefore make it a class but yeah ;)
 	struct PhysicElement
 	{
-		bool collisionIdInPointer;
-		Vector<ShortString> collisionIdValue;
-		Vector<ShortString>* collisionIdPointer;
-
 		bool collidersInPointer;
+
 		union
 		{
 				Collider* collidersPointer;
@@ -102,7 +98,6 @@ private:
 		} colliders;
 	public:
 		Collider* getCollider() const;
-		Vector<ShortString>* getCollisionIds() const;
 	};
 public:
 	class Body
@@ -127,42 +122,47 @@ public:
 		bool isStatic;
 		bool isTrigger;
 		bool triggered = false;
+		bool isActive = true;
 		TriggerInformation triggerInformation = {};
 		Vector2f pos;
 		ShortString id;
 		Vector<PhysicElement> physicsElements;
+		int index;
 	public:
 		Vector2f vel = { 0.0f, 0.0f };
 	public:
 		//Should be called, if the object is moving
-		Body(Vector2f& pos, ShortString name, Collider* collider, Vector<ShortString>* collisionId, bool isTrigger = false, bool isStatic = false);
-		Body(Vector2f& pos, ShortString name, Collider* collider, bool isTrigger = false, bool isStatic = false, Vector<ShortString> collisionId = {});
+		Body(Vector2f&& pos, const ShortString& name, Collider* collider, bool isTrigger = false, bool isStatic = false);
 		//Should be called if the object, is a static one
-		Body(ShortString name, Collider collider, bool isTrigger = false, bool isStatic = true, Vector<ShortString> collisionId = {});
+		Body(const ShortString& name, Collider&& collider, bool isTrigger = false, bool isStatic = true);
 		//To have one name for a lot of Colliders. The body you have to pass by value, because pos and that does not make sense to manipulate here!
-		Body(ShortString name, Vector<Collider> colliders, bool isTrigger = false);
+		Body(const ShortString& name, Vector<Collider>&& colliders, bool isTrigger = false);
 	public:
-		bool getIsTriggerd();
-		Vector2f& getPos();
+		bool getIsTriggerd() const;
+		const Vector2f& getPos() const;
 		void setPos(Vector2f newPos);
-		TriggerInformation& getTriggerInformation();
-		ShortString& getId();
+		const TriggerInformation& getTriggerInformation() const;
+		const ShortString& getId() const;
+		int getIndex() const;
+		bool getIsActive() const;
 	};
 private:
 	static constexpr float gravity = 9.81f;
-	std::unordered_map<ShortString, std::unique_ptr<Body>> bodies;
+	size_t activeIndex = 0;
+	size_t inactiveIndex = 0;
+	Vector<Body> bodies;
 private:
-	void handleCollision(Body* itBody, Body* collideElementBody, Collider & bodyCollider,
+	void handleCollision(Body& itBody, Body& collideElementBody, Collider & bodyCollider,
 						 const Collider& elementCollider);
 public:
 	Physics();
 	void update(float dt);
-	void debugRenderBodies(RenderWindow& window);
+	void debugRenderBodies(RenderWindow& window) const;
 	//Use if you need a reference to the body, to get back triggerInformation etc.
-	Body* addElementPointer(std::unique_ptr<Body> body);
+	Body* addElementPointer(Body&& body);
 	//Use this otherwise
-	void addElementValue(Body body);
-	bool removeElementById(ShortString& id);
-	static void applySpriteToBoundingBox(const Sprite& sprite, Collider& boundingBox);
-	Vector<ShortString> getAllCollisionIdsWhichContain(const ShortString& string);
+	void addElementValue(Body&& body);
+	void removeElementByIndex(int index);
+	//TODO: Would be better if it is inside Body && TEST!
+	void flipActive(Body& body);
 };
