@@ -136,7 +136,7 @@ bool Animation::isAnimationFinished()
 	}
 }
 
-Sprite Animation::getKeyFrame()
+const Sprite& Animation::getKeyFrame()
 {
 	if (!paused)
 	{

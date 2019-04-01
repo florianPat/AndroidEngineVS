@@ -14,9 +14,7 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 		utils::logBreak("Cant open file!");
 	}
 
-	LongString tempString;
-
-	file.getline(tempString);
+	file.readTempLine();
 
 	if (!file.eof())
 	{
@@ -37,7 +35,6 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 					int width, height;
 					ShortString widthChar, heightChar;
 					
-					
 					widthChar = getLineContentBetweeen(lineContent, ' ', ',');
 					
 					size_t nCharsToCopyHeight = lineContent.size();
@@ -56,7 +53,6 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 				}	break;
 				case 3:
 				{
-					
 					fileHeader.filter[0] = getLineContentBetweeen(lineContent, ' ', ',');
 					
 					size_t nCharsToCopyFilter1 = lineContent.size();
@@ -123,12 +119,12 @@ TextureAtlas::TextureAtlas(const String& filepath, AssetManager* assetManager) :
 	}
 }
 
-std::unique_ptr<TextureRegion> TextureAtlas::findRegion(const String& name) const
+const TextureRegion* TextureAtlas::findRegion(const String& name) const
 {
 	auto result = textureAtlas.find(name);
 	if (result != textureAtlas.end())
 	{
-		return std::make_unique<TextureRegion>(result->second);
+		return &result->second;
 	}
 	else
 	{
@@ -136,16 +132,9 @@ std::unique_ptr<TextureRegion> TextureAtlas::findRegion(const String& name) cons
 	}
 }
 
-Vector<TextureRegion> TextureAtlas::getRegions()
+const std::unordered_map<String, TextureRegion>& TextureAtlas::getRegions()
 {
-	auto result = Vector<TextureRegion>();
-	int i = 0;
-	for (auto it = textureAtlas.begin(); it != textureAtlas.end(); ++it, ++i)
-	{
-		result.push_back(it->second);
-		result[i].initSprite(assetManager);
-	}
-	return result;
+	return textureAtlas;
 }
 
 void TextureAtlas::addRegion(const TextureRegion & adder)
@@ -162,7 +151,7 @@ String TextureAtlas::getLineContentBetweeen(String & lineContent, char first, ch
 
 	size_t kommaPos = lineContent.find(secound);
 
-	size_t nCharsToCopy = kommaPos;//(lineContent.size() - kommaPos);
+	size_t nCharsToCopy = kommaPos;
 	result = lineContent.substr(0, nCharsToCopy);
 
 	lineContent.erase(0, ++kommaPos);

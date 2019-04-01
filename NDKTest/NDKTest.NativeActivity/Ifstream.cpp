@@ -62,6 +62,11 @@ void Ifstream::getline(String & line)
 	}
 }
 
+void Ifstream::readTempLine()
+{
+	for (char c = get(); (!eof()) && (c != '\n'); c = get());
+}
+
 long long Ifstream::getSize()
 {
 	return AAsset_getLength64(asset);

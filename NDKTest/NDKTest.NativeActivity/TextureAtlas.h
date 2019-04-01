@@ -46,8 +46,8 @@ class TextureAtlas
 public:
 	TextureAtlas(const String& filepath, AssetManager* assetManger);
 
-	std::unique_ptr<TextureRegion> findRegion(const String& name) const;
-	Vector<TextureRegion> getRegions();
+	const TextureRegion* findRegion(const String& name) const;
+	const std::unordered_map<String, TextureRegion>& getRegions();
 	void addRegion(const TextureRegion& adder);
 private:
 	String getLineContentBetweeen(String& lineContent, char first, char secound);

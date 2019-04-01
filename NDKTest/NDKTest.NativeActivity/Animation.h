@@ -34,7 +34,7 @@ public:
 	void setFrameDuration(int64_t frameDuration);
 	void setKeyFrames(Vector<TextureRegion>& keyFrames);
 	bool isAnimationFinished();
-	Sprite getKeyFrame();
+	const Sprite& getKeyFrame();
 	void setPlayMode(PlayMode& playMode);
 	void restartFrameTimer();
 	void pause();

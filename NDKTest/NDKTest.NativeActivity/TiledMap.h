@@ -28,8 +28,9 @@ class TiledMap
 		ShortString name;
 		Vector<Physics::Collider> objects;
 	};
-	std::unordered_map<int, Tile> tiles;
-	std::unordered_map<ShortString, Layer> layers;
+
+	Vector<Tile> tiles;
+	Vector<Layer> layers;
 	std::unordered_map<ShortString, ObjectGroup> objectGroups;
 	int mapWidth = 0, mapHeight = 0, tileWidth = 0, tileHeight = 0;
 
@@ -38,8 +39,8 @@ class TiledMap
 	AssetManager* assetManager = nullptr;
 public:
 	TiledMap(const String& filepath, GameObjectManager& gom, EventManager& em, RenderWindow& window, Vector<ShortString>&& toGameObjects = Vector<ShortString>{});
-	Vector<Physics::Collider> getObjectGroup(const String& objectGroupName);
-	Vector<ObjectGroup> getObjectGroups();
+	const Vector<Physics::Collider>& getObjectGroup(const ShortString& objectGroupName);
+	const std::unordered_map<ShortString, ObjectGroup>& getObjectGroups();
 	void draw(RenderWindow& renderWindow);
 private:
 	size_t getEndOfWord(const String& word, const String& lineContent, bool* result);

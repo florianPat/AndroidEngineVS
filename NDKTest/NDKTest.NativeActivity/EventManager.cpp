@@ -55,8 +55,8 @@ void EventManager::removeListeners()
 	{
 		for (auto it = eventDeleterMap.begin(); it != eventDeleterMap.end(); ++it)
 		{
-			auto eventType = it->first;
-			auto delegateFunction = it->second;
+			uint eventType = it->first;
+			DelegateFunction delegateFunction = it->second;
 
 			auto findIt = eventListenerMap.find(eventType);
 			if (findIt != eventListenerMap.end())

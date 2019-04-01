@@ -13,6 +13,7 @@ class EventManager
 {
 	friend class Level;
 
+	//NOTE: I could really refactor this to use a Vector, or?
 	std::unordered_map<unsigned int, Vector<DelegateFunction>> eventListenerMap;
 	Vector<std::pair<unsigned int, DelegateFunction>> eventDeleterMap;
 public:

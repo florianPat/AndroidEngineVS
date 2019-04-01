@@ -23,6 +23,7 @@ public:
 	bool operator!() const;
 	bool eof();
 	void getline(String& line);
+	void readTempLine();
 	void read(void* s, uint n);
 	char get();
 	std::streampos tellg();

@@ -15,8 +15,7 @@ TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager
 		utils::logBreak("Cant open file!");
 	}
 
-	LongString temp;
-	file.getline(temp);
+	file.readTempLine();
 
 	if (!file.eof())
 	{
@@ -56,29 +55,21 @@ TiledMap::TiledMap(const String & filepath, GameObjectManager& gom, EventManager
 	}
 }
 
-Vector<Physics::Collider> TiledMap::getObjectGroup(const String& objectGroupName)
+const Vector<Physics::Collider>& TiledMap::getObjectGroup(const ShortString& objectGroupName)
 {
 	auto result = objectGroups.find(objectGroupName);
 	if (result != objectGroups.end())
 		return result->second.objects;
 	else
 	{
-		Vector<Physics::Collider> result;
 		InvalidCodePath;
-		return result;
+		return Vector<Physics::Collider>();
 	}
 }
 
-Vector<TiledMap::ObjectGroup> TiledMap::getObjectGroups()
+const std::unordered_map<ShortString, TiledMap::ObjectGroup>& TiledMap::getObjectGroups()
 {
-	Vector<ObjectGroup> result;
-
-	for (auto it = objectGroups.begin(); it != objectGroups.end(); ++it)
-	{
-		result.push_back(it->second);
-	}
-
-	return result;
+	return objectGroups;
 }
 
 void TiledMap::draw(RenderWindow& renderWindow)
@@ -146,9 +137,10 @@ void TiledMap::ParseLayer(Ifstream & file, String& lineContent)
 		int layerWidth = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 		int layerHeight = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 
-		layers.emplace(layerName, Layer{ layerName, layerWidth, layerHeight, Vector<Tile>() });
+		layers.push_back(Layer{ layerName, layerWidth, layerHeight, Vector<Tile>() });
 
-		auto currentLayer = layers.find(layerName);
+		Layer& currentLayer = layers.back();
+		currentLayer.tiles.reserve(layerWidth * layerHeight);
 
 		file.getline(lineContent); //  <data encoding="csv">
 		if (!utils::isWordInLine("csv", lineContent))
@@ -166,10 +158,7 @@ void TiledMap::ParseLayer(Ifstream & file, String& lineContent)
 				int nextTileId = atoi(lineContent.substr(0, kommaPos).c_str());
 				lineContent.erase(0, ++kommaPos);
 
-				Tile nextTile{ 0, 0, 0, nullptr };
-				if (tiles.find(nextTileId) != tiles.end())
-					nextTile = tiles.find(nextTileId)->second;
-				currentLayer->second.tiles.push_back(nextTile);
+				currentLayer.tiles.push_back(tiles.at(nextTileId));
 			}
 			file.getline(lineContent);
 		}
@@ -221,8 +210,8 @@ void TiledMap::MakeRenderTexture(Vector<ShortString>& toGameObjects, GameObjectM
 			{
 				for (int x = 0; x < mapWidth; ++x)
 				{
-					Layer currentLayer = it->second;
-					Texture* source = currentLayer.tiles[mapWidth * y + x].source;
+					Layer& currentLayer = *it;
+					Texture* source = currentLayer.tiles.at(mapWidth * y + x).source;
 					if (source == nullptr)
 						continue;
 					Sprite sprite(source);
@@ -235,7 +224,7 @@ void TiledMap::MakeRenderTexture(Vector<ShortString>& toGameObjects, GameObjectM
 						bool toGO = false;
 						for (auto toGOIt = toGameObjects.begin(); toGOIt != toGameObjects.end(); ++toGOIt)
 						{
-							if ((*toGOIt) == it->second.name)
+							if ((*toGOIt) == it->name)
 							{
 								Actor* actorP = gom.addActor();
 								actorP->addComponent(std::make_unique<TiledMapRenderComponent>(sprite, window, em, actorP));
@@ -265,9 +254,9 @@ String TiledMap::ParseTiles(Ifstream & file)
 	file.getline(lineContent);
 
 	bool gridInFile = false;
-	LongString temp;
-	file.getline(temp); // <grid...
-	if (utils::isWordInLine("<grid", temp))
+	LongString grid;
+	file.getline(grid); // <grid...
+	if (utils::isWordInLine("<grid", grid))
 	{
 		gridInFile = true;
 	}
@@ -275,6 +264,12 @@ String TiledMap::ParseTiles(Ifstream & file)
 	while (utils::isWordInLine("<tileset", lineContent))
 	{
 		int firstgrid = atoi(getLineContentBetween(lineContent, "firstgid", '"').c_str());
+
+		for (int i = tiles.size(); i < firstgrid; ++i)
+		{
+			tiles.push_back(Tile{i, 0, 0, nullptr});
+		}
+
 		int tileCount = atoi(getLineContentBetween(lineContent, "tilecount", '"').c_str());
 		for (int i = 0; i < tileCount; ++i)
 		{
@@ -284,7 +279,7 @@ String TiledMap::ParseTiles(Ifstream & file)
 			}
 			else
 			{
-				lineContent = temp;
+				lineContent = grid;
 				//NOTE: Just set it here, because in the next it`s it will get the next line
 				gridInFile = true;
 			}
@@ -296,7 +291,8 @@ String TiledMap::ParseTiles(Ifstream & file)
 			int width = atoi(getLineContentBetween(lineContent, "width", '"').c_str());
 			int height = atoi(getLineContentBetween(lineContent, "height", '"').c_str());
 			String source = getLineContentBetween(lineContent, "source", '"');
-			tiles.emplace(id, Tile{ id, width, height, assetManager->getOrAddRes<Texture>(source) });
+			assert(tiles.size() == id);
+			tiles.push_back(Tile{ id, width, height, assetManager->getOrAddRes<Texture>(source) });
 
 			file.getline(lineContent); //</tile>
 			assert(utils::isWordInLine("</tile>", lineContent));

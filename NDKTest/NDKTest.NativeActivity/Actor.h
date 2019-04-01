@@ -29,7 +29,7 @@ template<typename T>
 inline T* Actor::getComponent(unsigned int componentId)
 {
 	auto result = components.find(componentId);
-	auto componentPtr = result->second.get();
+	Component* componentPtr = result->second.get();
 	if (result != components.end())
 	{
 		//NOTE: Only used to really verify that it is ok what I am doing. RTTI should be switched off in release mode
